@@ -3,7 +3,7 @@ package frc.robot;
 
 import static frc.robot.Constants.*;
 
-
+import frc.robot.commands.Test;
 import frc.robot.subsystems.Chassis;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -20,6 +20,7 @@ public class RobotContainer extends CommandBase{
   
   CommandXboxController driverController = new CommandXboxController(DriverControllerPort);
   Chassis chassis = new Chassis();
+  Test test = new Test();
 
 
 
@@ -46,6 +47,6 @@ public class RobotContainer extends CommandBase{
 
 
   public Command getAutonomousCommand() {
-    return null;
+    return test;
   }
 }
