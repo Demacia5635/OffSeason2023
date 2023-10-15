@@ -21,7 +21,7 @@ public class Test extends CommandBase {
 
   @Override
   public void initialize() {
-    System.out.println(roundedPoint.createCornerVector()); 
+    System.out.println(roundedPoint.getCenterCircle()); 
   }
 
 

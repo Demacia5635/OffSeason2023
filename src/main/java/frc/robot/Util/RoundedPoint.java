@@ -1,5 +1,6 @@
 
 package frc.robot.Util;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class RoundedPoint{
@@ -21,27 +22,32 @@ public class RoundedPoint{
     }
 
     
-    //work
     private double getCornerAngle(){
-        double dotProduct = (vectorAtoB.getX() * vectorBtoC.getX()) + (vectorAtoB.getY() * vectorBtoC.getY());
-        double angle = Math.acos(dotProduct / (vectorAtoB.getNorm() * vectorBtoC.getNorm()));
-        return Math.toDegrees(angle);
+        double bigAngle = vectorAtoB.times(-1).getAngle().getDegrees();
+        double smallAngle = vectorBtoC.getAngle().getDegrees();
+        return smallAngle - bigAngle;
     }
 
-    //work
     private double getDirection(){
-        double direction = vectorAtoB.times(-1).getAngle().getDegrees() + (getCornerAngle() / 2);
+        double direction = (getCornerAngle() / 2) + vectorAtoB.times(-1).getAngle().getDegrees();
         return direction;
     }
-    public double getCrossAngleLength(){
-        double length = Math.pow((Math.sin(getCornerAngle() / 2)), -1) * radius;
+    private Translation2d getAngleCrossNormalVector(){
+        Translation2d vector = new Translation2d(1, new Rotation2d(Math.toRadians(getDirection())));
+        return vector;
+    }
+    private double getAngleCrossNormalVectorLength(){
+        double length = Math.pow((Math.sin(Math.abs(getCornerAngle() / 2))), -1) * radius;
         System.out.println(length);
         return length;
     }
-
-    public Translation2d createCornerVector(){
-        Translation2d vector = new Translation2d(Math.cos(getDirection()), Math.sin(getDirection()));
-        return vector.times(getCrossAngleLength());
+    private Translation2d getVector(){
+        return getAngleCrossNormalVector().times(getAngleCrossNormalVectorLength());
     }
+    public Translation2d getCenterCircle(){
+        return getVector().plus(bPoint);
+    }
+
+
     
 }
