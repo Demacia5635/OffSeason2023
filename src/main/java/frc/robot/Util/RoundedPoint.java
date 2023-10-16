@@ -10,7 +10,6 @@ public class RoundedPoint{
     Translation2d cPoint;
     Translation2d vectorAtoB;
     Translation2d vectorBtoC;
-    Translation2d vectorCool = new Translation2d(bPoint.getX(), bPoint.getY());
     public RoundedPoint(double radius, Translation2d aPoint, Translation2d bPoint, Translation2d cPoint){
         this.radius = radius;
         this.aPoint = aPoint;
@@ -33,7 +32,7 @@ public class RoundedPoint{
         return vector;
     }
     private double getLength(){
-        double length = Math.pow((Math.sin(Math.abs(getCornerAngle() / 2))), -1) * radius;
+        double length = radius / Math.sin(Math.toRadians(Math.abs(getCornerAngle() / 2)));
         System.out.println(length);
         return length;
     }
@@ -43,6 +42,7 @@ public class RoundedPoint{
     public Translation2d getCenterCircle(){
         return getVector().plus(bPoint);
     }
+
 
 
     
