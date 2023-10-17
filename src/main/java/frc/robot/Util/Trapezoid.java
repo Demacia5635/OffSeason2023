@@ -24,13 +24,13 @@ public class Trapezoid {
 
 
         if (accelDistance() > distanceLeft) {
-            return CurrentVelocity - deltaV;
+            return Math.max(CurrentVelocity - deltaV, endV);
         } 
         else if(CurrentVelocity >= MaxVelocity){
             return MaxVelocity;
             
         } else{
-            return CurrentVelocity + deltaV;
+            return Math.min(CurrentVelocity + deltaV, endV);
         }
     }
 

@@ -20,6 +20,7 @@ public class DriveToPoint extends CommandBase {
   Pose2d pose = new Pose2d();
   double maxVelocity = 3;
   double wantedAccel = 6;
+  
   Translation2d translationFinal = new Translation2d();
 
   Trapezoid driveTrapezoid = new Trapezoid(wantedAccel, maxVelocity);
@@ -49,8 +50,10 @@ public class DriveToPoint extends CommandBase {
 
   @Override
   public void execute() {
+    
 
     pose = chassis.getPose();
+
     Translation2d vector = translationFinal.minus(pose.getTranslation());
     double angleError = wantedAngle.minus(pose.getRotation()).getDegrees();
     remainingDistance = vector.getNorm();
