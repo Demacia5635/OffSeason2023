@@ -19,7 +19,6 @@ public class Parallelogram extends SubsystemBase {
 
   /** Creates a new Parraller. */
   public Parallelogram() {
-    super();
     SmartDashboard.putData(this);
   }
 
