@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.ParallelogramConstants.*;
@@ -17,7 +18,10 @@ public class Parallelogram extends SubsystemBase {
   public TalonFX motor = new TalonFX(motorID);
 
   /** Creates a new Parraller. */
-  public Parallelogram() {}
+  public Parallelogram() {
+    super();
+    SmartDashboard.putData(this);
+  }
 
   public void setPow(double pow){
     motor.set(ControlMode.PercentOutput, pow);
@@ -25,6 +29,10 @@ public class Parallelogram extends SubsystemBase {
 
   public void setVel(double vel){
     motor.set(ControlMode.Velocity, vel);
+  }
+
+  public void stop(){
+    setVel(0);
   }
 
   public boolean isRetracted(){return false;}
