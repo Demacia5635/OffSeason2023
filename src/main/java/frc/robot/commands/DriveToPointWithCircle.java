@@ -30,7 +30,7 @@ public class DriveToPointWithCircle extends CommandBase {
     this.nextPoint = nextPoint;
     this.wantedAngle = wantedAngle;
     roundedPoint = new RoundedPoint(0, chassis.getPose().getTranslation(), wantedPoint, nextPoint);
-    points = roundedPoint.getPoints();
+    points = roundedPoint.getPoints() ;
   }
 
 
