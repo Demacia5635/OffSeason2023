@@ -30,7 +30,7 @@ public class ParallelogramDrive extends CommandBase {
   @Override
   public void execute() {
     yAxis = controller.getLeftY();
-    parallelogram.setVel(yAxis*0.5);
+    parallelogram.setPow(yAxis*0.5);
   }
 
   // Called once the command ends or is interrupted.
