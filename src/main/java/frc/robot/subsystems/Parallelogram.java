@@ -4,8 +4,10 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.ParallelogramConstants.*;
@@ -17,8 +19,25 @@ public class Parallelogram extends SubsystemBase {
   /** Creates a new Parraller. */
   public Parallelogram() {}
 
+  public void setPow(double pow){
+    motor.set(ControlMode.PercentOutput, pow);
+  }
+
+  public void setVel(double vel){
+    motor.set(ControlMode.Velocity, vel);
+  }
+
+  public boolean isRetracted(){return false;}
+
+  public double getVel(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerDegree;}
+
+
   @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+  public void initSendable(SendableBuilder builder) {
+      // TODO Auto-generated method stub
+      super.initSendable(builder);
+
+      builder.addBooleanProperty("isRetracted", this::isRetracted, null);
+      builder.addDoubleProperty("Velocity", this::getVel, null);
   }
 }
