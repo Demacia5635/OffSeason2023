@@ -4,12 +4,21 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Parallelogram;
 
-public class ParrelogramMoveBackAndForward extends CommandBase {
-  
+public class ParallelogramDrive extends CommandBase {
+
+  public Parallelogram parallelogram;
+  public XboxController controller;
+  public double yAxis;
+
   /** Creates a new Parrelogram. */
-  public ParrelogramMoveBackAndForward() {
+  public ParallelogramDrive(Parallelogram parallelogram, XboxController controller) {
+    this.parallelogram = parallelogram;
+    this.controller = controller;
+    addRequirements(parallelogram);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -19,7 +28,10 @@ public class ParrelogramMoveBackAndForward extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    yAxis = controller.getLeftY();
+    parallelogram.setVel(yAxis*0.5);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
