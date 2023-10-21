@@ -2,6 +2,7 @@
 package frc.robot.Util;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.Constants;
 
 public class RoundedPoint{
     double smoothnes = 10;
@@ -23,25 +24,48 @@ public class RoundedPoint{
 
         direction = (cornerAngle() / 2) + vectorAtoB.times(-1).getAngle().getDegrees();
     }
+
+    /**
+     * @return The angle of the corner in degrees, relative to the vector BtoA (Which represents one of the corner's wall)
+     */
     private double cornerAngle(){
         double bigAngle = vectorAtoB.times(-1).getAngle().getDegrees();
         double smallAngle = vectorBtoC.getAngle().getDegrees();
         return smallAngle - bigAngle;
     }
 
+    /**
+     * 
+     * @return A unit vector which represents the direction of the corner
+     */
     private Translation2d getAngleVector(){
         Translation2d vector = new Translation2d(1, new Rotation2d(Math.toRadians(direction)));
         return vector;
     }
+
+    /**
+     * 
+     * @return The length of the corner's angle cross, from point B to an encounter with the corner's circle
+     */
     private double getLength(){
         double length = radius / Math.sin(Math.toRadians(Math.abs(cornerAngle() / 2)));
         System.out.println(length);
         return length;
     }
+
+    /**
+     * 
+     * @return The position of the corner's circle
+     */
     public Translation2d getCenterCircle(){
         Translation2d vector = getAngleVector().times(getLength());
         return vector.plus(bPoint);
     }
+
+    /**
+     * 
+     * @return The starting position of the corner's curve (relative to the corner's circle's center)
+     */
     public Translation2d startRange()
     {
         return new Translation2d(radius, new Rotation2d(
@@ -49,6 +73,11 @@ public class RoundedPoint{
         ));
     }
 
+
+    /**
+     * 
+     * @return The ending position of the corner's curve (relative to the corner's circle's center)
+     */
     public Translation2d endRange()
     {
         return new Translation2d(radius, new Rotation2d(
@@ -56,14 +85,21 @@ public class RoundedPoint{
         ));
     }
 
+    /**
+     * 
+     * @param pos
+     * @param velocity
+     * @return Returns a vector that represents the required velocity, According to the 
+     */
     public Translation2d getCurrentVel(Translation2d pos,double velocity)
     {
+        
         Translation2d relativePos = pos.minus(getCenterCircle());
         System.out.println("RelativPos : " + relativePos);
         System.out.println("StartRange : " + startRange());
         double diffAngle = endRange().getAngle().getDegrees() - startRange().getAngle().getDegrees();
         Translation2d unitVel = relativePos.rotateBy(new Rotation2d(Math.toRadians(90 * Math.signum(diffAngle)))).div(relativePos.getNorm());
-        return unitVel.times(velocity);
+        return unitVel.times(velocity * Constants.cycleTime);
     }
 
     public Translation2d[] getPoints(){
