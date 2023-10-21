@@ -7,10 +7,10 @@ import frc.robot.Util.RoundedPoint;
 
 
 public class Test extends CommandBase {
-  double radius = 0.5;
-  Translation2d aPoint = new Translation2d(-1, 0);
-  Translation2d bPoint = new Translation2d(0, -1);
-  Translation2d cPoint = new Translation2d(1, 0);
+  double radius = 0.1;
+  Translation2d aPoint = new Translation2d(0, 0);
+  Translation2d bPoint = new Translation2d(1, 1);
+  Translation2d cPoint = new Translation2d(2, 0);
   RoundedPoint roundedPoint = new RoundedPoint(radius, aPoint, bPoint, cPoint);
 
   public Test() {
@@ -21,7 +21,7 @@ public class Test extends CommandBase {
 
   @Override
   public void initialize() {
-    roundedPoint.getPoints();
+    System.out.println(roundedPoint.getCurrentVel(roundedPoint.startRange().plus(roundedPoint.getCenterCircle()), 4));
     
   }
 

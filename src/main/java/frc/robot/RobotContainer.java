@@ -51,6 +51,6 @@ public class RobotContainer extends CommandBase{
 
 
   public Command getAutonomousCommand() {
-    return driveToPointWithCircle;
+    return test;
   }
 }

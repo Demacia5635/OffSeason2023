@@ -38,7 +38,7 @@ public class RoundedPoint{
         System.out.println(length);
         return length;
     }
-    private Translation2d getCenterCircle(){
+    public Translation2d getCenterCircle(){
         Translation2d vector = getAngleVector().times(getLength());
         return vector.plus(bPoint);
     }
@@ -54,6 +54,16 @@ public class RoundedPoint{
         return new Translation2d(radius, new Rotation2d(
             Math.toRadians(vectorBtoC.getAngle().getDegrees() + (90 * Math.signum(cornerAngle())))
         ));
+    }
+
+    public Translation2d getCurrentVel(Translation2d pos,double velocity)
+    {
+        Translation2d relativePos = pos.minus(getCenterCircle());
+        System.out.println("RelativPos : " + relativePos);
+        System.out.println("StartRange : " + startRange());
+        double diffAngle = endRange().getAngle().getDegrees() - startRange().getAngle().getDegrees();
+        Translation2d unitVel = relativePos.rotateBy(new Rotation2d(Math.toRadians(90 * Math.signum(diffAngle)))).div(relativePos.getNorm());
+        return unitVel.times(velocity);
     }
 
     public Translation2d[] getPoints(){
