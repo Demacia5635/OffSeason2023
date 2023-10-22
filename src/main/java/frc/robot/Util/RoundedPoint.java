@@ -45,7 +45,7 @@ public class RoundedPoint{
 
     /**
      * 
-     * @return The length of the corner's angle cross, from point B to an encounter with the corner's circle
+     * @return The length of the corner's angle cross, from point B to the corner's circle's center
      */
     private double getLength(){
         double length = radius / Math.sin(Math.toRadians(Math.abs(cornerAngle() / 2)));
@@ -76,7 +76,7 @@ public class RoundedPoint{
 
     /**
      * 
-     * @return The ending position of the corner's curve (relative to the corner's circle's center)
+     * @return The ending position of the corner's curve (relative to the corner's circle's center) 
      */
     public Translation2d endRange()
     {
@@ -89,7 +89,7 @@ public class RoundedPoint{
      * 
      * @param pos
      * @param velocity
-     * @return Returns a vector that represents the required velocity, According to the 
+     * @return Returns a vector that represents the required velocity, According to the chassis position 
      */
     public Translation2d getCurrentVel(Translation2d pos,double velocity)
     {
