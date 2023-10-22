@@ -36,7 +36,7 @@ public class Parallelogram extends SubsystemBase {
 
   public boolean isRetracted(){return false;}
 
-  public double getVel(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerDegree;}
+  public double getVel(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle;}
 
 
   @Override
