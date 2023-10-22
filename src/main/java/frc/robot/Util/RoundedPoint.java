@@ -102,6 +102,11 @@ public class RoundedPoint{
         return unitVel.times(velocity * Constants.cycleTime);
     }
 
+    /**
+     * 
+     * @return An array of points that represent the corner's curve's structure
+     */
+
     public Translation2d[] getPoints(){
         int place = 0;
         Translation2d[] points = new Translation2d[(int)smoothnes];
@@ -114,7 +119,15 @@ public class RoundedPoint{
         return points;
     }
 
-
+    /**
+     * 
+     * @return the length of the corner's curve
+     */
+    public double getCurveLength()
+    {
+        double diffAngle = Math.abs(endRange().getAngle().getRadians() - startRange().getAngle().getRadians());
+        return this.radius * diffAngle;
+    }
 
 
 
