@@ -129,7 +129,24 @@ public class RoundedPoint{
         return this.radius * diffAngle;
     }
 
+    /**
+     * 
+     * @return The distance between point A and the start of the corner's curve
+     */
+    public double getAtoCurvelength()
+    {
+        return getCenterCircle().plus(startRange()).minus(aPoint).getNorm();
+    }
 
+
+    /**
+     * 
+     * @return The distance between point C and the end of the corner's curve
+     */
+    public double getCtoCurvelength()
+    {
+        return getCenterCircle().plus(endRange()).minus(cPoint).getNorm();
+    }
 
 
     
