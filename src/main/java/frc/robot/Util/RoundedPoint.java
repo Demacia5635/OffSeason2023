@@ -148,6 +148,10 @@ public class RoundedPoint{
         return getCenterCircle().plus(endRange()).minus(cPoint).getNorm();
     }
 
+    public double getTotalLength()
+    {
+        return getCtoCurvelength() + getCurveLength() + getAtoCurvelength();
+    }
 
     
 }

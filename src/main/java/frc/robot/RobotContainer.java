@@ -26,7 +26,7 @@ public class RobotContainer extends CommandBase{
 
   Test test = new Test();
 
-  Translation2d[] points = {new Translation2d(0,0), new Translation2d(1,1), new Translation2d(3,-1), new Translation2d(4,0)};
+  Translation2d[] points = {new Translation2d(0,0), new Translation2d(-1,1), new Translation2d(-3,-1), new Translation2d(-4,0)};
   double[] radius = {0.1,0.1};
 
   roundedPath path = new roundedPath(chassis, points, radius, 0, 0);
@@ -55,6 +55,6 @@ public class RobotContainer extends CommandBase{
 
 
   public Command getAutonomousCommand() {
-    return path;
+    return test;
   }
 }

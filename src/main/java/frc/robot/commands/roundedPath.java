@@ -20,6 +20,27 @@ public class roundedPath extends CommandBase {
   Trapezoid trapezoid;
   Chassis chassis;
 
+  //Current corner the robot's on and it's index
+  RoundedPoint cCorner;
+  double cIndex = 0;
+  
+  //the distance left for the robot in a segment (a to curve's start,curve,c to curve's end)
+  double segLeft;
+  //the distance left for the robot in total
+  double totalLeft;
+  
+  /**
+   * 0 - on a to curve's start
+   * 1 - on curve
+   * 2 - on c to curve's end
+   */
+  int status = 0;
+  boolean isFinished = false;
+
+  //current & previous positions
+  Translation2d cPos = new Translation2d(0,0);
+  Translation2d pPos = new Translation2d(0,0);
+
   public roundedPath(Chassis chassis,Translation2d[] points, double[] radius, double maxVel, double maxAcc) {
     this.corners = new RoundedPoint[points.length - 2];
     for(int i = 0; i < points.length - 2; i++)
@@ -39,6 +60,9 @@ public class roundedPath extends CommandBase {
     this.pathLength += corners[corners.length - 1].getAtoCurvelength() + corners[corners.length - 1].getCurveLength() + corners[corners.length - 1].getCtoCurvelength();
     System.out.println("added a to curve length : " + corners[corners.length - 1].getAtoCurvelength() + " | added curve length : " + corners[corners.length - 1].getCurveLength() + " | added c to curve length : " + corners[corners.length - 1].getCtoCurvelength());
     System.out.println("Path Length : " + this.pathLength);
+
+    totalLeft = this.pathLength;
+    segLeft = corners[0].getAtoCurvelength();
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -51,7 +75,25 @@ public class roundedPath extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    double distance = cPos.minus(pPos).getNorm();
+    totalLeft -= distance;
+    segLeft -= distance;
+    if(totalLeft <= 0){
+      chassis.stop();
+      isFinished = true;
+    }
+    else{
+        if(cIndex == 0)
+        {
+          switch(status){
+            0:
+              if
+          }
+        }
+        else{
 
+        }
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -61,6 +103,6 @@ public class roundedPath extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return isFinished;
   }
 }
