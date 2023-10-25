@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Parallelogram;
 
@@ -34,6 +35,15 @@ public class ParallelogramQuel extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     parallelogram.stop();
+  }
+
+  public double getPow(){ return pow; }
+  
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      // TODO Auto-generated method stub
+      super.initSendable(builder);
+      builder.addDoubleProperty("Power", this::getPow, null);
   }
 
   // Returns true when the command should end.
