@@ -20,6 +20,9 @@ public final class Constants {
     public final static double pulesPerRotation = 2048;
     public final static double gearRatio = 180;
     public final static double pulsePerAngle = pulesPerRotation*gearRatio/360;
+
+    public final static double minAngle = -20;
+    public final static double maxAngle = 60;
   }
   public static class OperatorConstants {
 	public static final int kDriverControllerPort = 0;
