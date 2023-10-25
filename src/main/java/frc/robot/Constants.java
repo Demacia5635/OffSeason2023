@@ -15,7 +15,10 @@ package frc.robot;
 public final class Constants {
   public static class ParallelogramConstants{
     public final static int motorID = 1; // need to fix
-    public final static double pulsePerAngle = 1; // need to fix
+    
+    public final static double pulesPerRotation = 2048;
+    public final static double gearRatio = 180;
+    public final static double pulsePerAngle = pulesPerRotation*gearRatio/360;
   }
   public static class OperatorConstants {
 	public static final int kDriverControllerPort = 0;
