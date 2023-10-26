@@ -23,6 +23,10 @@ public final class Constants {
 
     public final static double minAngle = -20;
     public final static double maxAngle = 60;
+
+    public final static double KP = 0;
+    public final static double KI = 0;
+    public final static double KD = 0;
   }
   public static class OperatorConstants {
 	public static final int kDriverControllerPort = 0;

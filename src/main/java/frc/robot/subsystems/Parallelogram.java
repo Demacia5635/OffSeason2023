@@ -34,7 +34,7 @@ public class Parallelogram extends SubsystemBase {
   }
 
   public void stop(){
-    setVel(0);
+    setPow(0);
   }
 
   public boolean isRetracted(){return false;}
@@ -52,5 +52,25 @@ public class Parallelogram extends SubsystemBase {
       builder.addDoubleProperty("Velocity", this::getVel, null);
       builder.addDoubleProperty("Angle", this::getAngle, null);
 
+      SmartDashboard.putNumber("KP", KP);
+      SmartDashboard.putNumber("KI", KI);
+      SmartDashboard.putNumber("KD", KD);
+  }
+
+  double sumError = 0;
+  double lastError = 0;
+  double error;
+  double p,i,d;
+  double pv;
+
+  public double getPID(double sp){
+    pv = getVel();
+    error = sp - pv;
+    sumError += error;
+    p = KP * error;
+    i = KI * sumError;
+    d = KD * (lastError - error);
+    lastError = error;
+    return p+i+d;
   }
 }
