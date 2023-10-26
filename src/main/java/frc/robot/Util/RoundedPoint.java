@@ -101,27 +101,26 @@ public class RoundedPoint{
 
         double diffAngle =  endRange().getAngle().getDegrees() - startRange().getAngle().getDegrees();
         System.out.println("diffAngle start to end : " + diffAngle);
-        double pDiffAngle = relativePos.getAngle().getDegrees() - startRange().getAngle().getDegrees();
-        System.out.println("diffAngle pos to start : " + pDiffAngle);
-        Translation2d unitVel;
-        if(-pDiffAngle >= 0 && pDiffAngle <= -diffAngle){
-            System.out.println("Curve");
-            unitVel = relativePos.rotateBy(new Rotation2d(Math.toRadians(-90 * Math.signum(diffAngle)))).div(relativePos.getNorm());
-        }
 
+        double psDiffAngle = relativePos.getAngle().getDegrees() - startRange().getAngle().getDegrees();
+        double peDiffAngle =  relativePos.getAngle().getDegrees() - endRange().getAngle().getDegrees();
+        System.out.println("diffAngle pos to start : " + psDiffAngle);
+        System.out.println("diffAngle pos to end : " + peDiffAngle);
+        System.out.println("sum : " + (psDiffAngle + peDiffAngle));
+
+        Translation2d unitVel;
+        if(peDiffAngle + psDiffAngle == 0)
+        {
+            System.out.println("curve");
+            unitVel = relativePos.rotateBy(new Rotation2d(Math.toRadians(90 * Math.signum(diffAngle)))).div(relativePos.getNorm());
+            
+        }
         else
         {
-            if(pDiffAngle < 0)
-            {
-                System.out.println("a");
-                unitVel = vectorAtoB.div(vectorAtoB.getNorm()).times(velocity);
-            }
-            else
-            {
-                System.out.println("c");
-                unitVel = vectorBtoC.div(vectorBtoC.getNorm()).times(velocity);
-            }
+            unitVel = new Translation2d(0,0);
         }
+        
+        
         
         return unitVel.times(velocity * Constants.cycleTime);
     }
