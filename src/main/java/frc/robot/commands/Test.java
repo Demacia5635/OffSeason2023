@@ -21,7 +21,7 @@ public class Test extends CommandBase {
 
   @Override
   public void initialize() {
-    System.out.println(roundedPoint.getCurrentVel(roundedPoint.startRange().plus(roundedPoint.getCenterCircle()), 4));
+    System.out.println(roundedPoint.getCurrentVel(roundedPoint.getCenterCircle().plus(roundedPoint.endRange()), 4));
     
   }
 

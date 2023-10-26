@@ -28,13 +28,7 @@ public class roundedPath extends CommandBase {
   double segLeft;
   //the distance left for the robot in total
   double totalLeft;
-  
-  /**
-   * 0 - on a to curve's start
-   * 1 - on curve
-   * 2 - on c to curve's end
-   */
-  int status = 0;
+
   boolean isFinished = false;
 
   //current & previous positions
@@ -62,7 +56,6 @@ public class roundedPath extends CommandBase {
     System.out.println("Path Length : " + this.pathLength);
 
     totalLeft = this.pathLength;
-    segLeft = corners[0].getAtoCurvelength();
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -75,25 +68,14 @@ public class roundedPath extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    double vel = trapezoid.calculate(totalLeft, chassis.getVelocity().getNorm(), 0);
+
+
+
     double distance = cPos.minus(pPos).getNorm();
     totalLeft -= distance;
     segLeft -= distance;
-    if(totalLeft <= 0){
-      chassis.stop();
-      isFinished = true;
-    }
-    else{
-        if(cIndex == 0)
-        {
-          switch(status){
-            0:
-              if
-          }
-        }
-        else{
-
-        }
-    }
+    
   }
 
   // Called once the command ends or is interrupted.
