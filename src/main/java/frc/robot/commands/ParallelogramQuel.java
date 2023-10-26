@@ -10,13 +10,13 @@ import frc.robot.subsystems.Parallelogram;
 
 public class ParallelogramQuel extends CommandBase {
   public Parallelogram parallelogram;
-  public double pow;
+  public double vel;
 
   /** Creates a new ParallelogramQuel. */
-  public ParallelogramQuel(Parallelogram parallelogram, double pow) {
+  public ParallelogramQuel(Parallelogram parallelogram, double vel) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.parallelogram = parallelogram;
-    this.pow = pow;
+    this.vel = vel;
     addRequirements(parallelogram);
   }
 
@@ -28,7 +28,7 @@ public class ParallelogramQuel extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    parallelogram.setPow(pow);
+    parallelogram.setVel(vel);
   }
 
   // Called once the command ends or is interrupted.
@@ -37,13 +37,13 @@ public class ParallelogramQuel extends CommandBase {
     parallelogram.stop();
   }
 
-  public double getPow(){ return pow; }
+  public double getVel(){ return vel; }
   
   @Override
   public void initSendable(SendableBuilder builder) {
       // TODO Auto-generated method stub
       super.initSendable(builder);
-      builder.addDoubleProperty("Power", this::getPow, null);
+      builder.addDoubleProperty("Velocity", this::getVel, null);
   }
 
   // Returns true when the command should end.

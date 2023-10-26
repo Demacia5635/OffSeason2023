@@ -10,13 +10,13 @@ import frc.robot.subsystems.Parallelogram;
 
 public class ParallelogramGoToAngle extends CommandBase {
   public Parallelogram parallelogram;
-  public double pow;
+  public double vel;
   public double wantedAngle;
   /** Creates a new ParrellelogramBackAndForth. */
-  public ParallelogramGoToAngle(Parallelogram parallelogram, double pow, double angle) {
+  public ParallelogramGoToAngle(Parallelogram parallelogram, double vel, double angle) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.parallelogram = parallelogram;
-    this.pow = pow;
+    this.vel = vel;
     this.wantedAngle = angle;
     addRequirements(parallelogram);
   }
@@ -30,9 +30,9 @@ public class ParallelogramGoToAngle extends CommandBase {
   @Override
   public void execute() {
     if (wantedAngle > parallelogram.getAngle()){
-      parallelogram.setPow(pow);
+      parallelogram.setVel(vel);
     } else if (wantedAngle < parallelogram.getAngle()){
-      parallelogram.setPow(-pow);
+      parallelogram.setVel(vel);
     }
   }
 
@@ -42,13 +42,13 @@ public class ParallelogramGoToAngle extends CommandBase {
     parallelogram.stop();
   }
 
-  public double getPow(){ return pow; }
+  public double getVel(){ return vel; }
   
   @Override
   public void initSendable(SendableBuilder builder) {
       // TODO Auto-generated method stub
       super.initSendable(builder);
-      builder.addDoubleProperty("Power", this::getPow, null);
+      builder.addDoubleProperty("Velocity", this::getVel, null);
   }
 
   // Returns true when the command should end.

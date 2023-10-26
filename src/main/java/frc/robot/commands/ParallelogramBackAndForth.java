@@ -11,21 +11,21 @@ import static frc.robot.Constants.ParallelogramConstants.*;
 
 public class ParallelogramBackAndForth extends CommandBase {
   public Parallelogram parallelogram;
-  public double pow;
+  public double vel;
 
   /** Creates a new ParallelogramBackAndForth. */
-  public ParallelogramBackAndForth(Parallelogram parallelogram, double pow) {
+  public ParallelogramBackAndForth(Parallelogram parallelogram, double vel) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.parallelogram = parallelogram;
-    this.pow = pow;
+    this.vel = vel;
     addRequirements(parallelogram);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    new ParallelogramGoToAngle(parallelogram,pow,minAngle);
-    new ParallelogramGoToAngle(parallelogram,pow,maxAngle);
+    new ParallelogramGoToAngle(parallelogram,vel,minAngle);
+    new ParallelogramGoToAngle(parallelogram,vel,maxAngle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -36,13 +36,13 @@ public class ParallelogramBackAndForth extends CommandBase {
   @Override
   public void end(boolean interrupted) {}
 
-  public double getPow(){ return pow; }
+  public double getVel(){ return vel; }
   
   @Override
   public void initSendable(SendableBuilder builder) {
       // TODO Auto-generated method stub
       super.initSendable(builder);
-      builder.addDoubleProperty("Power", this::getPow, null);
+      builder.addDoubleProperty("Velocity", this::getVel, null);
   }
 
   // Returns true when the command should end.
