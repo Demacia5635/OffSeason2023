@@ -22,6 +22,10 @@ public class Parallelogram extends SubsystemBase {
 
   /** Creates a new Parraller. */
   public Parallelogram() {
+    motor.config_kP(0,KP);
+    motor.config_kP(0,KI);
+    motor.config_kP(0,KD);
+    
     SmartDashboard.putData(this);
   }
 
@@ -57,20 +61,4 @@ public class Parallelogram extends SubsystemBase {
       SmartDashboard.putNumber("KD", KD);
   }
 
-  double sumError = 0;
-  double lastError = 0;
-  double error;
-  double p,i,d;
-  double pv;
-
-  public double getPID(double sp){
-    pv = getVel();
-    error = sp - pv;
-    sumError += error;
-    p = KP * error;
-    i = KI * sumError;
-    d = KD * (lastError - error);
-    lastError = error;
-    return p+i+d;
-  }
 }
