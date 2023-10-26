@@ -122,7 +122,7 @@ public class RoundedPoint{
                 unitVel = vectorBtoC.div(vectorBtoC.getNorm()).times(velocity);
             }
         }
-
+        
         return unitVel.times(velocity * Constants.cycleTime);
     }
 
