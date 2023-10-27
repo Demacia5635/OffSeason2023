@@ -91,7 +91,7 @@ public class RoundedPoint{
      * @param velocity
      * @return Returns a vector that represents the required velocity, According to the chassis position 
      */
-    public Translation2d getCurrentVel(Translation2d pos,double velocity)
+    public Translation2d getVelDirection(Translation2d pos,double velocity)
     {
         
         Translation2d relativePos = pos.minus(getCenterCircle());

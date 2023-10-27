@@ -21,7 +21,8 @@ public class Test extends CommandBase {
 
   @Override
   public void initialize() {
-    System.out.println(roundedPoint.getCurrentVel(cPoint, 4));
+    
+    System.out.println("Direction : " + roundedPoint.getVelDirection(aPoint, 4));
     
   }
 
