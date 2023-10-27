@@ -3,6 +3,8 @@ package frc.robot.Util;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants;
+import frc.robot.commands.ArcDrive;
+import frc.robot.subsystems.Chassis;
 
 public class RoundedPoint{
     double smoothnes = 10;
@@ -176,5 +178,8 @@ public class RoundedPoint{
         return getCtoCurvelength() + getCurveLength() + getAtoCurvelength();
     }
 
-    
+    public ArcDrive getArcDrive(Chassis chassis)
+    {
+        return new ArcDrive(chassis, getCenterCircle().plus(startRange()), getCenterCircle(), endRange().getAngle().minus(startRange().getAngle()), 5);
+    }
 }
