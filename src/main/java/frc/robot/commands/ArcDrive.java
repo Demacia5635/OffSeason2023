@@ -64,6 +64,7 @@ public class ArcDrive extends CommandBase {
 
     //if the chassis is still on the range of the arc
     if(Math.abs(this.angle.minus(diffAngle).getDegrees()) > 0) {
+
       Translation2d velVector = 
       relativePos.rotateBy(
         new Rotation2d(
@@ -74,6 +75,7 @@ public class ArcDrive extends CommandBase {
         .times(velocity);
 
       chassis.setVelocity(new ChassisSpeeds(velVector.getX(),velVector.getY(),0));
+      
     }
 
     this.prevTrans = chassis.getPose().getTranslation();
