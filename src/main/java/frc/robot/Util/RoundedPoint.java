@@ -182,4 +182,19 @@ public class RoundedPoint{
     {
         return new ArcDrive(chassis, getCenterCircle().plus(startRange()), getCenterCircle(), endRange().getAngle().minus(startRange().getAngle()), 5);
     }
+
+    public Leg getAtoCurveLeg()
+    {
+        return new Leg(aPoint, startRange().plus(getCenterCircle()));
+    }
+    public Leg getCtoCurveLeg()
+    {
+        return new Leg(endRange().plus(getCenterCircle()), cPoint);
+    }
+
+    public Arc getArc()
+    {
+        Rotation2d diffAngle = endRange().getAngle().minus(startRange().getAngle());
+        return new Arc(startRange().plus(getCenterCircle()), getCenterCircle(), diffAngle);
+    }
 }

@@ -37,19 +37,26 @@ public class Arc extends Segment{
     {
         Translation2d relativePos = p2.minus(pos);
 
-        Translation2d fixVector = relativePos.times(-1).div(relativePos.getNorm()).times(relativePos.getNorm() - radius).times(0.5);
+        Translation2d fixVector = relativePos.times(-1).div(relativePos.getNorm()).times(relativePos.getNorm() - radius).times(0.5/*kP*/);
 
         Translation2d velVector = 
-      relativePos.rotateBy(
+        relativePos.rotateBy(
         new Rotation2d(
           Math.toRadians(90 * Math.signum(angle.getDegrees()))
           )
         )
         .div(relativePos.getNorm())
-        .plus(fixVector)
-        .times(velocity);
+        .times(velocity)
+        .plus(fixVector);
+      return velVector;
+    }
 
+    public double distancePassed(Translation2d pos)
+    {
+      Translation2d relativePos = p2.minus(pos);
 
+      Rotation2d diffAngle = startVector.getAngle().minus(relativePos.getAngle());
+      return diffAngle.getRadians() * radius;
     }
 
 
