@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import javax.swing.text.Segment;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -31,27 +30,32 @@ public class ArcPath extends CommandBase {
   Leg[] legs;
   Arc[] arcs;
   Trapezoid trapezoid;
-  /** Creates a new ArcPath. */
+  /** Creates a new ArcPath.
+   * @param chassis 
+   * @param point Translation2d array of points for the path
+   * @param radius double array of radius (for each turn)
+   * @param maxVel the max velocity in m/s
+   * @param maxAccel the max accel in m/s2 (squared)
+   * 
+   */
 
   public ArcPath(Chassis chassis,Translation2d[] points, double[] radius, double maxVel, double maxAcc) {
-
 
     this.corners = new RoundedPoint[points.length - 2];
     for(int i = 0; i < points.length - 2; i++)
     {
       corners[i] = new RoundedPoint(radius[i], points[i], points[i+1], points[i+2]);
     }
-
     this.chassis = chassis;
     addRequirements(chassis);
 
-
     trapezoid = new Trapezoid(maxAcc, maxVel);
 
-    this.pathLength = 0;
+    //calculate the total length of the path
+    pathLength = 0;
     for(int i = 0; i < corners.length - 1; i++)
     {
-      this.pathLength += corners[i].getAtoCurvelength() + corners[i].getCurveLength();
+      pathLength += corners[i].getAtoCurvelength() + corners[i].getCurveLength();
       System.out.println("added a to curve length : " + corners[i].getAtoCurvelength() + " | added curve length : " + corners[i].getCurveLength());
     }
     this.pathLength += corners[corners.length - 1].getAtoCurvelength() + corners[corners.length - 1].getCurveLength() + corners[corners.length - 1].getCtoCurvelength();
@@ -75,17 +79,15 @@ public class ArcPath extends CommandBase {
 
 
     
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
 
 
-  // Called when the command is initially scheduled.
+
   @Override
   public void initialize() {
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     double velocity = trapezoid.calculate(totalLeft , chassis.getVelocity().getNorm(), 0);
@@ -112,15 +114,15 @@ public class ArcPath extends CommandBase {
     
 
     ChassisSpeeds speed = new ChassisSpeeds(0,0,0);
+    chassis.setVelocity(speed);
   }
 
-  // Called once the command ends or is interrupted.
+
   @Override
   public void end(boolean interrupted) {
     chassis.stop();
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;

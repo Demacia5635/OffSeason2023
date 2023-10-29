@@ -22,7 +22,6 @@ import java.util.Arrays;
 public class Chassis extends SubsystemBase{
     private Gyro gyro;
     private SwerveModule[] modules;
-    
     private SwerveDrivePoseEstimator poseEstimator;
     Field2d fieldPosition = new Field2d();
     
@@ -39,10 +38,10 @@ public class Chassis extends SubsystemBase{
           new SwerveModule() // RBack
         };
 
+
         poseEstimator = new SwerveDrivePoseEstimator(KINEMATICS, getAngle(), getModulePositions(), new Pose2d());
         SmartDashboard.putData(fieldPosition);
     }
-
     public void stop() {
         for (SwerveModule module : modules) module.stop();
         gyro.setVelocity(0);
@@ -50,7 +49,11 @@ public class Chassis extends SubsystemBase{
 
 
 
-
+    /**
+     * sets the velocity for each swerve motor relative to the field
+     * @param speed in ChassisSpeeds (vxMetersPerSecond, vyMetersPerSecond, omegaRadiansPerSecond)
+     * 
+     */
     public void setVelocity(ChassisSpeeds speed) {
         
         ChassisSpeeds newSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(speed.vxMetersPerSecond, speed.vyMetersPerSecond, speed.omegaRadiansPerSecond, getAngle());
@@ -65,6 +68,8 @@ public class Chassis extends SubsystemBase{
     public Pose2d getPose(){
         return poseEstimator.getEstimatedPosition();
     }
+
+
 
     public Translation2d getVelocity() {
         SwerveModuleState[] states = new SwerveModuleState[4];

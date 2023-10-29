@@ -28,7 +28,7 @@ public class RoundedPoint{
     }
 
     /**
-     * @return The angle of the corner in degrees, relative to the vector BtoA (Which represents one of the corner's wall)
+     * @return The angle of the corner in degrees, relative to the vector A to B (Which represents one of the corner's wall)
      */
     private double cornerAngle(){
         double bigAngle = vectorAtoB.times(-1).getAngle().getDegrees();
@@ -57,7 +57,7 @@ public class RoundedPoint{
 
     /**
      * 
-     * @return The position of the corner's circle
+     * @return The position of the corner's circle center
      */
     public Translation2d getCenterCircle(){
         Translation2d vector = getAngleVector().times(getLength());
@@ -74,8 +74,6 @@ public class RoundedPoint{
             Math.toRadians(vectorAtoB.times(-1).getAngle().getDegrees() - (90 *Math.signum(cornerAngle())))
         ));
     }
-
-
     /**
      * 
      * @return The ending position of the corner's curve (relative to the corner's circle's center) 
@@ -89,29 +87,32 @@ public class RoundedPoint{
 
     /**
      * 
-     * @param pos
-     * @param velocity
+     * @param position chassis position in Translation2d
+     * @param velocity chassis velocity in m/s
      * @return Returns a vector that represents the required velocity, According to the chassis position 
      */
     public Translation2d getVelDirection(Translation2d pos,double velocity)
     {
-        
+
+        //calculates the position relative to the center circle
         Translation2d relativePos = pos.minus(getCenterCircle());
         System.out.println("RelativPos : " + relativePos);
         System.out.println("StartRange : " + startRange());
         System.out.println("EndRange : " + endRange());
 
+        //calculates the angle between the start and the end of the circle
         double diffAngle =  endRange().getAngle().getDegrees() - startRange().getAngle().getDegrees();
         System.out.println("diffAngle start to end : " + diffAngle);
 
-        double psDiffAngle = relativePos.getAngle().getDegrees() - startRange().getAngle().getDegrees();
-        double peDiffAngle =  relativePos.getAngle().getDegrees() - endRange().getAngle().getDegrees();
-        System.out.println("diffAngle pos to start : " + psDiffAngle);
-        System.out.println("diffAngle pos to end : " + peDiffAngle);
-        System.out.println("sum : " + (psDiffAngle + peDiffAngle));
+        //calculates the relative angle between the start and the end of the circle
+        double startDiffAngle = relativePos.getAngle().getDegrees() - startRange().getAngle().getDegrees();
+        double endDiffAngle =  relativePos.getAngle().getDegrees() - endRange().getAngle().getDegrees();
+        System.out.println("diffAngle pos to start : " + startDiffAngle);
+        System.out.println("diffAngle pos to end : " + endDiffAngle);
+        System.out.println("sum : " + (startDiffAngle + endDiffAngle));
 
         Translation2d unitVel;
-        if(peDiffAngle + psDiffAngle == 0)
+        if(endDiffAngle + startDiffAngle == 0)
         {
             System.out.println("curve");
             unitVel = relativePos.rotateBy(new Rotation2d(Math.toRadians(90 * Math.signum(diffAngle)))).div(relativePos.getNorm());

@@ -8,7 +8,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 public final class Constants {
  // private static double voltsPerMeter = 0.417;
 
+
+
   public static final int DriverControllerPort = 0;
+
+  //position of each swerve module from the center of the chassis
   public static class SwerveChassisConstants {
     public static final SwerveModuleConstants frontLeft = new SwerveModuleConstants(new Translation2d(-1, 1));
     public static final SwerveModuleConstants frontRight = new SwerveModuleConstants(new Translation2d(1, 1));
