@@ -13,4 +13,5 @@ abstract class Segment {
     
     abstract Translation2d calc(Translation2d position, double velocity);
     abstract double distancePassed(Translation2d position);
+    abstract double getLength();
 }

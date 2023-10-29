@@ -45,4 +45,9 @@ public class Leg extends Segment{
         double distanceMoved = (relativePos.getX() * velDirection.getX()) + (relativePos.getY()*velDirection.getY());
         return distanceMoved;
     }
+
+    public double getLength()
+    {
+        return totalVector.getNorm();
+    }
 }
