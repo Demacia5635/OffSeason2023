@@ -54,9 +54,13 @@ public class ParallelogramGoToAngle extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(parallelogram.getAngle()==wantedAngle){
+    if (!parallelogram.getInput()){
+      if(parallelogram.getAngle()==wantedAngle){
+        return true;
+      }
+      return false;
+    } else {
       return true;
     }
-    return false;
   }
 }

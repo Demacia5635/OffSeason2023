@@ -41,8 +41,8 @@ public class Parallelogram extends SubsystemBase {
     setPow(0);
   }
 
+  public boolean getInput(){ return input.get(); }// if true will stop the command
   public boolean isRetracted(){return false;}
-
   public double getVel(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle; }
   public double getAngle(){ return motor.getSelectedSensorPosition() / pulsePerAngle; }
 
@@ -55,6 +55,7 @@ public class Parallelogram extends SubsystemBase {
       builder.addBooleanProperty("isRetracted", this::isRetracted, null);
       builder.addDoubleProperty("Velocity", this::getVel, null);
       builder.addDoubleProperty("Angle", this::getAngle, null);
+      builder.addBooleanProperty("Input", this::getInput, null);
 
       SmartDashboard.putNumber("KP", KP);
       SmartDashboard.putNumber("KI", KI);

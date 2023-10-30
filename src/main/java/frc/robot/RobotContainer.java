@@ -9,7 +9,10 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.ParallelogramDrive;
+// import frc.robot.commands.ParallelogramDrive;
+// import frc.robot.commands.ParallelogramBackAndForth;
+// import frc.robot.commands.ParallelogramGoToAngle;
+// import frc.robot.commands.ParallelogramQuel;
 import frc.robot.subsystems.Parallelogram;
 
 /**
@@ -19,7 +22,7 @@ import frc.robot.subsystems.Parallelogram;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  public Parallelogram parallelogram;
+  public Parallelogram parallelogram = new Parallelogram();
   public XboxController controller;
   // The robot's subsystems and commands are defined here...
 
@@ -56,6 +59,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new ParallelogramDrive(parallelogram, controller);
+    return null;
   }
 }
