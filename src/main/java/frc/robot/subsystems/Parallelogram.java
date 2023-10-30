@@ -5,14 +5,17 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.ParallelogramConstants.*;
+
 
 
 public class Parallelogram extends SubsystemBase {
@@ -45,6 +48,12 @@ public class Parallelogram extends SubsystemBase {
   public boolean isRetracted(){return false;}
   public double getVel(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle; }
   public double getAngle(){ return motor.getSelectedSensorPosition() / pulsePerAngle; }
+  public void brake(){
+    motor.setNeutralMode(NeutralMode.Brake);
+  }
+  public void coast(){
+    motor.setNeutralMode(NeutralMode.Coast);
+  }
 
 
   @Override
@@ -60,6 +69,11 @@ public class Parallelogram extends SubsystemBase {
       SmartDashboard.putNumber("KP", KP);
       SmartDashboard.putNumber("KI", KI);
       SmartDashboard.putNumber("KD", KD);
+
+      InstantCommand cmdBrake = new InstantCommand(()-> brake(), this);
+      InstantCommand cmdCoast = new InstantCommand(()-> coast(), this);
+      SmartDashboard.putData(cmdBrake);
+      SmartDashboard.putData(cmdCoast);
   }
 
 }
