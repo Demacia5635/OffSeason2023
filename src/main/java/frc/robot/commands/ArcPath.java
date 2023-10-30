@@ -5,6 +5,9 @@
 package frc.robot.commands;
 
 
+import javax.swing.text.Segment;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -20,6 +23,8 @@ public class ArcPath extends CommandBase {
   RoundedPoint[] corners;
 
 
+  
+
   double pathLength;
   double totalLeft;
   int segmentIndex = 0;
@@ -27,9 +32,13 @@ public class ArcPath extends CommandBase {
 
   //Segment[] segments;
 
+
+
   Leg[] legs;
   Arc[] arcs;
   Trapezoid trapezoid;
+  double velocity = 0;
+
   /** Creates a new ArcPath.
    * @param chassis 
    * @param point Translation2d array of points for the path
@@ -41,6 +50,7 @@ public class ArcPath extends CommandBase {
 
   public ArcPath(Chassis chassis,Translation2d[] points, double[] radius, double maxVel, double maxAcc) {
 
+
     this.corners = new RoundedPoint[points.length - 2];
     for(int i = 0; i < points.length - 2; i++)
     {
@@ -48,6 +58,7 @@ public class ArcPath extends CommandBase {
     }
     this.chassis = chassis;
     addRequirements(chassis);
+
 
     trapezoid = new Trapezoid(maxAcc, maxVel);
 
@@ -78,7 +89,7 @@ public class ArcPath extends CommandBase {
     legs[legs.length - 1] = corners[corners.length - 1].getCtoCurveLeg();
 
 
-    
+    //segments[0] = new Leg(null, null);
   }
 
 
@@ -88,32 +99,38 @@ public class ArcPath extends CommandBase {
   public void initialize() {
   }
 
+
+
   @Override
   public void execute() {
-    double velocity = trapezoid.calculate(totalLeft , chassis.getVelocity().getNorm(), 0);
-    Translation2d vecVel = new Translation2d(0,0);
-    totalLeft -= legs[segmentIndex].getLength();
-
+    
+    Translation2d vecVel = new Translation2d(0,0);  
+    
 
     if((segmentPosition+ 1) % 2 == 0)
     {
+      
       vecVel = legs[segmentIndex].calc(chassis.getPose().getTranslation(), velocity);
       if(legs[segmentIndex].distancePassed(chassis.getPose().getTranslation()) >= legs[segmentIndex].getLength())
       {
         segmentPosition++;
+        totalLeft -= legs[segmentIndex].getLength();
       }
     }
     else
     {
       vecVel = arcs[segmentIndex].calc(chassis.getPose().getTranslation(), velocity);
       if(arcs[segmentIndex].distancePassed(chassis.getPose().getTranslation()) >= arcs[segmentIndex].getLength())
-
-      segmentIndex++;
-      segmentPosition++;
+      {
+        totalLeft -= arcs[segmentIndex].getLength();
+        segmentIndex++;
+        segmentPosition++;
+      }
     }
     
+    velocity = trapezoid.calculate(totalLeft , chassis.getVelocity().getNorm(), 0);
 
-    ChassisSpeeds speed = new ChassisSpeeds(0,0,0);
+    ChassisSpeeds speed = new ChassisSpeeds(3,3,0);
     chassis.setVelocity(speed);
   }
 

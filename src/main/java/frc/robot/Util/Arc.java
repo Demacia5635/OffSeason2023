@@ -25,8 +25,7 @@ public class Arc extends Segment{
     public Arc(Translation2d p1, Translation2d p2, Rotation2d angle)
     {
         //start point
-        this.p1 = p1;
-        this.p2 = p2;
+        super(p1,p2);
         this.angle = angle;
 
         startVector = p1.minus(p2);

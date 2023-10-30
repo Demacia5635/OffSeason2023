@@ -51,7 +51,6 @@ public class RoundedPoint{
      */
     private double getLength(){
         double length = radius / Math.sin(Math.toRadians(Math.abs(cornerAngle() / 2)));
-        System.out.println(length);
         return length;
     }
 

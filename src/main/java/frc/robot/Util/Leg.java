@@ -7,6 +7,9 @@ package frc.robot.Util;
 import edu.wpi.first.math.geometry.Translation2d;
 
 /** Add your docs here. */
+
+
+
 public class Leg extends Segment{
 
     Translation2d totalVector;
@@ -15,14 +18,13 @@ public class Leg extends Segment{
 
     public Leg(Translation2d p1, Translation2d p2)
     {
-        this.p1 = p1;
-        this.p2 = p2;
-
+        super(p1,p2);
         totalVector = p2.minus(p1);
 
         velDirection = totalVector.div(totalVector.getNorm());
     }
 
+    @Override
     public Translation2d calc(Translation2d position, double velocity)
     {
         Translation2d relativePos = position.minus(p1);
@@ -38,6 +40,7 @@ public class Leg extends Segment{
 
     }
 
+    @Override
     public double distancePassed(Translation2d position)
     {
         Translation2d relativePos = position.minus(p1);
@@ -46,6 +49,7 @@ public class Leg extends Segment{
         return distanceMoved;
     }
 
+    @Override
     public double getLength()
     {
         return totalVector.getNorm();
