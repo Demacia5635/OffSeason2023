@@ -49,6 +49,9 @@ public class Parallelogram extends SubsystemBase {
 
   public double getVel(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle; }
   public double getAngle(){ return motor.getSelectedSensorPosition() / pulsePerAngle; }
+  public double getValtPercentage(){ return motor.getMotorOutputPercent(); }
+  public double getValtValtage(){ return motor.getMotorOutputVoltage(); }
+  
 
   public void brake(){
     motor.setNeutralMode(NeutralMode.Brake);
@@ -67,6 +70,9 @@ public class Parallelogram extends SubsystemBase {
       builder.addDoubleProperty("Velocity", this::getVel, null);
       builder.addDoubleProperty("Angle", this::getAngle, null);
       builder.addBooleanProperty("Input", this::getInput, null);
+      builder.addDoubleProperty("Valt Percent", this::getValtPercentage, null);
+      builder.addDoubleProperty("Valt Valtage", this::getValtValtage, null);
+      
 
       SmartDashboard.putNumber("KP", KP);
       SmartDashboard.putNumber("KI", KI);
