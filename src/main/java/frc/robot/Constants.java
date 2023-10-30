@@ -14,15 +14,15 @@ package frc.robot;
  */
 public final class Constants {
   public static class ParallelogramConstants{
-    public final static int motorID = 1;
-    public final static int DigitalInputID = 2;
+    public final static int motorID = 1; // estimating
+    public final static int DigitalInputID = 2; // estimating
 
     public final static double pulesPerRotation = 2048;
     public final static double gearRatio = 180;
     public final static double pulsePerAngle = pulesPerRotation*gearRatio/360;
 
-    public final static double minAngle = -20;
-    public final static double maxAngle = 60;
+    public final static double minAngle = -20; // estimating
+    public final static double maxAngle = 60; // estimating
 
     public final static double KP = 0;
     public final static double KI = 0;

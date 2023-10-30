@@ -46,8 +46,10 @@ public class Parallelogram extends SubsystemBase {
 
   public boolean getInput(){ return input.get(); }// if true will stop the command
   public boolean isRetracted(){return false;}
+
   public double getVel(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle; }
   public double getAngle(){ return motor.getSelectedSensorPosition() / pulsePerAngle; }
+
   public void brake(){
     motor.setNeutralMode(NeutralMode.Brake);
   }
@@ -72,8 +74,8 @@ public class Parallelogram extends SubsystemBase {
 
       InstantCommand cmdBrake = new InstantCommand(()-> brake(), this);
       InstantCommand cmdCoast = new InstantCommand(()-> coast(), this);
-      SmartDashboard.putData(cmdBrake);
-      SmartDashboard.putData(cmdCoast);
+      SmartDashboard.putData("Brake",cmdBrake.ignoringDisable(true));
+      SmartDashboard.putData("Coast", cmdCoast.ignoringDisable(true));
   }
 
 }
