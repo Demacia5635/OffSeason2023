@@ -54,4 +54,9 @@ public class Leg extends Segment{
     {
         return totalVector.getNorm();
     }
+
+    @Override
+    public String toString() {
+        return "\n~Leg~\np1 : " + p1 + "\np2 : " + p2 + "\nTotalVector : " + totalVector;
+    }
 }

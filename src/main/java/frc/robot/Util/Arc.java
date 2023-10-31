@@ -32,6 +32,7 @@ public class Arc extends Segment{
         radius = startVector.getNorm();
     }
 
+    @Override
     public Translation2d calc(Translation2d pos,double velocity)
     {
         Translation2d relativePos = p2.minus(pos);
@@ -50,6 +51,7 @@ public class Arc extends Segment{
       return velVector;
     }
 
+    @Override
     public double distancePassed(Translation2d pos)
     {
       Translation2d relativePos = p2.minus(pos);
@@ -58,10 +60,15 @@ public class Arc extends Segment{
       return Math.abs(diffAngle.getRadians() * radius);
     }
 
+    @Override
     public double getLength()
     {
       return Math.abs(angle.getRadians()) * radius;
     }
 
+    @Override
+    public String toString() {
+        return "\n~Arc~\nStartPoint : " + p1 + "\nCircleCenter : " + p2 + "\nAngle : " + angle + "\nRadius : " + radius;
+    }
 
 }

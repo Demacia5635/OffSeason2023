@@ -20,4 +20,8 @@ public class Segment {
     public Translation2d calc(Translation2d position, double velocity) {return new Translation2d();};
     public double distancePassed(Translation2d position) {return 0;};
     public double getLength() {return 0;};
+    @Override
+    public String toString() {
+        return "\n~\np1 : " + p1 + "\np2 : " + p2;
+    }
 }

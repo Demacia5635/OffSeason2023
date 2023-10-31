@@ -5,12 +5,12 @@
 package frc.robot.commands;
 
 
-import javax.swing.text.Segment;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Util.Segment;
 import frc.robot.Util.Arc;
 import frc.robot.Util.Leg;
 import frc.robot.Util.RoundedPoint;
@@ -30,12 +30,11 @@ public class ArcPath extends CommandBase {
   int segmentIndex = 0;
   int segmentPosition = 0;
 
-  //Segment[] segments;
+  Segment[] segments;
 
 
 
-  Leg[] legs;
-  Arc[] arcs;
+
   Trapezoid trapezoid;
   double velocity = 0;
 
@@ -75,20 +74,22 @@ public class ArcPath extends CommandBase {
 
     totalLeft = this.pathLength;
 
-    //segments = new Segment[points.length - 1];
-    arcs = new Arc[corners.length];
-    legs = new Leg[corners.length + 1];
+    segments = new Segment[points.length - 1];
+    
 
-    for(int i = 0; i < corners.length; i++)
+
+    for(int i = 0; i < segments.length - 1; i +=2)
     {
-
-      arcs[i] = corners[i].getArc();
-      legs[i] = corners[i].getAtoCurveLeg();
+      segments[i] = corners[i].getAtoCurveLeg();
+      segments[i+1] = corners[i].getArc();
     }
 
-    legs[legs.length - 1] = corners[corners.length - 1].getCtoCurveLeg();
+    System.out.println(segments.length);
+    segments[segments.length - 1] = corners[corners.length - 1].getCtoCurveLeg();
 
-
+    for (Segment s : segments) {
+      System.out.println(s);
+    }
     //segments[0] = new Leg(null, null);
   }
 
@@ -107,26 +108,26 @@ public class ArcPath extends CommandBase {
     Translation2d vecVel = new Translation2d(0,0);  
     
 
-    if((segmentPosition+ 1) % 2 == 0)
-    {
+    // if((segmentPosition+ 1) % 2 == 0)
+    // {
       
-      vecVel = legs[segmentIndex].calc(chassis.getPose().getTranslation(), velocity);
-      if(legs[segmentIndex].distancePassed(chassis.getPose().getTranslation()) >= legs[segmentIndex].getLength())
-      {
-        segmentPosition++;
-        totalLeft -= legs[segmentIndex].getLength();
-      }
-    }
-    else
-    {
-      vecVel = arcs[segmentIndex].calc(chassis.getPose().getTranslation(), velocity);
-      if(arcs[segmentIndex].distancePassed(chassis.getPose().getTranslation()) >= arcs[segmentIndex].getLength())
-      {
-        totalLeft -= arcs[segmentIndex].getLength();
-        segmentIndex++;
-        segmentPosition++;
-      }
-    }
+    //   vecVel = legs[segmentIndex].calc(chassis.getPose().getTranslation(), velocity);
+    //   if(legs[segmentIndex].distancePassed(chassis.getPose().getTranslation()) >= legs[segmentIndex].getLength())
+    //   {
+    //     segmentPosition++;
+    //     totalLeft -= legs[segmentIndex].getLength();
+    //   }
+    // }
+    // else
+    // {
+    //   vecVel = arcs[segmentIndex].calc(chassis.getPose().getTranslation(), velocity);
+    //   if(arcs[segmentIndex].distancePassed(chassis.getPose().getTranslation()) >= arcs[segmentIndex].getLength())
+    //   {
+    //     totalLeft -= arcs[segmentIndex].getLength();
+    //     segmentIndex++;
+    //     segmentPosition++;
+    //   }
+    // }
     
     velocity = trapezoid.calculate(totalLeft , chassis.getVelocity().getNorm(), 0);
 
