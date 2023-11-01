@@ -3,6 +3,7 @@ package frc.robot.subsystems.chassis;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -66,6 +67,16 @@ public class Chassis extends SubsystemBase {
       poseEstimator.update(getAngle(), getModulePositions());
       field.setRobotPose(poseEstimator.getEstimatedPosition());
   }
+
+  public Translation2d getVelocity() {
+    SwerveModuleState[] states = new SwerveModuleState[4];
+    for (int i = 0; i < 4; i++) {
+        states[i] = new SwerveModuleState(modules[i].getVelocity(), modules[i].getAngle());
+    }
+    ChassisSpeeds speeds = KINEMATICS.toChassisSpeeds(states);
+    return new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
+}
+
 
   public Rotation2d getAngle() {
     return Rotation2d.fromDegrees(gyro.getFusedHeading());
