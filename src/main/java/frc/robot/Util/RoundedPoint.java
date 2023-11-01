@@ -43,8 +43,9 @@ public class RoundedPoint{
     public Translation2d getCenterCircle(){
         double length;
 
-        if(this.cornerAngle.getSin() != 0 && Math.abs(this.cornerAngle.getDegrees()) < 177)
-            length =  radius / Math.abs(this.cornerAngle.getSin());
+        System.out.print(cornerAngle.getCos());
+        if(this.cornerAngle.div(2).getSin() != 0 && Math.abs(this.cornerAngle.getDegrees()) < 177)
+            length =  radius / Math.abs(this.cornerAngle.div(2).getSin());
         else
             length = 0;
         
