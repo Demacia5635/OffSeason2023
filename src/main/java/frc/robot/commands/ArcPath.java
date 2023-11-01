@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -21,16 +22,18 @@ public class ArcPath extends CommandBase {
 
   Chassis chassis;
   RoundedPoint[] corners;
+  Pose2d pose = new Pose2d();
 
+  double distanceOffset = 5;
 
   
 
   double pathLength;
   double totalLeft;
   int segmentIndex = 0;
-  int segmentPosition = 0;
 
   Segment[] segments;
+  Translation2d vecVel;
 
   Trapezoid trapezoid;
   double velocity = 0;
@@ -95,21 +98,29 @@ public class ArcPath extends CommandBase {
 
   @Override
   public void initialize() {
+
+    vecVel = new Translation2d(0,0);  
   }
 
 
 
   @Override
   public void execute() {
+    pose = chassis.getPose().getEstimatedPosition();
+
     
-    Translation2d vecVel = new Translation2d(0,0);  
-    
+    if(segments[segmentIndex].distancePassed(pose.getTranslation()) >= segments[segmentIndex].getLength() - distanceOffset){
+      totalLeft -= segments[segmentIndex].getLength();
+      segmentIndex++;
+    }
 
 
     
-    velocity = trapezoid.calculate(totalLeft , chassis.getVelocity().getNorm(), 0);
+
     
-    ChassisSpeeds speed = new ChassisSpeeds(3,3,0);
+    velocity = trapezoid.calculate(totalLeft - segments[segmentIndex].distancePassed(pose.getTranslation()), chassis.getVelocity().getNorm(), 0);
+    Translation2d velVector = segments[segmentIndex].calc(pose.getTranslation(), velocity);
+    ChassisSpeeds speed = new ChassisSpeeds(velVector.getX(), velVector.getY(), 0);
     chassis.setVelocities(speed);
   }
 
@@ -121,6 +132,6 @@ public class ArcPath extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return segments[points.length + 1];
+    return totalLeft <= 0;
   }
 }

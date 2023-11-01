@@ -4,6 +4,8 @@
 
 package frc.robot.Util;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 /** Add your docs here. */
@@ -28,15 +30,18 @@ public class Leg extends Segment{
     public Translation2d calc(Translation2d position, double velocity)
     {
         Translation2d relativePos = position.minus(p1);
+        Translation2d normalVector = velDirection.times(velocity);
 
-        double distance = distancePassed(position);
+        Translation2d distanceVec = velDirection.times(distancePassed(position));
+        Translation2d PosToEndVector = relativePos.minus(normalVector);
+        Rotation2d fixHeading = PosToEndVector.getAngle().times(2).minus(normalVector.getAngle());
 
-        Translation2d distanceVec = velDirection.times(distance);
+        Translation2d finalVector = new Translation2d(velocity, fixHeading);
 
-        Translation2d unitFixVec = distanceVec.minus(relativePos);
-        unitFixVec = unitFixVec.div(unitFixVec.getNorm());
+        
 
-        return (velDirection.plus(unitFixVec.times(0.5/*kP*/))).times(velocity);
+
+        return finalVector;
 
     }
 
