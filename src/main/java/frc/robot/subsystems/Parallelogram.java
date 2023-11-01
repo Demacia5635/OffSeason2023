@@ -21,7 +21,7 @@ import static frc.robot.Constants.ParallelogramConstants.*;
 public class Parallelogram extends SubsystemBase {
   
   public TalonFX motor = new TalonFX(motorID);
-  public DigitalInput input = new DigitalInput(DigitalInputID);
+  // public DigitalInput input = new DigitalInput(DigitalInputID);
 
   /** Creates a new Parraller. */
   public Parallelogram() {
@@ -44,7 +44,7 @@ public class Parallelogram extends SubsystemBase {
     setPow(0);
   }
 
-  public boolean getInput(){ return input.get(); }// if true will stop the command
+  public boolean getInput(){ return false; }// if true will stop the command
   public boolean isRetracted(){return false;}
 
   public double getVel(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle; }
