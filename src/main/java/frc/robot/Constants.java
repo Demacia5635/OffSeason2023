@@ -21,9 +21,6 @@ public final class Constants {
     public final static double gearRatio = 240;
     public final static double pulsePerAngle = pulesPerRotation*gearRatio/360;
 
-    public final static double minAngle = -20; // estimating
-    public final static double maxAngle = 60; // estimating
-
     public final static double KP = 0;
     public final static double KI = 0;
     public final static double KD = 0;
