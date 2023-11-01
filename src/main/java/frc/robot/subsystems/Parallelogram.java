@@ -5,11 +5,12 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DigitalInput;
+// import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,9 +19,12 @@ import static frc.robot.Constants.ParallelogramConstants.*;
 
 
 
+
 public class Parallelogram extends SubsystemBase {
   
   public TalonFX motor = new TalonFX(motorID);
+  public double baseAngle;
+
   // public DigitalInput input = new DigitalInput(DigitalInputID);
 
   /** Creates a new Parraller. */
@@ -35,20 +39,26 @@ public class Parallelogram extends SubsystemBase {
   public void setPow(double pow){
     motor.set(ControlMode.PercentOutput, pow);
   }
-
-  public void setVel(double vel){
-    motor.set(ControlMode.Velocity, vel);
-  }
-
+  
   public void stop(){
     setPow(0);
+  }
+
+  public double FeedForward(double AV, double angle, double CAV){
+    double rad = Math.toRadians(angle);
+    double P = KS + AV * KV + (AV-CAV) * KA + Kalpha * rad + Ksin * Math.sin(rad) + Kcos*Math.cos(rad) + Kcossin * Math.cos(rad) * Math.sin(rad);
+    return P;
+  }
+
+  public void setVel(double AV){
+    motor.set(ControlMode.Velocity, AV, DemandType.ArbitraryFeedForward, FeedForward(getCAV(),getAngle(),AV));
   }
 
   public boolean getInput(){ return /*input.get()*/false; }// if true will stop the command
   public boolean isRetracted(){return false;}
 
-  public double getVel(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle; }
-  public double getAngle(){ return motor.getSelectedSensorPosition() / pulsePerAngle; }
+  public double getCAV(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle; }
+  public double getAngle(){ return (motor.getSelectedSensorPosition() / pulsePerAngle) - baseAngle; }
   public double getValtPercentage(){ return motor.getMotorOutputPercent(); }
   public double getValtValtage(){ return motor.getMotorOutputVoltage(); }
   
@@ -67,9 +77,9 @@ public class Parallelogram extends SubsystemBase {
       super.initSendable(builder);
 
       builder.addBooleanProperty("isRetracted", this::isRetracted, null);
-      builder.addDoubleProperty("Velocity", this::getVel, null);
+      builder.addDoubleProperty("Current Angle Velocity", this::getCAV, null);
       builder.addDoubleProperty("Angle", this::getAngle, null);
-      builder.addBooleanProperty("Input", this::getInput, null);
+      // builder.addBooleanProperty("Input", this::getInput, null);
       builder.addDoubleProperty("Valt Percent", this::getValtPercentage, null);
       builder.addDoubleProperty("Valt Valtage", this::getValtValtage, null);
       
@@ -77,6 +87,15 @@ public class Parallelogram extends SubsystemBase {
       SmartDashboard.putNumber("KP", KP);
       SmartDashboard.putNumber("KI", KI);
       SmartDashboard.putNumber("KD", KD);
+
+      SmartDashboard.putNumber("KS", KS);
+      SmartDashboard.putNumber("KV", KV);
+      SmartDashboard.putNumber("KA", KA);
+      SmartDashboard.putNumber("Ksin", Ksin);
+      SmartDashboard.putNumber("Kcos", Kcos);
+      SmartDashboard.putNumber("Kcossin", Kcossin);
+      SmartDashboard.putNumber("Kalpha", Kalpha);
+      SmartDashboard.putNumber("Kvalt", Kvalt);
 
       InstantCommand cmdBrake = new InstantCommand(()-> brake(), this);
       InstantCommand cmdCoast = new InstantCommand(()-> coast(), this);

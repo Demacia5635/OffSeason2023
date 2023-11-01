@@ -21,9 +21,18 @@ public final class Constants {
     public final static double gearRatio = 240;
     public final static double pulsePerAngle = pulesPerRotation*gearRatio/360;
 
-    public final static double KP = 0;
+    public final static double KP = 3.596;
     public final static double KI = 0;
     public final static double KD = 0;
+
+    public final static double KA = 0;
+    public final static double KV = 0;
+    public final static double KS = 0;
+    public final static double Kalpha = 0;
+    public final static double Ksin = 0;
+    public final static double Kcos = 0;
+    public final static double Kcossin = 0;
+    public final static double Kvalt = 0;
   }
   public static class OperatorConstants {
 	public static final int kDriverControllerPort = 0;
