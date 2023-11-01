@@ -4,13 +4,8 @@
 
 package frc.robot;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.math.geometry.Translation2d;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -28,7 +23,11 @@ public final class Constants {
 
   public static final class VisionConstants {
 
-    public static final String photonCameraName = "";
+    public static final String photonCamera1Name = "";
+    public static final String photonCamera2Name = "";
+    public static final int photonCameraNum1 = 1;
+    public static final int photonCameraNum2 = 2;
+
     public static final Pose2d cameraToRobotCenter = new Pose2d();
 
     public static final double maxValidVelcity = 2.0; // m/s - ignoring vision data abve this velocity

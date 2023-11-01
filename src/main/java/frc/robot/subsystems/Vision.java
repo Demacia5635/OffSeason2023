@@ -14,6 +14,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -24,7 +25,8 @@ import static frc.robot.Constants.VisionConstants.*;
 public class Vision extends SubsystemBase{
     
     
-    PhotonCamera camera;
+    PhotonCamera camera1;
+    PhotonCamera camera2;
     SwerveDrivePoseEstimator poseEstimator;
     PhotonPoseEstimator photonPoseEstimator;
     Chassis chassis;
@@ -33,7 +35,8 @@ public class Vision extends SubsystemBase{
     double lastUpdateTime;
 
     public Vision(Chassis chassis, SwerveDrivePoseEstimator estimator) {
-        camera = new PhotonCamera(photonCameraName);
+        camera1 = new PhotonCamera(photonCamera1Name);
+        camera2 = new PhotonCamera(photonCamera2Name);
         this.chassis = chassis;
         for(int i = 0; i < buf.length; i++) {
             buf[i] = new VisionData(null, 0);
@@ -63,7 +66,14 @@ public class Vision extends SubsystemBase{
         }
     }
 
-    private void updateVisionData() {
+    private void getNewVisionDataFromCameraX(int x) {
+        //Choosing Camera.
+        PhotonCamera camera;
+        if(x == photonCameraNum1)
+            camera = camera1;
+        else 
+            camera = camera2; 
+
         if(chassis.getVelocity() <= maxValidVelcity ) {
             var latestResult = camera.getLatestResult();
             var bestTarget = latestResult.getBestTarget();
@@ -76,8 +86,8 @@ public class Vision extends SubsystemBase{
                 return;
             }
             Pose2d cameraToAprilTagPose2d = new Pose2d(bestTarget.getBestCameraToTarget().getTranslation().toTranslation2d(), bestTarget.getBestCameraToTarget().getRotation().toRotation2d());
-            Pose2d visionRobotToFieldPose = new Pose2d(); // !
-            VisionData newVisionData = new VisionData(visionRobotToFieldPose, latestResult.getTimestampSeconds() - (latestResult.getLatencyMillis()/1000));
+            Pose2d visionRobotToFieldPose2d = cameraToRobotCenter.plus((aprilTagToFieldPose2d).minus(cameraToAprilTagPose2d)); // !
+            VisionData newVisionData = new VisionData(visionRobotToFieldPose2d, latestResult.getTimestampSeconds() - (latestResult.getLatencyMillis()/1000));
             if(newVisionData != null && newVisionData.pose != null){
                 if((newVisionData.pose).getTranslation().getDistance(aprilTagToFieldPose2d.getTranslation()) > maxDistanceOfCameraFromAprilTag)
                     return;
@@ -85,11 +95,12 @@ public class Vision extends SubsystemBase{
             }
         }
     }
-
+    
     @Override
     public void periodic() {
         super.periodic();
-        updateVisionData();
+        getNewVisionDataFromCameraX(photonCameraNum1);
+        getNewVisionDataFromCameraX(photonCameraNum2);
         updateRobotPose();
     }
 
@@ -131,7 +142,7 @@ public class Vision extends SubsystemBase{
     public boolean validVisionPosition() {
         return lastUpdateLatency() < 1;
     }
-
+    
     class VisionData{
     
         private Pose2d pose;
