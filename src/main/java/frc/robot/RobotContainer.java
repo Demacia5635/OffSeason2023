@@ -8,6 +8,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.ParallelogramTest;
 // import frc.robot.commands.ParallelogramDrive;
 import frc.robot.subsystems.Parallelogram;
 
@@ -55,6 +56,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return null;
+    return new ParallelogramTest(parallelogram, 0).withTimeout(5);
   }
 }

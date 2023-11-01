@@ -44,7 +44,7 @@ public class Parallelogram extends SubsystemBase {
     setPow(0);
   }
 
-  public boolean getInput(){ return false; }// if true will stop the command
+  public boolean getInput(){ return /*input.get()*/false; }// if true will stop the command
   public boolean isRetracted(){return false;}
 
   public double getVel(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle; }

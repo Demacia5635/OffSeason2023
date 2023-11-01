@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Parallelogram;
 
@@ -12,15 +11,16 @@ public class ParallelogramTest extends CommandBase {
   public Parallelogram parallelogram;
   public double pow;
   /** Creates a new ParallelogramTest. */
-  public ParallelogramTest(Parallelogram parallelogram) {
+  public ParallelogramTest(Parallelogram parallelogram, double pow) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.parallelogram = parallelogram;
+    addRequirements(parallelogram);
+    this.pow = pow;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    pow = SmartDashboard.getNumber("Power", 0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
