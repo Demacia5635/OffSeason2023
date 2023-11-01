@@ -32,7 +32,8 @@ public final class Constants {
     public final static double Ksin = 0;
     public final static double Kcos = 0;
     public final static double Kcossin = 0;
-    public final static double Kvalt = 0;
+    public final static double Kvalt = 0; // fro future use
+    
   }
   public static class OperatorConstants {
 	public static final int kDriverControllerPort = 0;
