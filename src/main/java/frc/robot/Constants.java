@@ -15,7 +15,7 @@ package frc.robot;
 public final class Constants {
   public static class ParallelogramConstants{
     public final static int motorID = 30;
-    public final static int DigitalInputID = 0; // estimating
+    public final static int DigitalInputID = 0;
 
     public final static double pulesPerRotation = 2048;
     public final static double gearRatio = 240;
@@ -32,7 +32,6 @@ public final class Constants {
     public final static double Ksin = 0;
     public final static double Kcos = 0;
     public final static double Kcossin = 0;
-    public final static double Kvalt = 0; // for future use
 
   }
   public static class OperatorConstants {

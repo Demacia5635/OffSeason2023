@@ -10,7 +10,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
-// import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,9 +23,9 @@ import static frc.robot.Constants.ParallelogramConstants.*;
 public class Parallelogram extends SubsystemBase {
   
   public TalonFX motor = new TalonFX(motorID);
-  public double baseAngle;
+  public double baseAngle = 0;
 
-  // public DigitalInput input = new DigitalInput(DigitalInputID);
+  public DigitalInput input = new DigitalInput(DigitalInputID);
 
   /** Creates a new Parraller. */
   public Parallelogram() {
@@ -44,17 +44,17 @@ public class Parallelogram extends SubsystemBase {
     setPow(0);
   }
 
-  public double FeedForward(double AV, double angle, double CAV){
+  public double FF(double AV, double angle, double CAV){
     double rad = Math.toRadians(angle);
     double P = KS + AV * KV + (AV-CAV) * KA + Kalpha * rad + Ksin * Math.sin(rad) + Kcos*Math.cos(rad) + Kcossin * Math.cos(rad) * Math.sin(rad);
     return P;
   }
 
   public void setVel(double AV){
-    motor.set(ControlMode.Velocity, AV, DemandType.ArbitraryFeedForward, FeedForward(getCAV(),getAngle(),AV));
+    motor.set(ControlMode.Velocity, AV, DemandType.ArbitraryFeedForward, FF(getCAV(),getAngle(),AV));
   }
 
-  public boolean getInput(){ return /*input.get()*/false; }// if true will stop the command
+  public boolean getInput(){ return input.get(); }// if true will stop the command
   public boolean isRetracted(){return false;}
 
   public double getCAV(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle; }
@@ -79,7 +79,7 @@ public class Parallelogram extends SubsystemBase {
       builder.addBooleanProperty("isRetracted", this::isRetracted, null);
       builder.addDoubleProperty("Current Angle Velocity", this::getCAV, null);
       builder.addDoubleProperty("Angle", this::getAngle, null);
-      // builder.addBooleanProperty("Input", this::getInput, null);
+      builder.addBooleanProperty("Input", this::getInput, null);
       builder.addDoubleProperty("Valt Percent", this::getValtPercentage, null);
       builder.addDoubleProperty("Valt Valtage", this::getValtValtage, null);
       
@@ -95,7 +95,6 @@ public class Parallelogram extends SubsystemBase {
       SmartDashboard.putNumber("Kcos", Kcos);
       SmartDashboard.putNumber("Kcossin", Kcossin);
       SmartDashboard.putNumber("Kalpha", Kalpha);
-      SmartDashboard.putNumber("Kvalt", Kvalt);
 
       InstantCommand cmdBrake = new InstantCommand(()-> brake(), this);
       InstantCommand cmdCoast = new InstantCommand(()-> coast(), this);

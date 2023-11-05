@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -31,21 +30,12 @@ public class ParallelogramDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    parallelogram.setPow(controller.getLeftY()*0.5);
+    parallelogram.setPow(controller.getLeftY()*SmartDashboard.getNumber("max power", 0.3));
   }
 
   // Called once the command ends or is interrupted.
   @Override
-public void end(boolean interrupted) { /*parallelogram.stop();*/ }
-
-  public double getLeftY() { return controller.getLeftY(); }
-
-  @Override
-  public void initSendable(SendableBuilder builder) {
-      // TODO Auto-generated method stub
-      super.initSendable(builder);
-      builder.addDoubleProperty("Controller", this::getLeftY, null);
-  }
+public void end(boolean interrupted) { parallelogram.stop(); }
 
   // Returns true when the command should end.
   @Override
