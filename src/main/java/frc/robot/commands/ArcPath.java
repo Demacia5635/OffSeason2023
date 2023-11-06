@@ -121,6 +121,6 @@ public class ArcPath extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return segments[points.length + 1];
+    return false;
   }
 }

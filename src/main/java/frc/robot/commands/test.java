@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Util.Leg;
 import frc.robot.Util.RoundedPoint;
 
 public class test extends CommandBase {
@@ -22,7 +23,7 @@ public class test extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("CircleCenter : " + rPoint.getCenterCircle());
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
