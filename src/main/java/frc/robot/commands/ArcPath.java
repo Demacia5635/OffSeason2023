@@ -132,10 +132,6 @@ public class ArcPath extends CommandBase {
 
   @Override
   public boolean isFinished() {
-<<<<<<< HEAD
     return false;
-=======
-    return totalLeft <= 0;
->>>>>>> 752ffd533429aa7ca7065d0714115b3e67bc398d
   }
 }
