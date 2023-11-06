@@ -4,8 +4,10 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Util.Arc;
 import frc.robot.Util.Leg;
 import frc.robot.Util.RoundedPoint;
 
@@ -23,7 +25,9 @@ public class test extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
+    Arc e = new Arc(new Translation2d(0,0), new Translation2d(5,0), new Rotation2d(Math.toRadians(180)));
+    System.out.println(e);
+    System.out.println("Velocity : " + e.calc(new Translation2d(0,0), 1));
   }
 
   // Called every time the scheduler runs while the command is scheduled.

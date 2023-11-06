@@ -30,25 +30,28 @@ public class Arc extends Segment{
 
         startVector = p1.minus(p2);
         radius = startVector.getNorm();
+        
     }
 
     @Override
     public Translation2d calc(Translation2d pos,double velocity)
     {
-        Translation2d relativePos = p2.minus(pos);
+        Translation2d relativePos = pos.minus(p2);
+        double dFromCenter = relativePos.getNorm();
+
+        Rotation2d tAngle = new Rotation2d(velocity / radius);
+
+
 
         Translation2d fixVector = relativePos.times(-1).div(relativePos.getNorm()).times(relativePos.getNorm() - radius).times(0.5/*kP*/);
 
-        Translation2d velVector = 
-        relativePos.rotateBy(
-        new Rotation2d(
-          Math.toRadians(90 * Math.signum(angle.getDegrees()))
-          )
-        )
-        .div(relativePos.getNorm())
-        .times(velocity)
-        .plus(fixVector);
-      return velVector;
+        Rotation2d tanAngle = relativePos.getAngle().minus(new Rotation2d(Math.toRadians(90 * Math.signum(angle.getDegrees()))));
+        Rotation2d fixAngle = tAngle.times(dFromCenter / radius);
+
+
+
+        
+      return new Translation2d(velocity, tanAngle.plus(fixAngle));
     }
 
     @Override
