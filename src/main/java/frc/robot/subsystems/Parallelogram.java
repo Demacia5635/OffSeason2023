@@ -80,8 +80,8 @@ public class Parallelogram extends SubsystemBase {
       builder.addDoubleProperty("Current Angle Velocity", this::getCAV, null);
       builder.addDoubleProperty("Angle", this::getAngle, null);
       builder.addBooleanProperty("Input", this::getInput, null);
-      builder.addDoubleProperty("Valt Percent", this::getValtPercentage, null);
-      builder.addDoubleProperty("Valt Valtage", this::getValtValtage, null);
+      builder.addDoubleProperty("Pow", this::getValtPercentage, null);
+      builder.addDoubleProperty("Valt", this::getValtValtage, null);
       
 
       SmartDashboard.putNumber("KP", KP);
@@ -98,7 +98,7 @@ public class Parallelogram extends SubsystemBase {
 
       InstantCommand cmdBrake = new InstantCommand(()-> brake(), this);
       InstantCommand cmdCoast = new InstantCommand(()-> coast(), this);
-      SmartDashboard.putData("Brake",cmdBrake.ignoringDisable(true));
+      SmartDashboard.putData("Brake", cmdBrake.ignoringDisable(true));
       SmartDashboard.putData("Coast", cmdCoast.ignoringDisable(true));
   }
 
