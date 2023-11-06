@@ -44,6 +44,10 @@ public class Chassis extends SubsystemBase {
     SmartDashboard.putData(field);
   }
 
+  public SwerveDrivePoseEstimator getPose(){
+    return poseEstimator;
+  }
+
   public void stop() {
     Arrays.stream(modules).forEach(SwerveModule::stop);
   }
