@@ -12,6 +12,8 @@ public class Drive extends CommandBase {
   public Drive(Chassis chassis, CommandXboxController controller) {
     this.chassis = chassis;
     this.controller = controller;
+
+    addRequirements(chassis);
   }
 
   @Override

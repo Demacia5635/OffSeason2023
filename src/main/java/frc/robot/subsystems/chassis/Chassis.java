@@ -6,8 +6,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.chassis.utils.SwerveModule;
 
@@ -41,6 +43,16 @@ public class Chassis extends SubsystemBase {
     poseEstimator = new SwerveDrivePoseEstimator(KINEMATICS, getAngle(), getModulePositions(), new Pose2d());
     field = new Field2d();
     SmartDashboard.putData(field);
+    SmartDashboard.putData(this);
+    SmartDashboard.putData("m1 offset", modules[0]);
+    SmartDashboard.putData("m2 offset", modules[1]);
+    SmartDashboard.putData("m3 offset", modules[2]);
+    SmartDashboard.putData("m4 offset", modules[3]);
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      builder.addDoubleProperty("vel", () -> modules[2].getVelocity(), null);
   }
 
   public void stop() {
@@ -48,7 +60,7 @@ public class Chassis extends SubsystemBase {
   }
 
   public void setDrivePower(double power) {
-    Arrays.stream(modules).forEach((module) -> module.setPower(power));
+    Arrays.stream(modules).forEach((module) -> module.setPower(power, 0));
   }
 
   public void setDriveVelocity(double velocity) {
@@ -63,6 +75,10 @@ public class Chassis extends SubsystemBase {
 
   public ChassisSpeeds getVelocity() {
     return KINEMATICS.toChassisSpeeds(getModuleStates());
+  }
+
+  public void calibrateWheels() {
+    Arrays.stream(modules).forEach((module) -> module.setAngle(new Rotation2d(15)));
   }
 
   @Override
