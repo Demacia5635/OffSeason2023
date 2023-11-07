@@ -23,11 +23,16 @@ public class Drive extends CommandBase {
 
   @Override
   public void execute() {
-      double x = controller.getLeftX();
-      double y = controller.getLeftY();
-      double rot = controller.getRightTriggerAxis() - controller.getLeftTriggerAxis();
+      double x = deadband(controller.getLeftX(), 0.1);
+      double y = deadband(controller.getLeftY(), 0.1);
+      double rot = deadband(controller.getRightTriggerAxis(), 0.1) - deadband(controller.getLeftTriggerAxis(), 0.1);
 
-      ChassisSpeeds speeds = new ChassisSpeeds(y, x, rot);
+      ChassisSpeeds speeds = new ChassisSpeeds(y * 1.4, x * 1.4, Math.toRadians(rot * 90));
       chassis.setVelocities(speeds);
+  }
+
+  private double deadband(double x, double minDeadband) {
+    if (Math.abs(x) < minDeadband) return 0;
+    return x;
   }
 }

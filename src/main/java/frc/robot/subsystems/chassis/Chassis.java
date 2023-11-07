@@ -48,6 +48,11 @@ public class Chassis extends SubsystemBase {
     SmartDashboard.putData("m2 offset", modules[1]);
     SmartDashboard.putData("m3 offset", modules[2]);
     SmartDashboard.putData("m4 offset", modules[3]);
+
+    modules[0].setInverted(false);
+    modules[1].setInverted(true);
+    modules[2].setInverted(false);
+    modules[3].setInverted(true);
   }
 
   @Override
@@ -70,15 +75,19 @@ public class Chassis extends SubsystemBase {
   public void setVelocities(ChassisSpeeds speeds) {
     ChassisSpeeds relativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getAngle());
     SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(relativeSpeeds);
-    for (int i = 0; i < 4; i++) modules[i].setState(states[i]);
+    setModuleStates(states);
   }
 
   public ChassisSpeeds getVelocity() {
     return KINEMATICS.toChassisSpeeds(getModuleStates());
   }
 
-  public void calibrateWheels() {
-    Arrays.stream(modules).forEach((module) -> module.setAngle(new Rotation2d(15)));
+  public void resetWheels() {
+    Arrays.stream(modules).forEach((module) -> module.setAngle(new Rotation2d(0)));
+  }
+
+  public void setWheelAngles(double x) {
+    Arrays.stream(modules).forEach((module) -> module.setAngle(Rotation2d.fromDegrees(x)));
   }
 
   @Override
@@ -97,5 +106,9 @@ public class Chassis extends SubsystemBase {
 
   public SwerveModuleState[] getModuleStates() {
     return Arrays.stream(modules).map(SwerveModule::getState).toArray(SwerveModuleState[]::new);
+  }
+
+  public void setModuleStates(SwerveModuleState[] states) {
+    for (int i = 0; i < 4; i++) modules[i].setState(states[i]);
   }
 }

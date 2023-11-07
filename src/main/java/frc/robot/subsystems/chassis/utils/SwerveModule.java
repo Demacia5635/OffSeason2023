@@ -79,7 +79,6 @@ public class SwerveModule implements Sendable {
 
     public Rotation2d getAngle() {
         return Rotation2d.fromDegrees(absoluteEncoder.getAbsolutePosition() - angleOffset);
-        // return Rotation2d.fromDegrees(0);
     }
 
     public void setAngle(Rotation2d angle) {
@@ -94,6 +93,10 @@ public class SwerveModule implements Sendable {
     public void setState(SwerveModuleState state) {
         setVelocity(state.speedMetersPerSecond);
         setAngle(state.angle);
+    }
+
+    public void setInverted(boolean invert) {
+        moveMotor.setInverted(invert);
     }
 
     public SwerveModulePosition getModulePosition() {
