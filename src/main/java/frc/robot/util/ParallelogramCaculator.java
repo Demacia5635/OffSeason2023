@@ -20,15 +20,19 @@ public class ParallelogramCaculator {
     public int ParallelogramStartToEnd(double startAngle, double endAngle,double switchAngle, double pow){
         if (!(endAngle <= angle) && isForward){
             if ((startAngle < angle && angle < switchAngle)|| angle <= startAngle){
+                parallelogram.setPow(pow);
                 return 0;
             } else if ((endAngle > angle && angle > switchAngle)|| angle <= switchAngle){
+                parallelogram.setPow(pow);
                 return 1;
             }
         } else {
             isForward = false;
             if ((endAngle > angle && angle > switchAngle)|| angle >= endAngle){
+                parallelogram.setPow(-pow);
                 return 2;
             } else if ((startAngle < angle && angle < switchAngle)|| angle <= switchAngle){
+                parallelogram.setPow(-pow);
                 return 3;
             }
         }
