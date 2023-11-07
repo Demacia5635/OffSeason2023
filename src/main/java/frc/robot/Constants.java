@@ -18,7 +18,7 @@ public final class Constants {
     public final static int DigitalInputID = 0;
 
     public final static double pulesPerRotation = 2048;
-    public final static double gearRatio = 240;
+    public final static double gearRatio = 180;
     public final static double pulsePerAngle = pulesPerRotation*gearRatio/360;
 
     public final static double KP = 3.596;

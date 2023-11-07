@@ -7,21 +7,23 @@ package frc.robot;
 import edu.wpi.first.wpilibj.XboxController;
 // import frc.robot.Constants.OperatorConstants;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.ParallelogramDrive;
-// import frc.robot.commands.ParallelogramStartToEnd;
+import frc.robot.commands.ParallelogramControl;
+import frc.robot.commands.ParallelogramSetAngle;
+import frc.robot.commands.ParallelogramStartToEnd;
 import frc.robot.subsystems.Parallelogram;
 
 
 public class RobotContainer {
   public Parallelogram parallelogram = new Parallelogram();
-  public XboxController controller = new XboxController(0);
-  ParallelogramDrive drive = new ParallelogramDrive(parallelogram, controller);
+  public CommandXboxController controller = new CommandXboxController(0);
   
   public RobotContainer() {
     configureBindings();
 
-    parallelogram.setDefaultCommand(drive);
+    // parallelogram.setDefaultCommand(drive);
   }
 
   /**
@@ -34,7 +36,11 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-   
+    controller.a().onTrue(new ParallelogramControl(parallelogram, controller));
+    controller.b().onTrue(new ParallelogramSetAngle(parallelogram));
+    controller.x().onTrue(new InstantCommand(()-> parallelogram.stop(),parallelogram));
+    controller.y().onTrue(new ParallelogramStartToEnd(parallelogram));
+    controller.leftBumper().onTrue(new InstantCommand(()-> parallelogram.test(parallelogram.getAngle()),parallelogram));
   }
 
   /**
@@ -44,7 +50,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return null;
-    // return new ParallelogramStartToEnd(parallelogram);
+    // return null;
+    return new ParallelogramSetAngle(parallelogram)/* .andThen(new ParallelogramStartToEnd(parallelogram))*/;
   }
 }

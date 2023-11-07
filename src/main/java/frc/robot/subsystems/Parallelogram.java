@@ -23,7 +23,7 @@ import static frc.robot.Constants.ParallelogramConstants.*;
 public class Parallelogram extends SubsystemBase {
   
   public TalonFX motor = new TalonFX(motorID);
-  public double baseAngle = 0;
+  public double baseAngle = 9.673095703125;
 
   public DigitalInput input = new DigitalInput(DigitalInputID);
 
@@ -56,11 +56,13 @@ public class Parallelogram extends SubsystemBase {
 
   public boolean getInput(){ return !input.get(); }// if false will stop the command; false when colide with the parallelogram;
   public boolean isRetracted(){return false;}
+  public void test(double angle){baseAngle += angle;}
 
   public double getCAV(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle; }
   public double getAngle(){ return (motor.getSelectedSensorPosition() / pulsePerAngle) - baseAngle; }
   public double getPow(){ return motor.getMotorOutputPercent(); }
   public double getValt(){ return motor.getMotorOutputVoltage(); }
+
   
 
   public void brake(){
@@ -82,6 +84,7 @@ public class Parallelogram extends SubsystemBase {
       builder.addBooleanProperty("Input", this::getInput, null);
       builder.addDoubleProperty("Pow", this::getPow, null);
       builder.addDoubleProperty("Valt", this::getValt, null);
+      builder.addDoubleProperty("base angle", ()-> {return baseAngle;}, null);
       
 
       SmartDashboard.putNumber("KP", KP);
