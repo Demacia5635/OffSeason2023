@@ -36,8 +36,8 @@ public class Parallelogram extends SubsystemBase {
     SmartDashboard.putData(this);
   }
 
-  public void setPow(double pow){
-    motor.set(ControlMode.PercentOutput, pow);
+  public void setPow(double AP){
+    motor.set(ControlMode.PercentOutput, AP);
   }
   
   public void stop(){
@@ -54,13 +54,13 @@ public class Parallelogram extends SubsystemBase {
     motor.set(ControlMode.Velocity, AV, DemandType.ArbitraryFeedForward, FF(getCAV(),getAngle(),AV));
   }
 
-  public boolean getInput(){ return input.get(); }// if true will stop the command
+  public boolean getInput(){ return !input.get(); }// if false will stop the command; false when colide with the parallelogram;
   public boolean isRetracted(){return false;}
 
   public double getCAV(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle; }
   public double getAngle(){ return (motor.getSelectedSensorPosition() / pulsePerAngle) - baseAngle; }
-  public double getValtPercentage(){ return motor.getMotorOutputPercent(); }
-  public double getValtValtage(){ return motor.getMotorOutputVoltage(); }
+  public double getPow(){ return motor.getMotorOutputPercent(); }
+  public double getValt(){ return motor.getMotorOutputVoltage(); }
   
 
   public void brake(){
@@ -80,8 +80,8 @@ public class Parallelogram extends SubsystemBase {
       builder.addDoubleProperty("Current Angle Velocity", this::getCAV, null);
       builder.addDoubleProperty("Angle", this::getAngle, null);
       builder.addBooleanProperty("Input", this::getInput, null);
-      builder.addDoubleProperty("Pow", this::getValtPercentage, null);
-      builder.addDoubleProperty("Valt", this::getValtValtage, null);
+      builder.addDoubleProperty("Pow", this::getPow, null);
+      builder.addDoubleProperty("Valt", this::getValt, null);
       
 
       SmartDashboard.putNumber("KP", KP);

@@ -45,7 +45,7 @@ public class ParallelogramStartToEnd extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) { parallelogram.stop(); }
 
   @Override
   public void initSendable(SendableBuilder builder) {
@@ -62,6 +62,6 @@ public class ParallelogramStartToEnd extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return parallelogram.getInput();
   }
 }

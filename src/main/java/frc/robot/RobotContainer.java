@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ParallelogramDrive;
 // import frc.robot.commands.ParallelogramStartToEnd;
-import frc.robot.commands.ParallelogramTest;
 import frc.robot.subsystems.Parallelogram;
 
 
@@ -45,7 +44,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new ParallelogramTest(parallelogram, 0.2);
+    return null;
     // return new ParallelogramStartToEnd(parallelogram);
   }
 }
