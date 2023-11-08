@@ -15,7 +15,10 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.VisionUtils.SwerveDrivePoseEstimator;
@@ -23,8 +26,8 @@ import frc.robot.utils.VisionUtils.SwerveDrivePoseEstimator;
 import static frc.robot.Constants.VisionConstants.*;
 
 public class Vision extends SubsystemBase{
-    
-    
+    Field2d checkField2d;
+    Pose2d checkPose;
     PhotonCamera camera1;
     PhotonCamera camera2;
     SwerveDrivePoseEstimator poseEstimator;
@@ -38,9 +41,12 @@ public class Vision extends SubsystemBase{
         camera1 = new PhotonCamera(photonCamera1Name);
         camera2 = new PhotonCamera(photonCamera2Name);
         this.chassis = chassis;
+        checkPose = new Pose2d();
+        checkField2d = new Field2d();
         for(int i = 0; i < buf.length; i++) {
             buf[i] = new VisionData(null, 0);
         }
+        SmartDashboard.putData("field", checkField2d);;
     }
     
     public void updateRobotPose(){
@@ -95,13 +101,65 @@ public class Vision extends SubsystemBase{
             }
         }
     }
-    
+        
+    private void checkFunc(int x) {
+        //Choosing Camera.
+        PhotonCamera camera;
+        if(x == photonCameraNum1)
+            camera = camera1;
+        else 
+            camera = camera2; 
+
+        var latestResult = camera.getLatestResult();
+        var bestTarget = latestResult.getBestTarget();
+        int targetID = bestTarget.getFiducialId();
+        lastData = next();
+        Pose2d aprilTagToFieldPose2d;
+        try {
+            aprilTagToFieldPose2d = AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField().getTagPose(targetID).get().toPose2d();
+        } catch (IOException e) {
+            return;
+        }
+        Pose2d cameraToAprilTagPose2d = new Pose2d(bestTarget.getBestCameraToTarget().getTranslation().toTranslation2d(), bestTarget.getBestCameraToTarget().getRotation().toRotation2d());
+        Pose2d visionRobotToFieldPose2d = cameraToRobotCenter.plus((aprilTagToFieldPose2d).minus(cameraToAprilTagPose2d)); // !
+        VisionData newVisionData = new VisionData(visionRobotToFieldPose2d, latestResult.getTimestampSeconds() - (latestResult.getLatencyMillis()/1000));
+        if(newVisionData != null && newVisionData.pose != null){
+            if((newVisionData.pose).getTranslation().getDistance(aprilTagToFieldPose2d.getTranslation()) > maxDistanceOfCameraFromAprilTag)
+                return;
+            buf[lastData] = newVisionData;
+        }
+        
+    }
+    public void checkUpdateRobotPose(){
+        double time = getTime();
+        {
+            if(validBuf(time)) {
+                VisionData vData = median(buf);
+                if(vData != null && vData.pose != null) {
+                    checkField2d.setRobotPose(vData.pose);
+                    lastUpdateTime = time;
+                    time = vData.timeStamp;
+                    for(VisionData vd : buf) {
+                        vd.recalc(time);
+                    }
+                }
+            }
+            else{
+                VisionData dataBeforelastData = buf[lastData-1];
+                VisionData dataLastData = buf[lastData];
+                buf[lastData - 2] = dataBeforelastData;
+                buf[lastData - 1] = dataLastData;
+            }
+        }
+    }
+
     @Override
     public void periodic() {
         super.periodic();
-        getNewVisionDataFromCameraX(photonCameraNum1);
-        getNewVisionDataFromCameraX(photonCameraNum2);
-        updateRobotPose();
+        // getNewVisionDataFromCameraX(photonCameraNum1);
+        // getNewVisionDataFromCameraX(photonCameraNum2);
+        checkFunc(photonCameraNum1);
+        checkUpdateRobotPose();
     }
 
     int next() {
