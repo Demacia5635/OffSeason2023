@@ -87,9 +87,8 @@ public class ArcPath extends CommandBase {
     System.out.println(segments.length);
     segments[segments.length - 1] = corners[corners.length - 1].getCtoCurveLeg();
 
-    for (Segment s : segments) {
-      System.out.println(s);
-    }
+    System.out.println("Segments : \n");
+    printSegments();
     //segments[0] = new Leg(null, null);
   }
 
@@ -133,5 +132,12 @@ public class ArcPath extends CommandBase {
   @Override
   public boolean isFinished() {
     return false;
+  }
+
+  public void printSegments()
+  {
+    for (Segment s : segments) {
+      System.out.println(s);
+    }
   }
 }

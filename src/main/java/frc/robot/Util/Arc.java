@@ -49,7 +49,7 @@ public class Arc extends Segment{
         Rotation2d fixAngle = tAngle.times(dFromCenter / radius);
 
 
-
+      
         
       return new Translation2d(velocity, tanAngle.plus(fixAngle));
     }
