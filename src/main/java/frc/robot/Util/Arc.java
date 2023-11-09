@@ -12,6 +12,7 @@ public class Arc extends Segment{
 
     //p1 represents the start point, p2 represents the circle center
     Rotation2d angle;
+    double maxVel = 2;
 
 
     final Translation2d startVector;

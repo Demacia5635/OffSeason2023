@@ -24,9 +24,7 @@ public class ArcPath extends CommandBase {
   RoundedPoint[] corners;
   Pose2d pose = new Pose2d();
 
-  double distanceOffset = 5;
-
-  
+  double distanceOffset = 0.3;
 
   double pathLength;
   double totalLeft;
@@ -36,6 +34,7 @@ public class ArcPath extends CommandBase {
   Translation2d vecVel;
 
   Trapezoid trapezoid;
+  Trapezoid testTrap;
   double velocity = 0;
 
   /** Creates a new ArcPath.
@@ -60,20 +59,9 @@ public class ArcPath extends CommandBase {
 
 
     trapezoid = new Trapezoid(maxAcc, maxVel);
+    testTrap = new Trapezoid(1, 2);
 
     //calculate the total length of the path
-    pathLength = 0;
-
-    for(int i = 0; i < corners.length; i++)
-    {
-      pathLength += corners[i].getAtoCurvelength() + corners[i].getCurveLength();
-      System.out.println("added a to curve length : " + corners[i].getAtoCurvelength() + " | added curve length : " + corners[i].getCurveLength());
-    }
-    pathLength =+ corners[corners.length - 1].getCtoCurvelength();
-    System.out.println("added a to curve length : " + corners[corners.length - 1].getAtoCurvelength() + " | added curve length : " + corners[corners.length - 1].getCurveLength() + " | added c to curve length : " + corners[corners.length - 1].getCtoCurvelength());
-    System.out.println("Path Length : " + this.pathLength);
-
-    totalLeft = pathLength;
 
     segments = new Segment[points.length + 1];
     
@@ -89,8 +77,12 @@ public class ArcPath extends CommandBase {
     System.out.println(segments.length);
     segments[segments.length - 1] = corners[corners.length - 1].getCtoCurveLeg();
 
-    System.out.println("Segments : \n");
-    printSegments();
+    for (Segment s : segments) {
+      pathLength += s.getLength();
+    }
+    totalLeft = pathLength;
+
+    
     //segments[0] = new Leg(null, null);
   }
 
@@ -120,6 +112,8 @@ public class ArcPath extends CommandBase {
 
     
     velocity = trapezoid.calculate(totalLeft - segments[segmentIndex].distancePassed(pose.getTranslation()), chassis.getVelocity().getNorm(), 0);
+    double testVelocity = testTrap.calculate(5, 0, 0);
+    System.out.println("TEST VELOCITY: " + testVelocity);
     Translation2d velVector = segments[segmentIndex].calc(pose.getTranslation(), velocity);
     ChassisSpeeds speed = new ChassisSpeeds(velVector.getX(), velVector.getY(), 0);
     chassis.setVelocities(speed);
