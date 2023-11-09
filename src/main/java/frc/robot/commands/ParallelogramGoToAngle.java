@@ -10,7 +10,7 @@ import frc.robot.subsystems.Parallelogram;
 public class ParallelogramGoToAngle extends CommandBase {
   Parallelogram parallelogram;
   double wantedAngle;
-  double pow;
+  double pow = 0.15;
 
   /** Creates a new ParallelogramGoToAngle. */
   public ParallelogramGoToAngle(Parallelogram parallelogram, double angle) {
