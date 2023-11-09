@@ -40,7 +40,7 @@ public class Arc extends Segment{
         double dFromCenter = relativePos.getNorm();
 
         Rotation2d tAngle = new Rotation2d(velocity / radius);
-
+      System.out.println("tAngle : " + tAngle);
 
 
         Translation2d fixVector = relativePos.times(-1).div(relativePos.getNorm()).times(relativePos.getNorm() - radius).times(0.5/*kP*/);
@@ -49,7 +49,7 @@ public class Arc extends Segment{
         Rotation2d fixAngle = tAngle.times(dFromCenter / radius);
 
 
-      
+
         
       return new Translation2d(velocity, tanAngle.plus(fixAngle));
     }
