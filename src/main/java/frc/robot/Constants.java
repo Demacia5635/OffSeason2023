@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 /**
@@ -28,7 +29,7 @@ public final class Constants {
     public static final int photonCameraNum1 = 1;
     public static final int photonCameraNum2 = 2;
 
-    public static final Pose2d cameraToRobotCenter = new Pose2d();
+    public static final Pose2d cameraToRobotCenter = new Pose2d(new Translation2d(0.23, 0.8), Rotation2d.fromDegrees(144));
 
     public static final double maxValidVelcity = 2.0; // m/s - ignoring vision data abve this velocity
     public static final double maxValidAngleDiff = 10.0; // degrees - ignoring vision data if vision heading is off by more than this value
