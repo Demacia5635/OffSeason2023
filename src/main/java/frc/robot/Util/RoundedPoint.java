@@ -172,8 +172,6 @@ public class RoundedPoint{
 
     public Leg getAtoCurveLeg()
     {
-        Segment e = new Leg(new Translation2d(0,0), new Translation2d(0,0));
-        Segment d = new Arc(bPoint, aPoint, cornerAngle);
         return new Leg(aPoint, startRange().plus(getCenterCircle()));
     }
     public Leg getCtoCurveLeg()
