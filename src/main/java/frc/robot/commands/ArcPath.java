@@ -66,13 +66,14 @@ public class ArcPath extends CommandBase {
     segments = new Segment[points.length + 1];
     
 
-    segments[0] = new Leg(points[0], corners[0].getCurveStart());
-    segments[1] = corners[0].getArc();
-    for(int i = 2,j = 2; i < corners.length; i +=1, j+=2)
+    segments[0] = corners[0].getAtoCurveLeg();
+    for(int i = 0,j = 1; i < corners.length - 1; i +=1, j+=2)
     {
-      segments[j] = corners[i].getAtoCurveLeg();
-      segments[j+1] = corners[i].getArc();
+      segments[j] = corners[i].getArc(); 
+      segments[j+1] = new Leg(corners[i].getCurveEnd(), corners[i+1].getCurveStart());
     }
+    segments[segments.length - 2] = corners[corners.length - 1].getArc();
+    segments[segments.length - 1] = corners[corners.length - 1].getCtoCurveLeg();
 
     System.out.println(segments.length);
     segments[segments.length - 1] = corners[corners.length - 1].getCtoCurveLeg();
@@ -84,6 +85,10 @@ public class ArcPath extends CommandBase {
 
     
     //segments[0] = new Leg(null, null);
+
+    System.out.println("Velocity calc test : \n");
+    System.out.println("Position : " + corners[0].getCurveStart());
+    System.out.println(segments[1].calc(corners[0].getCurveStart(),1));
   }
 
 
