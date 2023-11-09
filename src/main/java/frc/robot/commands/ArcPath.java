@@ -117,8 +117,7 @@ public class ArcPath extends CommandBase {
 
     
     velocity = trapezoid.calculate(totalLeft - segments[segmentIndex].distancePassed(pose.getTranslation()), chassis.getVelocity().getNorm(), 0);
-    double testVelocity = testTrap.calculate(5, 0, 0);
-    System.out.println("TEST VELOCITY: " + testVelocity);
+
     Translation2d velVector = segments[segmentIndex].calc(pose.getTranslation(), velocity);
     ChassisSpeeds speed = new ChassisSpeeds(velVector.getX(), velVector.getY(), 0);
     chassis.setVelocities(speed);

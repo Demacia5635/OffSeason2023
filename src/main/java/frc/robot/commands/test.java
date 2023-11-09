@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Util.Arc;
 import frc.robot.Util.Leg;
 import frc.robot.Util.RoundedPoint;
+import frc.robot.Util.Trapezoid;
 
 public class test extends CommandBase {
   /** Creates a new test. */
@@ -17,6 +18,7 @@ public class test extends CommandBase {
   Translation2d bPoint = new Translation2d(1,1);
   Translation2d cPoint = new Translation2d(2,0);
   RoundedPoint rPoint = new RoundedPoint(0.1, aPoint, bPoint, cPoint);
+  Trapezoid testTrap = new Trapezoid(1, 2);
   public test() {
     // Use addRequirements() here to declare subsystem dependencies.
 
@@ -32,7 +34,10 @@ public class test extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    double testVelocity = testTrap.calculate(2, 2, 0);
+    System.out.println("TEST VELOCITY: " + testVelocity);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
