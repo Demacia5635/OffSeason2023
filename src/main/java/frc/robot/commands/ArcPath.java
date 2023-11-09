@@ -78,8 +78,9 @@ public class ArcPath extends CommandBase {
     segments = new Segment[points.length + 1];
     
 
-    //segments[0] = Leg(points[0], );
-    for(int i = 0,j = 0; i < corners.length; i +=1, j+=2)
+    segments[0] = new Leg(points[0], corners[0].getCurveStart());
+    segments[1] = corners[0].getArc();
+    for(int i = 2,j = 2; i < corners.length; i +=1, j+=2)
     {
       segments[j] = corners[i].getAtoCurveLeg();
       segments[j+1] = corners[i].getArc();
