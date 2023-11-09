@@ -26,8 +26,7 @@ public class RoundedPoint{
         this.cornerAngle = vectorAtoB.times(-1).getAngle().minus(vectorBtoC.getAngle());
         this.cornerDir = vectorAtoB.times(-1).getAngle().minus(this.cornerAngle.div(2));
 
-        System.out.println("Corner angle real no fake : " + this.cornerAngle);
-        System.out.println("Corner dir real no fake : " + this.cornerDir);
+        
 
     }
 
@@ -43,7 +42,6 @@ public class RoundedPoint{
     public Translation2d getCenterCircle(){
         double length;
 
-        System.out.print(cornerAngle.getCos());
         if(this.cornerAngle.div(2).getSin() != 0 && Math.abs(this.cornerAngle.getDegrees()) < 177)
             length =  radius / Math.abs(this.cornerAngle.div(2).getSin());
         else
@@ -150,6 +148,15 @@ public class RoundedPoint{
         return getCenterCircle().plus(startRange()).minus(aPoint).getNorm();
     }
 
+    public Translation2d getCurveStart()
+    {
+        return getCenterCircle().plus(startRange());
+    }
+
+    public Translation2d getCurveEnd()
+    {
+        return getCenterCircle().plus(endRange());
+    }
 
     /**
      * 
