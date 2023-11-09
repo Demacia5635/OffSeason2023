@@ -63,7 +63,10 @@ public class ArcPath extends CommandBase {
 
     //calculate the total length of the path
 
-    segments = new Segment[points.length + 1];
+    if(points.length <= 3)
+      segments = new Segment[points.length];
+    else
+      segments = new Segment[points.length + 1];
     
 
     segments[0] = corners[0].getAtoCurveLeg();
@@ -75,7 +78,7 @@ public class ArcPath extends CommandBase {
     segments[segments.length - 2] = corners[corners.length - 1].getArc();
     segments[segments.length - 1] = corners[corners.length - 1].getCtoCurveLeg();
 
-    System.out.println(segments.length);
+    System.out.println("Segment length : " + segments.length);
     segments[segments.length - 1] = corners[corners.length - 1].getCtoCurveLeg();
 
     for (Segment s : segments) {
@@ -84,6 +87,9 @@ public class ArcPath extends CommandBase {
     totalLeft = pathLength;
 
     
+    System.out.println("Segments : \n");
+    printSegments();
+
     //segments[0] = new Leg(null, null);
 
     System.out.println("Velocity calc test : \n");
