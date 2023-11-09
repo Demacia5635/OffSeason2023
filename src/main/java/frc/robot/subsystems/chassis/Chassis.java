@@ -26,8 +26,10 @@ public class Chassis extends SubsystemBase {
 
   private final SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field;
+  
 
   public Chassis() {
+
     modules = new SwerveModule[] {
       new SwerveModule(MODULE_FRONT_LEFT),
       new SwerveModule(MODULE_FRONT_RIGHT),
@@ -42,6 +44,7 @@ public class Chassis extends SubsystemBase {
     gyro = new PigeonIMU(GYRO_ID);
 
     poseEstimator = new SwerveDrivePoseEstimator(KINEMATICS, getAngle(), getModulePositions(), new Pose2d());
+    poseEstimator.resetPosition(new Rotation2d(0), getModulePositions(), new Pose2d());
     field = new Field2d();
     SmartDashboard.putData(field);
     SmartDashboard.putData(this);
