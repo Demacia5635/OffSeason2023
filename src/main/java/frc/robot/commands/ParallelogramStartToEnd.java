@@ -13,11 +13,12 @@ import frc.robot.util.ParallelogramCaculator;
 public class ParallelogramStartToEnd extends CommandBase {
   public Parallelogram parallelogram;
   public double startAngle = 0;
-  public double endAngle = 80;
+  public double endAngle = 68;
   public double switchAngle = 40;
   public double pow = 0.15;
   public ParallelogramCaculator caculator;
   public int state;
+  boolean isStart = false;
 
   /** Creates a new ParallelogramBackAndForth. */
   public ParallelogramStartToEnd(Parallelogram parallelogram) {
@@ -31,16 +32,15 @@ public class ParallelogramStartToEnd extends CommandBase {
   @Override
   public void initialize() {
     caculator = new ParallelogramCaculator(parallelogram);
-    
-    while (parallelogram.getInput()){
-      parallelogram.setPow(pow);
-    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     state = caculator.ParallelogramStartToEnd(startAngle, endAngle, switchAngle, pow);
+    if (parallelogram.getAngle()>1){
+      isStart = true;
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -61,6 +61,6 @@ public class ParallelogramStartToEnd extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return parallelogram.getInput() || state == 4 || parallelogram.getAngle()==0;
+    return (parallelogram.getInput()&&isStart) || state == 4 || (((Math.abs(parallelogram.getAngle()))<0.5)&&isStart);
   }
 }

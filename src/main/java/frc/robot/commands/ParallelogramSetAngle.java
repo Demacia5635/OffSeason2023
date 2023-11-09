@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.Parallelogram;
 
 public class ParallelogramSetAngle extends CommandBase {
@@ -29,7 +30,7 @@ public class ParallelogramSetAngle extends CommandBase {
   @Override
   public void execute() {
     parallelogram.setPow(-pow);
-    parallelogram.baseAngle = parallelogram.getAngle();
+    parallelogram.baseAngle = parallelogram.motor.getSelectedSensorPosition()/Constants.ParallelogramConstants.pulsePerAngle;
   }
 
   // Called once the command ends or is interrupted.

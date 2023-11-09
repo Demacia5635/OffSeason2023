@@ -11,6 +11,7 @@ public class ParallelogramGoToAngle extends CommandBase {
   Parallelogram parallelogram;
   double wantedAngle;
   double pow = 0.15;
+  boolean isStart = false;
 
   /** Creates a new ParallelogramGoToAngle. */
   public ParallelogramGoToAngle(Parallelogram parallelogram, double angle) {
@@ -32,6 +33,10 @@ public class ParallelogramGoToAngle extends CommandBase {
     } else if(parallelogram.getAngle() < wantedAngle){
       parallelogram.setPow(pow);
     }
+
+    if (parallelogram.getAngle()>1){
+      isStart = true;
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -41,6 +46,6 @@ public class ParallelogramGoToAngle extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return parallelogram.getInput() || (Math.abs(parallelogram.getAngle()-wantedAngle)<1);
+    return (parallelogram.getInput()&&isStart) || (Math.abs(parallelogram.getAngle()-wantedAngle)<1);
   }
 }

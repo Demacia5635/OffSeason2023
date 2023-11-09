@@ -24,6 +24,7 @@ public class Parallelogram extends SubsystemBase {
   
   public TalonFX motor = new TalonFX(motorID);
   public double baseAngle = 0;
+  double lastPow = 0;
 
   public DigitalInput input = new DigitalInput(DigitalInputID);
 
@@ -62,6 +63,11 @@ public class Parallelogram extends SubsystemBase {
   public double getAngle(){ return (motor.getSelectedSensorPosition() / pulsePerAngle) - baseAngle; }
   public double getPow(){ return motor.getMotorOutputPercent(); }
   public double getValt(){ return motor.getMotorOutputVoltage(); }
+  public double getPowAcc(){ 
+    double returnn = Math.abs(getPow()-lastPow);
+    lastPow = getPow();
+    return returnn;
+  }
 
   
 
@@ -77,18 +83,19 @@ public class Parallelogram extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
       super.initSendable(builder);
 
-      builder.addBooleanProperty("isRetracted", this::isRetracted, null);
+      // builder.addBooleanProperty("isRetracted", this::isRetracted, null);
       builder.addDoubleProperty("Current Angle Velocity", this::getCAV, null);
       builder.addDoubleProperty("Angle", this::getAngle, null);
       builder.addBooleanProperty("Input", this::getInput, null);
       builder.addDoubleProperty("Pow", this::getPow, null);
       builder.addDoubleProperty("Valt", this::getValt, null);
       builder.addDoubleProperty("base angle", ()-> {return baseAngle;}, null);
+      builder.addDoubleProperty("power accelaration", this::getPowAcc, null);
       
 
-      SmartDashboard.putNumber("KP", KP);
-      SmartDashboard.putNumber("KI", KI);
-      SmartDashboard.putNumber("KD", KD);
+      // SmartDashboard.putNumber("KP", KP);
+      // SmartDashboard.putNumber("KI", KI);
+      // SmartDashboard.putNumber("KD", KD);
 
       SmartDashboard.putNumber("KS", KS);
       SmartDashboard.putNumber("KV", KV);

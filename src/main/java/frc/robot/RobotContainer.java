@@ -39,7 +39,7 @@ public class RobotContainer {
     controller.a().onTrue(new ParallelogramControl(parallelogram, controller));
     controller.b().onTrue(new ParallelogramSetAngle(parallelogram));
     controller.x().onTrue(new ParallelogramGoToAngle(parallelogram, 50));
-    controller.y().onTrue(new ParallelogramStartToEnd(parallelogram));
+    controller.y().onTrue(new ParallelogramGoToAngle(parallelogram, 1).andThen(new ParallelogramStartToEnd(parallelogram)));
     controller.rightBumper().onTrue(new InstantCommand(()-> parallelogram.stop(),parallelogram));
   }
 
