@@ -46,7 +46,6 @@ public class ParallelogramStartToEnd extends CommandBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-      // TODO Auto-generated method stub
       super.initSendable(builder);
       builder.addIntegerProperty("state", ()->{return state;}, null);
 
@@ -59,6 +58,6 @@ public class ParallelogramStartToEnd extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return parallelogram.getInput() || state == 4;
+    return parallelogram.getInput() || state == 4 || parallelogram.getAngle()==0;
   }
 }

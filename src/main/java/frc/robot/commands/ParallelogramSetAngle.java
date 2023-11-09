@@ -10,6 +10,7 @@ import frc.robot.subsystems.Parallelogram;
 
 public class ParallelogramSetAngle extends CommandBase {
   public Parallelogram parallelogram;
+  public double pow = 0.15;
 
   /** Creates a new ParallelogramSetAngle. */
   public ParallelogramSetAngle(Parallelogram parallelogram) {
@@ -27,7 +28,8 @@ public class ParallelogramSetAngle extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    parallelogram.setPow(-0.15);
+    parallelogram.setPow(-pow);
+    parallelogram.baseAngle = parallelogram.getAngle();
   }
 
   // Called once the command ends or is interrupted.
