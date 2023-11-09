@@ -23,7 +23,7 @@ import static frc.robot.Constants.ParallelogramConstants.*;
 public class Parallelogram extends SubsystemBase {
   
   public TalonFX motor = new TalonFX(motorID);
-  public double baseAngle = 9.673095703125;
+  public double baseAngle = 0;
 
   public DigitalInput input = new DigitalInput(DigitalInputID);
 

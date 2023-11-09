@@ -24,14 +24,17 @@ public class ParallelogramStartToEnd extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     this.parallelogram = parallelogram;
     addRequirements(parallelogram);
-    caculator = new ParallelogramCaculator(parallelogram);
     SmartDashboard.putData(this);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    parallelogram.setPow(pow);
+    caculator = new ParallelogramCaculator(parallelogram);
+    
+    while (parallelogram.getInput()){
+      parallelogram.setPow(pow);
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
