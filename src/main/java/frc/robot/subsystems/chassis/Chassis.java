@@ -101,14 +101,6 @@ public class Chassis extends SubsystemBase {
       field.setRobotPose(poseEstimator.getEstimatedPosition());
   }
 
-  public Translation2d getVelocity() {
-    SwerveModuleState[] states = new SwerveModuleState[4];
-    for (int i = 0; i < 4; i++) {
-        states[i] = new SwerveModuleState(modules[i].getVelocity(), modules[i].getAngle());
-    }
-    ChassisSpeeds speeds = KINEMATICS.toChassisSpeeds(states);
-    return new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
-}
 
 
   public Rotation2d getAngle() {

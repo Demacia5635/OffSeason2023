@@ -36,6 +36,7 @@ public class ArcPath extends CommandBase {
   Trapezoid trapezoid;
   Trapezoid testTrap;
   double velocity = 0;
+  
 
   /** Creates a new ArcPath.
    * @param chassis 
@@ -111,6 +112,7 @@ public class ArcPath extends CommandBase {
   @Override
   public void execute() {
     pose = chassis.getPose().getEstimatedPosition();
+    Translation2d translation2dVelocity = new Translation2d(chassis.getVelocity().vxMetersPerSecond, chassis.getVelocity().vyMetersPerSecond);
 
     
     if(segments[segmentIndex].distancePassed(pose.getTranslation()) >= segments[segmentIndex].getLength() - distanceOffset){
@@ -122,7 +124,7 @@ public class ArcPath extends CommandBase {
     
 
     
-    velocity = trapezoid.calculate(totalLeft - segments[segmentIndex].distancePassed(pose.getTranslation()), chassis.getVelocity().getNorm(), 0);
+    velocity = trapezoid.calculate(totalLeft - segments[segmentIndex].distancePassed(pose.getTranslation()), translation2dVelocity.getNorm(), 0);
 
     Translation2d velVector = segments[segmentIndex].calc(pose.getTranslation(), velocity);
     ChassisSpeeds speed = new ChassisSpeeds(velVector.getX(), velVector.getY(), 0);
