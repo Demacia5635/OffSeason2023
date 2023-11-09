@@ -6,6 +6,7 @@ package frc.robot;
 
 // import frc.robot.Constants.OperatorConstants;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ParallelogramControl;
@@ -37,8 +38,9 @@ public class RobotContainer {
   private void configureBindings() {
     controller.a().onTrue(new ParallelogramControl(parallelogram, controller));
     controller.b().onTrue(new ParallelogramSetAngle(parallelogram));
-    controller.x().onTrue(new ParallelogramGoToAngle(parallelogram, 0));
+    controller.x().onTrue(new ParallelogramGoToAngle(parallelogram, 50));
     controller.y().onTrue(new ParallelogramStartToEnd(parallelogram));
+    controller.rightBumper().onTrue(new InstantCommand(()-> parallelogram.stop(),parallelogram));
   }
 
   /**
@@ -49,6 +51,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     // return null;
-    return new ParallelogramSetAngle(parallelogram)/* .andThen(new ParallelogramStartToEnd(parallelogram))*/;
+    return new ParallelogramSetAngle(parallelogram);
   }
 }
