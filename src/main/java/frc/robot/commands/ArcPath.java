@@ -63,6 +63,7 @@ public class ArcPath extends CommandBase {
 
     //calculate the total length of the path
     pathLength = 0;
+
     for(int i = 0; i < corners.length; i++)
     {
       pathLength += corners[i].getAtoCurvelength() + corners[i].getCurveLength();
@@ -77,7 +78,7 @@ public class ArcPath extends CommandBase {
     segments = new Segment[points.length + 1];
     
 
-
+    //segments[0] = Leg(points[0], );
     for(int i = 0,j = 0; i < corners.length; i +=1, j+=2)
     {
       segments[j] = corners[i].getAtoCurveLeg();
