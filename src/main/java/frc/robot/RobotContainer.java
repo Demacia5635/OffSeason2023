@@ -9,15 +9,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.ParallelogramControl;
-import frc.robot.commands.ParallelogramGoToAngle;
-import frc.robot.commands.ParallelogramSetAngle;
-import frc.robot.commands.ParallelogramStartToEnd;
-import frc.robot.subsystems.Parallelogram;
+import frc.robot.commands.ArmControl;
+import frc.robot.commands.ArmGoToAngle;
+import frc.robot.commands.ArmGoBack;
+import frc.robot.commands.ArmStartToEnd;
+import frc.robot.subsystems.Arm;
 
 
 public class RobotContainer {
-  public Parallelogram parallelogram = new Parallelogram();
+  public Arm arm = new Arm();
   public CommandXboxController controller = new CommandXboxController(0);
   
   public RobotContainer() {
@@ -34,15 +34,15 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    controller.a().onTrue(new ParallelogramControl(parallelogram, controller));
-    controller.b().onTrue(new ParallelogramSetAngle(parallelogram));
-    controller.x().onTrue(new ParallelogramGoToAngle(parallelogram, 50));
-    controller.y().onTrue(new ParallelogramStartToEnd(parallelogram));
+    controller.a().onTrue(new ArmControl(arm, controller));
+    controller.b().onTrue(new ArmGoBack(arm));
+    controller.x().onTrue(new ArmGoToAngle(arm, 50));
+    controller.y().onTrue(new ArmStartToEnd(arm));
 
     // in case start to end does not work
-    // controller.y().onTrue(new ParallelogramSetAngle(parallelogram).andThen(new ParallelogramGoToAngle(parallelogram, 70).andThen(new ParallelogramSetAngle(parallelogram))));
+    // controller.y().onTrue(new ArmSetAngle(arm).andThen(new ArmGoToAngle(arm, 70).andThen(new ArmSetAngle(arm))));
 
-    controller.rightTrigger().onTrue(new InstantCommand(()-> parallelogram.stop(),parallelogram));
+    controller.rightTrigger().onTrue(new InstantCommand(()-> arm.stop(),arm));
   }
 
   /**
@@ -52,6 +52,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new ParallelogramSetAngle(parallelogram);
+    return new ArmGoBack(arm);
   }
 }

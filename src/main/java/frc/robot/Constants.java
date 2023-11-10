@@ -13,7 +13,7 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static class ParallelogramConstants{
+  public static class ArmConstants{
     public final static int motorID = 30;
     public final static int DigitalInputID = 0;
 

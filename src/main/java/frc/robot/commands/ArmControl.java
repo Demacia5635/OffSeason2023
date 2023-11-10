@@ -4,43 +4,42 @@
 
 package frc.robot.commands;
 
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Parallelogram;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.Arm;
 
-public class ParallelogramSetAngle extends CommandBase {
-  public Parallelogram parallelogram;
-  public double pow = 0.15;
+public class ArmControl extends CommandBase {
 
-  /** Creates a new ParallelogramSetAngle. */
-  public ParallelogramSetAngle(Parallelogram parallelogram) {
+  public Arm arm;
+  public CommandXboxController controller;
+
+  /** Creates a new Parrelogram. */
+  public ArmControl(Arm arm, CommandXboxController controller) {
+    this.arm = arm;
+    this.controller = controller;
+    addRequirements(arm);
+    SmartDashboard.putData(this);
     // Use addRequirements() here to declare subsystem dependencies.
-    this.parallelogram = parallelogram;
-    addRequirements(parallelogram);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    // parallelogram.setPow(0.2);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    parallelogram.setPow(-pow);
-    parallelogram.baseAngle = parallelogram.getAngle();
+    arm.setPow(-1*(controller.getLeftY()*0.3));
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    parallelogram.stop();
-  }
+public void end(boolean interrupted) { arm.stop(); }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return parallelogram.getInput();
+    return false;
   }
 }

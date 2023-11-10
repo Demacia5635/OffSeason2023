@@ -15,12 +15,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import static frc.robot.Constants.ParallelogramConstants.*;
+import static frc.robot.Constants.ArmConstants.*;
 
 
 
 
-public class Parallelogram extends SubsystemBase {
+public class Arm extends SubsystemBase {
   
   public TalonFX motor = new TalonFX(motorID);
   public double baseAngle = 0;
@@ -29,7 +29,7 @@ public class Parallelogram extends SubsystemBase {
   public DigitalInput input = new DigitalInput(DigitalInputID);
 
   /** Creates a new Parraller. */
-  public Parallelogram() {
+  public Arm() {
     motor.config_kP(0,KP);
     motor.config_kP(0,KI);
     motor.config_kP(0,KD);
@@ -45,19 +45,19 @@ public class Parallelogram extends SubsystemBase {
     setPow(0);
   }
 
-  public double FF(double AV, double angle, double CAV){
+  public double FF(double anglerVel, double angle, double currentAnglerVel){
     double rad = Math.toRadians(angle);
-    double P = KS + AV * KV + (AV-CAV) * KA + Kalpha * rad + Ksin * Math.sin(rad) + Kcos*Math.cos(rad) + Kcossin * Math.cos(rad) * Math.sin(rad);
+    double P = KS + anglerVel * KV + (anglerVel-currentAnglerVel) * KA + Kalpha * rad + Ksin * Math.sin(rad) + Kcos*Math.cos(rad) + Kcossin * Math.cos(rad) * Math.sin(rad);
     return P;
   }
 
-  public void setVel(double AV){
-    motor.set(ControlMode.Velocity, AV, DemandType.ArbitraryFeedForward, FF(getCAV(),getAngle(),AV));
+  public void setVel(double anglerVel){
+    motor.set(ControlMode.Velocity, anglerVel, DemandType.ArbitraryFeedForward, FF(getCurrentAnglerVel(),getAngle(),anglerVel));
   }
   
-  // if false will stop the command; false when colide with the parallelogram;
+  // if false will stop the command; false when colide with the arm;
   public boolean getInput(){ return !input.get(); }
-  public double getCAV(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle; }
+  public double getCurrentAnglerVel(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle; }
   public double getAngle(){ return (motor.getSelectedSensorPosition() / pulsePerAngle) - (baseAngle / pulsePerAngle); }
   public double getPow(){ return motor.getMotorOutputPercent(); }
   public double getValt(){ return motor.getMotorOutputVoltage(); }
@@ -81,7 +81,7 @@ public class Parallelogram extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
       super.initSendable(builder);
 
-      builder.addDoubleProperty("Current Angle Velocity", this::getCAV, null);
+      builder.addDoubleProperty("Current Angle Velocity", this::getCurrentAnglerVel, null);
       builder.addDoubleProperty("Angle", this::getAngle, null);
       builder.addBooleanProperty("Input", this::getInput, null);
       builder.addDoubleProperty("Pow", this::getPow, null);

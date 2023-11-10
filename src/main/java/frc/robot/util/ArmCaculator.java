@@ -4,35 +4,35 @@
 
 package frc.robot.util;
 
-import frc.robot.subsystems.Parallelogram;
+import frc.robot.subsystems.Arm;
 
 /** Add your docs here. */
-public class ParallelogramCaculator {
-    public Parallelogram parallelogram;
+public class ArmCaculator {
+    public Arm arm;
     public double angle;
     private boolean isForward = true;
 
-    public ParallelogramCaculator(Parallelogram parallelogram){
-        this.parallelogram = parallelogram;
-        angle = parallelogram.getAngle();
+    public ArmCaculator(Arm arm){
+        this.arm = arm;
+        angle = arm.getAngle();
     }
 
-    public int parallelogramStartToEnd(double startAngle, double endAngle, double switchAngle, double pow){
+    public int armStartToEnd(double startAngle, double endAngle, double switchAngle, double pow){
         if (!(Math.abs(endAngle-angle)<2) && isForward){
             if ((startAngle < angle && angle < switchAngle)|| angle == startAngle){
-                parallelogram.setPow(-pow);
+                arm.setPow(-pow);
                 return 0;
             } else if ((endAngle > angle && angle > switchAngle)|| angle == switchAngle){
-                parallelogram.setPow(-pow);
+                arm.setPow(-pow);
                 return 1;
             }
         } else {
             isForward = false;
             if ((endAngle > angle && angle > switchAngle)|| angle == endAngle){
-                parallelogram.setPow(pow);
+                arm.setPow(pow);
                 return 2;
             } else if ((startAngle < angle && angle < switchAngle)|| angle == switchAngle){
-                parallelogram.setPow(pow);
+                arm.setPow(pow);
                 return 3;
             }
         }

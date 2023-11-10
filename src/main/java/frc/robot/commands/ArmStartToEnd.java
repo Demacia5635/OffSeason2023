@@ -7,45 +7,45 @@ package frc.robot.commands;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Parallelogram;
-import frc.robot.util.ParallelogramCaculator;
+import frc.robot.subsystems.Arm;
+import frc.robot.util.ArmCaculator;
 
-public class ParallelogramStartToEnd extends CommandBase {
-  public Parallelogram parallelogram;
+public class ArmStartToEnd extends CommandBase {
+  public Arm arm;
   public double startAngle = 0;
   public double endAngle = 70;
   public double switchAngle = 40;
   public double pow = 0.15;
-  public ParallelogramCaculator caculator;
+  public ArmCaculator caculator;
   public int state;
   boolean isStart = false;
 
-  /** Creates a new ParallelogramBackAndForth. */
-  public ParallelogramStartToEnd(Parallelogram parallelogram) {
+  /** Creates a new ArmBackAndForth. */
+  public ArmStartToEnd(Arm arm) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.parallelogram = parallelogram;
-    addRequirements(parallelogram);
+    this.arm = arm;
+    addRequirements(arm);
     SmartDashboard.putData(this);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    caculator = new ParallelogramCaculator(parallelogram);
+    caculator = new ArmCaculator(arm);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    state = caculator.parallelogramStartToEnd(startAngle, endAngle, switchAngle, pow);
-    if (parallelogram.getAngle()>1){
+    state = caculator.armStartToEnd(startAngle, endAngle, switchAngle, pow);
+    if (arm.getAngle()>1){
       isStart = true;
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) { parallelogram.stop(); }
+  public void end(boolean interrupted) { arm.stop(); }
 
   @Override
   public void initSendable(SendableBuilder builder) {
@@ -61,6 +61,6 @@ public class ParallelogramStartToEnd extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (parallelogram.getInput()&&isStart) || state == 4 || (((Math.abs(parallelogram.getAngle()))<0.5)&&isStart);
+    return (arm.getInput()&&isStart) || state == 4 || (((Math.abs(arm.getAngle()))<0.5)&&isStart);
   }
 }
