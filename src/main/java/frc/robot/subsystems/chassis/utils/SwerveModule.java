@@ -22,8 +22,8 @@ public class SwerveModule implements Sendable {
     private final TalonFX angleMotor;
     private final CANCoder absoluteEncoder;
 
-    // private final SimpleMotorFeedforward moveFF;
-    // private final SimpleMotorFeedforward angleFF;
+    private final SimpleMotorFeedforward moveFF;
+    private final SimpleMotorFeedforward angleFF;
 
     private double angleOffset;
 
@@ -33,8 +33,8 @@ public class SwerveModule implements Sendable {
         absoluteEncoder = new CANCoder(constants.absoluteEncoderId);
         angleOffset = constants.steerOffset;
 
-        // moveFF = new SimpleMotorFeedforward(constants.kS, constants.kV, constants.kA);
-        // angleFF = new SimpleMotorFeedforward(constants.kS, constants.kV, constants.kA);
+        moveFF = new SimpleMotorFeedforward(constants.kS, constants.kV, constants.kA);
+        angleFF = new SimpleMotorFeedforward(constants.kS, constants.kV, constants.kA);
     }
 
     @Override
@@ -44,7 +44,6 @@ public class SwerveModule implements Sendable {
 
     public void calibrateOffset() {
         angleOffset += absoluteEncoder.getAbsolutePosition();
-        // angleMotor.setSelectedSensorPosition(angleOffset * PULSES_PER_DEGREE);
     }
 
     public void setMovePID(double kP, double kI, double kD) {
@@ -68,7 +67,7 @@ public class SwerveModule implements Sendable {
     }
 
     public void setVelocity(double v) {
-        // double volts = moveFF.calculate(getVelocity(), v, Constants.CYCLE_DT);
+        double volts = moveFF.calculate(getVelocity(), v);
         moveMotor.set(ControlMode.Velocity, v * PULSES_PER_METER / 10);
     }
 
@@ -82,8 +81,8 @@ public class SwerveModule implements Sendable {
     }
 
     public void setAngle(Rotation2d angle) {
-        // double volts = angleFF.calculate(ANGULAR_VELOCITY, ANGULAR_ACCELERATION);
-        angleMotor.set(ControlMode.Position, calculateTarget(angle.getDegrees()));
+        double volts = angleFF.calculate(ANGULAR_VELOCITY, ANGULAR_ACCELERATION);
+        angleMotor.set(ControlMode.MotionMagic, calculateTarget(angle.getDegrees()), DemandType.ArbitraryFeedForward, volts / 12);
     }
 
     public SwerveModuleState getState() {

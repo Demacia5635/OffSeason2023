@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -15,11 +16,19 @@ public class RobotContainer {
   Chassis chassis = new Chassis();
   Drive drive;
   SetWheelAngles angles;
+  LedController ledController = new LedController(Constants.LedConstants.ID, Constants.LedConstants.LED_COUNT);
 
   public RobotContainer() {
     drive = new Drive(chassis, controller);
     angles = new SetWheelAngles(chassis);
     chassis.setDefaultCommand(drive);
+    
+    ledController.changeColor(new Color(29, 0, 51));
+    configureBindings();
+  }
+
+  private void configureBindings() {
+    controller.a().onTrue(new InstantCommand(() -> ledController.toggleEnabled()));
   }
 
   public Command getAutonomousCommand() {
