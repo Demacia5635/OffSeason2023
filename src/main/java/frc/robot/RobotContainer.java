@@ -22,8 +22,6 @@ public class RobotContainer {
   
   public RobotContainer() {
     configureBindings();
-
-    // parallelogram.setDefaultCommand(drive);
   }
 
   /**
@@ -39,8 +37,12 @@ public class RobotContainer {
     controller.a().onTrue(new ParallelogramControl(parallelogram, controller));
     controller.b().onTrue(new ParallelogramSetAngle(parallelogram));
     controller.x().onTrue(new ParallelogramGoToAngle(parallelogram, 50));
-    controller.y().onTrue(new ParallelogramGoToAngle(parallelogram, 1).andThen(new ParallelogramStartToEnd(parallelogram)));
-    controller.rightBumper().onTrue(new InstantCommand(()-> parallelogram.stop(),parallelogram));
+    controller.y().onTrue(new ParallelogramStartToEnd(parallelogram));
+
+    // in case start to end does not work
+    // controller.y().onTrue(new ParallelogramSetAngle(parallelogram).andThen(new ParallelogramGoToAngle(parallelogram, 70).andThen(new ParallelogramSetAngle(parallelogram))));
+
+    controller.rightTrigger().onTrue(new InstantCommand(()-> parallelogram.stop(),parallelogram));
   }
 
   /**
@@ -50,7 +52,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    // return null;
     return new ParallelogramSetAngle(parallelogram);
   }
 }

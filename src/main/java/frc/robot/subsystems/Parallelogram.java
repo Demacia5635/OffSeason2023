@@ -54,13 +54,11 @@ public class Parallelogram extends SubsystemBase {
   public void setVel(double AV){
     motor.set(ControlMode.Velocity, AV, DemandType.ArbitraryFeedForward, FF(getCAV(),getAngle(),AV));
   }
-
-  public boolean getInput(){ return !input.get(); }// if false will stop the command; false when colide with the parallelogram;
-  public boolean isRetracted(){return false;}
-  public void test(double angle){baseAngle += angle;}
-
+  
+  // if false will stop the command; false when colide with the parallelogram;
+  public boolean getInput(){ return !input.get(); }
   public double getCAV(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle; }
-  public double getAngle(){ return (motor.getSelectedSensorPosition() / pulsePerAngle) - baseAngle; }
+  public double getAngle(){ return (motor.getSelectedSensorPosition() / pulsePerAngle) - (baseAngle / pulsePerAngle); }
   public double getPow(){ return motor.getMotorOutputPercent(); }
   public double getValt(){ return motor.getMotorOutputVoltage(); }
   public double getPowAcc(){ 
@@ -83,13 +81,11 @@ public class Parallelogram extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
       super.initSendable(builder);
 
-      // builder.addBooleanProperty("isRetracted", this::isRetracted, null);
       builder.addDoubleProperty("Current Angle Velocity", this::getCAV, null);
       builder.addDoubleProperty("Angle", this::getAngle, null);
       builder.addBooleanProperty("Input", this::getInput, null);
       builder.addDoubleProperty("Pow", this::getPow, null);
       builder.addDoubleProperty("Valt", this::getValt, null);
-      builder.addDoubleProperty("base angle", ()-> {return baseAngle;}, null);
       builder.addDoubleProperty("power accelaration", this::getPowAcc, null);
       
 
@@ -97,13 +93,13 @@ public class Parallelogram extends SubsystemBase {
       // SmartDashboard.putNumber("KI", KI);
       // SmartDashboard.putNumber("KD", KD);
 
-      SmartDashboard.putNumber("KS", KS);
-      SmartDashboard.putNumber("KV", KV);
-      SmartDashboard.putNumber("KA", KA);
-      SmartDashboard.putNumber("Ksin", Ksin);
-      SmartDashboard.putNumber("Kcos", Kcos);
-      SmartDashboard.putNumber("Kcossin", Kcossin);
-      SmartDashboard.putNumber("Kalpha", Kalpha);
+      // SmartDashboard.putNumber("KS", KS);
+      // SmartDashboard.putNumber("KV", KV);
+      // SmartDashboard.putNumber("KA", KA);
+      // SmartDashboard.putNumber("Ksin", Ksin);
+      // SmartDashboard.putNumber("Kcos", Kcos);
+      // SmartDashboard.putNumber("Kcossin", Kcossin);
+      // SmartDashboard.putNumber("Kalpha", Kalpha);
 
       InstantCommand cmdBrake = new InstantCommand(()-> brake(), this);
       InstantCommand cmdCoast = new InstantCommand(()-> coast(), this);

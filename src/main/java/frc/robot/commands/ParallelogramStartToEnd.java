@@ -13,7 +13,7 @@ import frc.robot.util.ParallelogramCaculator;
 public class ParallelogramStartToEnd extends CommandBase {
   public Parallelogram parallelogram;
   public double startAngle = 0;
-  public double endAngle = 68;
+  public double endAngle = 70;
   public double switchAngle = 40;
   public double pow = 0.15;
   public ParallelogramCaculator caculator;
@@ -37,7 +37,7 @@ public class ParallelogramStartToEnd extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    state = caculator.ParallelogramStartToEnd(startAngle, endAngle, switchAngle, pow);
+    state = caculator.parallelogramStartToEnd(startAngle, endAngle, switchAngle, pow);
     if (parallelogram.getAngle()>1){
       isStart = true;
     }
