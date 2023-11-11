@@ -50,7 +50,7 @@ public class ArcPath extends CommandBase {
   public ArcPath(Chassis chassis,Translation2d[] points, double[] radius, double maxVel, double maxAcc) {
 
 
-    this.corners = new RoundedPoint[points.length - 2];
+    corners = new RoundedPoint[points.length - 2];
     for(int i = 0; i < points.length - 2; i++)
     {
       corners[i] = new RoundedPoint(radius[i], points[i], points[i+1], points[i+2]);
@@ -64,23 +64,22 @@ public class ArcPath extends CommandBase {
 
     //calculate the total length of the path
 
-    if(points.length <= 3)
-      segments = new Segment[points.length];
-    else
-      segments = new Segment[points.length + 1];
-    
+    segments = new Segment[1 + ((points.length - 2) * 2)];
+
+   
 
     segments[0] = corners[0].getAtoCurveLeg();
-    for(int i = 0,j = 1; i < corners.length - 1; i +=1, j+=2)
+    int segmentIndexCreator = 1;
+    for(int i = 0; i < corners.length - 1; i +=1)
     {
-      segments[j] = corners[i].getArc(); 
-      segments[j+1] = new Leg(corners[i].getCurveEnd(), corners[i+1].getCurveStart());
+      segments[segmentIndexCreator] = corners[i].getArc(); 
+      segments[segmentIndexCreator+1] = new Leg(corners[i].getCurveEnd(), corners[i+1].getCurveStart());
+      segmentIndexCreator+=2;
     }
     segments[segments.length - 2] = corners[corners.length - 1].getArc();
     segments[segments.length - 1] = corners[corners.length - 1].getCtoCurveLeg();
 
     System.out.println("Segment length : " + segments.length);
-    segments[segments.length - 1] = corners[corners.length - 1].getCtoCurveLeg();
 
     for (Segment s : segments) {
       pathLength += s.getLength();
