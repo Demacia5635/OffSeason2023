@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
 import frc.robot.util.ArmCaculator;
 
-public class ArmStartToEnd extends CommandBase {
+public class ArmStateCaculator extends CommandBase {
   public Arm arm;
   public double startAngle = 0;
   public double endAngle = 70;
@@ -21,7 +21,7 @@ public class ArmStartToEnd extends CommandBase {
   boolean isStart = false;
 
   /** Creates a new ArmBackAndForth. */
-  public ArmStartToEnd(Arm arm) {
+  public ArmStateCaculator(Arm arm) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.arm = arm;
     addRequirements(arm);
@@ -37,7 +37,8 @@ public class ArmStartToEnd extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    state = caculator.armStartToEnd(startAngle, endAngle, switchAngle, pow);
+    state = caculator.armStartToEnd(startAngle, endAngle, switchAngle);
+
     if (arm.getAngle()>1){
       isStart = true;
     }

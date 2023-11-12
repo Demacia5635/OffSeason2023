@@ -30,9 +30,9 @@ public class Arm extends SubsystemBase {
 
   /** Creates a new Parraller. */
   public Arm() {
-    motor.config_kP(0,KP);
-    motor.config_kP(0,KI);
-    motor.config_kP(0,KD);
+    // motor.config_kP(0,KP);
+    // motor.config_kP(0,KI);
+    // motor.config_kP(0,KD);
     
     SmartDashboard.putData(this);
   }
@@ -47,7 +47,8 @@ public class Arm extends SubsystemBase {
 
   public double FF(double anglerVel, double angle, double currentAnglerVel){
     double rad = Math.toRadians(angle);
-    double P = KS + anglerVel * KV + (anglerVel-currentAnglerVel) * KA + Kalpha * rad + Ksin * Math.sin(rad) + Kcos*Math.cos(rad) + Kcossin * Math.cos(rad) * Math.sin(rad);
+    double P = (KS + anglerVel * KV + (anglerVel-currentAnglerVel) * KA + Kalpha * rad + 
+    Ksin * Math.sin(rad) + Kcos*Math.cos(rad) + Kcossin * Math.cos(rad) * Math.sin(rad));
     return P;
   }
 

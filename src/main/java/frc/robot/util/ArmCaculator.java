@@ -17,22 +17,18 @@ public class ArmCaculator {
         angle = arm.getAngle();
     }
 
-    public int armStartToEnd(double startAngle, double endAngle, double switchAngle, double pow){
+    public int armStartToEnd(double startAngle, double endAngle, double switchAngle){
         if (!(Math.abs(endAngle-angle)<2) && isForward){
             if ((startAngle < angle && angle < switchAngle)|| angle == startAngle){
-                arm.setPow(-pow);
                 return 0;
             } else if ((endAngle > angle && angle > switchAngle)|| angle == switchAngle){
-                arm.setPow(-pow);
                 return 1;
             }
         } else {
             isForward = false;
             if ((endAngle > angle && angle > switchAngle)|| angle == endAngle){
-                arm.setPow(pow);
                 return 2;
             } else if ((startAngle < angle && angle < switchAngle)|| angle == switchAngle){
-                arm.setPow(pow);
                 return 3;
             }
         }
