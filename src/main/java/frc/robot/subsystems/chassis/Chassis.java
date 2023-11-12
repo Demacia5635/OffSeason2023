@@ -1,17 +1,18 @@
 package frc.robot.subsystems.chassis;
 
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.chassis.utils.SwerveModule;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.utils.SwerveDrivePoseEstimator;
 
 import static frc.robot.Constants.ChassisConstants.*;
 
@@ -25,6 +26,7 @@ public class Chassis extends SubsystemBase {
 
   private final SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field;
+  private final Vision vision;
 
   public Chassis() {
     modules = new SwerveModule[] {
@@ -42,6 +44,8 @@ public class Chassis extends SubsystemBase {
 
     poseEstimator = new SwerveDrivePoseEstimator(KINEMATICS, getAngle(), getModulePositions(), new Pose2d());
     field = new Field2d();
+    vision = new Vision(this, poseEstimator);
+    vision.getName();
     SmartDashboard.putData(field);
     SmartDashboard.putData(this);
     SmartDashboard.putData("m1 offset", modules[0]);
@@ -78,8 +82,9 @@ public class Chassis extends SubsystemBase {
     setModuleStates(states);
   }
 
-  public ChassisSpeeds getVelocity() {
-    return KINEMATICS.toChassisSpeeds(getModuleStates());
+  public Translation2d getVelocity() {
+    ChassisSpeeds speeds = KINEMATICS.toChassisSpeeds(getModuleStates());
+    return new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
   }
 
   public void resetWheels() {
