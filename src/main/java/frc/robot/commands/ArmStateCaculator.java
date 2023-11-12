@@ -15,7 +15,6 @@ public class ArmStateCaculator extends CommandBase {
   public double startAngle = 0;
   public double endAngle = 70;
   public double switchAngle = 40;
-  public double pow = 0.15;
   public ArmCaculator caculator;
   public int state;
   boolean isStart = false;
@@ -56,7 +55,6 @@ public class ArmStateCaculator extends CommandBase {
       SmartDashboard.putNumber("Start Angle", startAngle);
       SmartDashboard.putNumber("End Angle", endAngle);
       SmartDashboard.putNumber("Switch Angle", switchAngle);
-      SmartDashboard.putNumber("Wanted Power", pow);
   }
 
   // Returns true when the command should end.

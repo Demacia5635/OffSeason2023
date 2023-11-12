@@ -38,13 +38,11 @@ public class RobotContainer {
     controller.a().onTrue(new ArmControl(arm, controller));
     controller.b().onTrue(new ArmGoBack(arm));
     controller.x().onTrue(new ArmGoToAngle(arm, 50));
+
     // run the caculator that get the state the arm, and run also a command that move the arm to 70 and then back to 0 degrees
-    controller.y().onTrue(new ParallelCommandGroup(new ArmGoToAngle(arm, 70).andThen(new ArmGoBack(arm)), new ArmStateCaculator(arm)));
+    controller.y().onTrue(new ArmGoBack(arm).andThen(new ParallelCommandGroup( new ArmStateCaculator(arm), new ArmGoToAngle(arm, 70).andThen(new ArmGoBack(arm)))));
 
-    // in case start to end does not work
-    // controller.y().onTrue(new ArmSetAngle(arm).andThen(new ArmGoToAngle(arm, 70).andThen(new ArmSetAngle(arm))));
-
-    controller.rightTrigger().onTrue(new InstantCommand(()-> arm.stop(),arm));
+    controller.rightBumper().onTrue(new InstantCommand(()-> arm.stop(),arm).ignoringDisable(true));
   }
 
   /**
