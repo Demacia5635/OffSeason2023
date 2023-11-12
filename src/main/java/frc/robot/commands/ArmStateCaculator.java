@@ -8,16 +8,15 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
-import frc.robot.util.ArmCaculator;
 
 public class ArmStateCaculator extends CommandBase {
   public Arm arm;
   public double startAngle = 0;
   public double endAngle = 70;
   public double switchAngle = 40;
-  public ArmCaculator caculator;
   public int state;
   boolean isStart = false;
+  boolean isForward;
 
   /** Creates a new ArmBackAndForth. */
   public ArmStateCaculator(Arm arm) {
@@ -30,13 +29,27 @@ public class ArmStateCaculator extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    caculator = new ArmCaculator(arm);
+    isForward = true;
+    state = 4;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    state = caculator.armStartToEnd(startAngle, endAngle, switchAngle);
+    if (!(Math.abs(endAngle-arm.getAngle())<2) && isForward){
+      if (startAngle <= arm.getAngle() && arm.getAngle() < switchAngle){
+          state = 0;
+      } else if (endAngle > arm.getAngle() && arm.getAngle() >= switchAngle){
+          state = 1;
+      }
+    } else {
+      isForward = false;
+      if (endAngle >= arm.getAngle() && arm.getAngle() > switchAngle){
+          state = 2;
+      } else if (startAngle < arm.getAngle() && arm.getAngle() <= switchAngle){
+          state = 3;
+      }
+    }
 
     if (arm.getAngle()>1){
       isStart = true;
