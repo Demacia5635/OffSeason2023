@@ -11,8 +11,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
 import frc.robot.Constants.ChassisConstants.SwerveModuleConstants;
 
 import static frc.robot.Constants.ChassisConstants.*;
@@ -67,8 +65,8 @@ public class SwerveModule implements Sendable {
     }
 
     public void setVelocity(double v) {
-        double volts = moveFF.calculate(getVelocity(), v);
-        moveMotor.set(ControlMode.Velocity, v * PULSES_PER_METER / 10);
+        double volts = moveFF.calculate(v, ACCELERATION);
+        moveMotor.set(ControlMode.Velocity, v * PULSES_PER_METER / 10, DemandType.ArbitraryFeedForward, volts / 12);
     }
 
     public void setPower(double m, double s) {
