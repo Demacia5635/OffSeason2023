@@ -40,19 +40,23 @@ public class Arc extends Segment{
         Translation2d relativePos = pos.minus(p2);
         double dFromCenter = relativePos.getNorm();
 
-        Rotation2d tAngle = new Rotation2d(velocity / radius);
-      System.out.println("tAngle : " + tAngle);
+        Rotation2d tAngle = new Rotation2d((velocity / radius) * Math.signum(angle.getDegrees()));
+        System.out.println("tAngle : " + tAngle);
 
 
-        Translation2d fixVector = relativePos.times(-1).div(relativePos.getNorm()).times(relativePos.getNorm() - radius).times(0.5/*kP*/);
+        //Translation2d fixVector = relativePos.times(-1).div(relativePos.getNorm()).times(relativePos.getNorm() - radius).times(0.5/*kP*/);
 
+        //tangent angle to arc, determined by the robot's position
         Rotation2d tanAngle = relativePos.getAngle().plus(new Rotation2d(Math.toRadians(90 * Math.signum(angle.getDegrees()))));
+        //fix angle = turn angle, multiplied by a ratio.
+        //bigger ratio - will turn more towards the center
+        //smaller ratio - will turn less towards the center
         Rotation2d fixAngle = tAngle.times(dFromCenter / radius);
 
 
 
         
-      return new Translation2d(velocity, tanAngle.minus(fixAngle));
+      return new Translation2d(velocity, tanAngle.plus(fixAngle));
     }
 
     @Override
