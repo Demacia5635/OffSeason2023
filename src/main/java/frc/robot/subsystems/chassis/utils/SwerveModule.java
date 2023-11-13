@@ -9,18 +9,21 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.ChassisConstants.SwerveModuleConstants;
 
 import static frc.robot.Constants.ChassisConstants.*;
 
-public class SwerveModule {
+public class SwerveModule implements Sendable {
     private final TalonFX moveMotor;
     private final TalonFX angleMotor;
     private final CANCoder absoluteEncoder;
 
-    private final SimpleMotorFeedforward moveFF;
-    private final SimpleMotorFeedforward angleFF;
+    // private final SimpleMotorFeedforward moveFF;
+    // private final SimpleMotorFeedforward angleFF;
 
     private double angleOffset;
 
@@ -28,25 +31,32 @@ public class SwerveModule {
         moveMotor = new TalonFX(constants.moveMotorId);
         angleMotor = new TalonFX(constants.angleMotorId);
         absoluteEncoder = new CANCoder(constants.absoluteEncoderId);
+        angleOffset = constants.steerOffset;
 
-        moveFF = new SimpleMotorFeedforward(constants.kS, constants.kV, constants.kA);
-        angleFF = new SimpleMotorFeedforward(constants.kS, constants.kV, constants.kA);
+        // moveFF = new SimpleMotorFeedforward(constants.kS, constants.kV, constants.kA);
+        // angleFF = new SimpleMotorFeedforward(constants.kS, constants.kV, constants.kA);
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.addDoubleProperty("offset", () -> absoluteEncoder.getAbsolutePosition(), null);
     }
 
     public void calibrateOffset() {
-        angleOffset = absoluteEncoder.getAbsolutePosition();
+        angleOffset += absoluteEncoder.getAbsolutePosition();
+        // angleMotor.setSelectedSensorPosition(angleOffset * PULSES_PER_DEGREE);
     }
 
     public void setMovePID(double kP, double kI, double kD) {
         moveMotor.config_kP(0, kP);
-        moveMotor.config_kP(0, kI);
-        moveMotor.config_kP(0, kD);
+        moveMotor.config_kI(0, kI);
+        moveMotor.config_kD(0, kD);
     }
 
     public void setAnglePID(double kP, double kI, double kD) {
         angleMotor.config_kP(0, kP);
-        angleMotor.config_kP(0, kI);
-        angleMotor.config_kP(0, kD);
+        angleMotor.config_kI(0, kI);
+        angleMotor.config_kD(0, kD);
     }
 
     public double getVelocity() {
@@ -54,17 +64,17 @@ public class SwerveModule {
     }
 
     public void stop() {
-        setPower(0);
+        setPower(0, 0);
     }
 
     public void setVelocity(double v) {
-        double volts = moveFF.calculate(getVelocity(), v, Constants.CYCLE_DT);
-        moveMotor.set(ControlMode.Velocity, v * PULSES_PER_METER / 10, DemandType.ArbitraryFeedForward, volts / 12);
+        // double volts = moveFF.calculate(getVelocity(), v, Constants.CYCLE_DT);
+        moveMotor.set(ControlMode.Velocity, v * PULSES_PER_METER / 10);
     }
 
-    public void setPower(double power) {
-        moveMotor.set(ControlMode.PercentOutput, power);
-        angleMotor.set(ControlMode.PercentOutput, power);
+    public void setPower(double m, double s) {
+        moveMotor.set(ControlMode.PercentOutput, m);
+        angleMotor.set(ControlMode.PercentOutput, s);
     }
 
     public Rotation2d getAngle() {
@@ -72,8 +82,8 @@ public class SwerveModule {
     }
 
     public void setAngle(Rotation2d angle) {
-        double volts = angleFF.calculate(ANGULAR_VELOCITY, ANGULAR_ACCELERATION);
-        moveMotor.set(ControlMode.MotionMagic, calculateTarget(angle.getDegrees()), DemandType.ArbitraryFeedForward, volts);
+        // double volts = angleFF.calculate(ANGULAR_VELOCITY, ANGULAR_ACCELERATION);
+        angleMotor.set(ControlMode.Position, calculateTarget(angle.getDegrees()));
     }
 
     public SwerveModuleState getState() {
@@ -83,6 +93,10 @@ public class SwerveModule {
     public void setState(SwerveModuleState state) {
         setVelocity(state.speedMetersPerSecond);
         setAngle(state.angle);
+    }
+
+    public void setInverted(boolean invert) {
+        moveMotor.setInverted(invert);
     }
 
     public SwerveModulePosition getModulePosition() {

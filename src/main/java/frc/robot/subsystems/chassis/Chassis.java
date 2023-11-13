@@ -7,8 +7,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.chassis.utils.SwerveModule;
 
@@ -24,8 +26,10 @@ public class Chassis extends SubsystemBase {
 
   private final SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field;
+  
 
   public Chassis() {
+
     modules = new SwerveModule[] {
       new SwerveModule(MODULE_FRONT_LEFT),
       new SwerveModule(MODULE_FRONT_RIGHT),
@@ -40,8 +44,24 @@ public class Chassis extends SubsystemBase {
     gyro = new PigeonIMU(GYRO_ID);
 
     poseEstimator = new SwerveDrivePoseEstimator(KINEMATICS, getAngle(), getModulePositions(), new Pose2d());
+    poseEstimator.resetPosition(new Rotation2d(0), getModulePositions(), new Pose2d());
     field = new Field2d();
     SmartDashboard.putData(field);
+    SmartDashboard.putData(this);
+    SmartDashboard.putData("m1 offset", modules[0]);
+    SmartDashboard.putData("m2 offset", modules[1]);
+    SmartDashboard.putData("m3 offset", modules[2]);
+    SmartDashboard.putData("m4 offset", modules[3]);
+
+    modules[0].setInverted(false);
+    modules[1].setInverted(true);
+    modules[2].setInverted(false);
+    modules[3].setInverted(true);
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      builder.addDoubleProperty("vel", () -> modules[2].getVelocity(), null);
   }
 
   public SwerveDrivePoseEstimator getPose(){
@@ -53,7 +73,7 @@ public class Chassis extends SubsystemBase {
   }
 
   public void setDrivePower(double power) {
-    Arrays.stream(modules).forEach((module) -> module.setPower(power));
+    Arrays.stream(modules).forEach((module) -> module.setPower(power, 0));
   }
 
   public void setDriveVelocity(double velocity) {
@@ -63,7 +83,19 @@ public class Chassis extends SubsystemBase {
   public void setVelocities(ChassisSpeeds speeds) {
     ChassisSpeeds relativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getAngle());
     SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(relativeSpeeds);
-    for (int i = 0; i < 4; i++) modules[i].setState(states[i]);
+    setModuleStates(states);
+  }
+
+  public ChassisSpeeds getVelocity() {
+    return KINEMATICS.toChassisSpeeds(getModuleStates());
+  }
+
+  public void resetWheels() {
+    Arrays.stream(modules).forEach((module) -> module.setAngle(new Rotation2d(0)));
+  }
+
+  public void setWheelAngles(double x) {
+    Arrays.stream(modules).forEach((module) -> module.setAngle(Rotation2d.fromDegrees(x)));
   }
 
   @Override
@@ -72,14 +104,6 @@ public class Chassis extends SubsystemBase {
       field.setRobotPose(poseEstimator.getEstimatedPosition());
   }
 
-  public Translation2d getVelocity() {
-    SwerveModuleState[] states = new SwerveModuleState[4];
-    for (int i = 0; i < 4; i++) {
-        states[i] = new SwerveModuleState(modules[i].getVelocity(), modules[i].getAngle());
-    }
-    ChassisSpeeds speeds = KINEMATICS.toChassisSpeeds(states);
-    return new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
-}
 
 
   public Rotation2d getAngle() {
@@ -88,5 +112,13 @@ public class Chassis extends SubsystemBase {
 
   public SwerveModulePosition[] getModulePositions() {
     return Arrays.stream(modules).map(SwerveModule::getModulePosition).toArray(SwerveModulePosition[]::new);
+  }
+
+  public SwerveModuleState[] getModuleStates() {
+    return Arrays.stream(modules).map(SwerveModule::getState).toArray(SwerveModuleState[]::new);
+  }
+
+  public void setModuleStates(SwerveModuleState[] states) {
+    for (int i = 0; i < 4; i++) modules[i].setState(states[i]);
   }
 }
