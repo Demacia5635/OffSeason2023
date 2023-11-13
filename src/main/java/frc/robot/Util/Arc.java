@@ -62,9 +62,10 @@ public class Arc extends Segment{
     @Override
     public double distancePassed(Translation2d pos)
     {
-      Translation2d relativePos = p2.minus(pos);
+      Translation2d relativePos = pos.minus(p2);
 
       Rotation2d diffAngle = startVector.getAngle().minus(relativePos.getAngle());
+      System.out.println("Diff : " + diffAngle);
       return Math.abs(diffAngle.getRadians() * radius);
     }
 

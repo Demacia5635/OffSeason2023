@@ -10,8 +10,8 @@ public class RobotContainer {
 
   test test = new test();
   Chassis chassis = new Chassis();
-  Translation2d[] points = { new Translation2d(0,0), new Translation2d(4,4),new Translation2d(8,0)};
-  double[] radius = {2};
+  Translation2d[] points = { new Translation2d(0,0), new Translation2d(4,4),new Translation2d(8,0),new Translation2d(12,4)};
+  double[] radius = {2,2};
   ArcPath path = new ArcPath(chassis, points, radius, 0, 0);
   public RobotContainer() {
 

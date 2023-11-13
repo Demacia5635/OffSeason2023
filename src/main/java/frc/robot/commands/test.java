@@ -29,14 +29,13 @@ public class test extends CommandBase {
   public void initialize() {
     Arc e = new Arc(new Translation2d(0,0), new Translation2d(5,0), new Rotation2d(Math.toRadians(180)));
     System.out.println(e);
-    System.out.println("Velocity : " + e.calc(new Translation2d(0,0), 1));
+    System.out.println("Velocity : " + e.distancePassed(new Translation2d(0,0)));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double testVelocity = testTrap.calculate(2, 2, 0);
-    System.out.println("TEST VELOCITY: " + testVelocity);
+    
   }
 
   // Called once the command ends or is interrupted.
