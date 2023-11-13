@@ -23,7 +23,7 @@ public class ArmGoToAngle extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {isStart = false;}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -34,7 +34,7 @@ public class ArmGoToAngle extends CommandBase {
       arm.setPow(pow);
     }
 
-    if (arm.getAngle()>1){
+    if (!arm.getInput()){
       isStart = true;
     }
   }

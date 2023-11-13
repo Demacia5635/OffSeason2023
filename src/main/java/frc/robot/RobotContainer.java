@@ -40,7 +40,7 @@ public class RobotContainer {
     controller.x().onTrue(new ArmGoToAngle(arm, 50));
 
     // run the caculator that get the state the arm, and run also a command that move the arm to 70 and then back to 0 degrees
-    controller.y().onTrue(new ArmGoBack(arm).andThen(new ParallelCommandGroup( new ArmStateCaculator(arm), new ArmGoToAngle(arm, 70).andThen(new ArmGoBack(arm)))));
+    controller.y().onTrue(new ArmGoToAngle(arm, 70).andThen(new ArmGoBack(arm)));
 
     controller.rightBumper().onTrue(new InstantCommand(()-> arm.stop(),arm).ignoringDisable(true));
   }
@@ -52,6 +52,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new ArmGoBack(arm);
+    return null;
   }
 }

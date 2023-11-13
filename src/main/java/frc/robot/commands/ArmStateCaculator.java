@@ -62,6 +62,7 @@ public class ArmStateCaculator extends CommandBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
+      // TODO Auto-generated method stub
       super.initSendable(builder);
       builder.addIntegerProperty("state", ()->{return state;}, null);
 

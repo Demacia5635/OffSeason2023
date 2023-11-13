@@ -24,7 +24,7 @@ public class Arm extends SubsystemBase {
   
   public TalonFX motor = new TalonFX(motorID);
   public double baseAngle = 0;
-  double lastPow = 0;
+  double lastVel = 0;
 
   public DigitalInput input = new DigitalInput(DigitalInputID);
 
@@ -59,12 +59,12 @@ public class Arm extends SubsystemBase {
   // if false will stop the command; false when colide with the arm;
   public boolean getInput(){ return !input.get(); }
   public double getCurrentAnglerVel(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle; }
-  public double getAngle(){ return (motor.getSelectedSensorPosition() / pulsePerAngle) - (baseAngle / pulsePerAngle); }
+  public double getAngle(){ return (motor.getSelectedSensorPosition() / pulsePerAngle) - baseAngle; }
   public double getPow(){ return motor.getMotorOutputPercent(); }
   public double getValt(){ return motor.getMotorOutputVoltage(); }
-  public double getPowAcc(){ 
-    double returnn = Math.abs(getPow()-lastPow);
-    lastPow = getPow();
+  public double getVelAcc(){ 
+    double returnn = (getCurrentAnglerVel()-lastVel);
+    lastVel = getCurrentAnglerVel();
     return returnn;
   }
 
@@ -77,9 +77,13 @@ public class Arm extends SubsystemBase {
     motor.setNeutralMode(NeutralMode.Coast);
   }
 
+  public double getBaseAngle(){
+    return baseAngle;
+  }
 
   @Override
   public void initSendable(SendableBuilder builder) {
+      // TODO Auto-generated method stub
       super.initSendable(builder);
 
       builder.addDoubleProperty("Current Angle Velocity", this::getCurrentAnglerVel, null);
@@ -87,7 +91,8 @@ public class Arm extends SubsystemBase {
       builder.addBooleanProperty("Input", this::getInput, null);
       builder.addDoubleProperty("Pow", this::getPow, null);
       builder.addDoubleProperty("Valt", this::getValt, null);
-      builder.addDoubleProperty("power accelaration", this::getPowAcc, null);
+      builder.addDoubleProperty("Velocity accelaration", this::getVelAcc, null);
+      // builder.addDoubleProperty("Base Angle", this::getBaseAngle, null);
       
 
       // SmartDashboard.putNumber("KP", KP);
