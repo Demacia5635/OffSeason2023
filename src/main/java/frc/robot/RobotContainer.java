@@ -7,13 +7,11 @@ package frc.robot;
 // import frc.robot.Constants.OperatorConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ArmControl;
 import frc.robot.commands.ArmGoToAngle;
 import frc.robot.commands.ArmGoBack;
-import frc.robot.commands.ArmStateCaculator;
 import frc.robot.subsystems.Arm;
 
 
@@ -37,7 +35,7 @@ public class RobotContainer {
   private void configureBindings() {
     controller.a().onTrue(new ArmControl(arm, controller));
     controller.b().onTrue(new ArmGoBack(arm));
-    controller.x().onTrue(new ArmGoToAngle(arm, 50));
+    controller.x().onTrue(new ArmGoToAngle(arm, 40));
 
     // run the caculator that get the state the arm, and run also a command that move the arm to 70 and then back to 0 degrees
     controller.y().onTrue(new ArmGoToAngle(arm, 70).andThen(new ArmGoBack(arm)));
