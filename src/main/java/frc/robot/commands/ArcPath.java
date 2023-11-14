@@ -139,7 +139,7 @@ public class ArcPath extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return false;
+    return totalLeft <= 0;
   }
 
   public void printSegments()
