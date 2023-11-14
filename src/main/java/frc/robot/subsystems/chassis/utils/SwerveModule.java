@@ -60,7 +60,7 @@ public class SwerveModule implements Sendable {
     }
 
     public double getVelocity() {
-        return moveMotor.getSelectedSensorVelocity() * PULSES_PER_METER * 10;
+        return moveMotor.getSelectedSensorVelocity() / PULSES_PER_METER * 10;
     }
 
     public void stop() {
@@ -91,8 +91,9 @@ public class SwerveModule implements Sendable {
     }
 
     public void setState(SwerveModuleState state) {
-        setVelocity(state.speedMetersPerSecond);
-        setAngle(state.angle);
+        SwerveModuleState s = SwerveModuleState.optimize(state, getAngle());
+        setVelocity(s.speedMetersPerSecond);
+        setAngle(s.angle);
     }
 
     public void setInverted(boolean invert) {
@@ -100,7 +101,7 @@ public class SwerveModule implements Sendable {
     }
 
     public SwerveModulePosition getModulePosition() {
-        return new SwerveModulePosition(moveMotor.getSelectedSensorPosition() * PULSES_PER_METER, getAngle());
+        return new SwerveModulePosition(moveMotor.getSelectedSensorPosition() / PULSES_PER_METER, getAngle());
     }
 
     private double getAngleDifference(double current, double target) {

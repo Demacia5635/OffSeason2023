@@ -6,12 +6,17 @@ package frc.robot.commands;
 
 
 
+import java.io.Console;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Util.Segment;
+import frc.robot.Constants;
 import frc.robot.Util.Arc;
 import frc.robot.Util.Leg;
 import frc.robot.Util.RoundedPoint;
@@ -24,7 +29,7 @@ public class ArcPath extends CommandBase {
   RoundedPoint[] corners;
   Pose2d pose = new Pose2d();
 
-  double distanceOffset = 0.3;
+  double distanceOffset = 0.1;
 
   double pathLength;
   double totalLeft;
@@ -36,7 +41,7 @@ public class ArcPath extends CommandBase {
   Trapezoid trapezoid;
   Trapezoid testTrap;
   double velocity = 0;
-  double safeVel = 0.3;
+  double safeVel = 1;
 
   /** Creates a new ArcPath.
    * @param chassis 
@@ -58,7 +63,9 @@ public class ArcPath extends CommandBase {
     this.chassis = chassis;
     addRequirements(chassis);
 
+    
 
+    SmartDashboard.putData(this);
     trapezoid = new Trapezoid(maxAcc, maxVel, safeVel, 0);
 
     //calculate the total length of the path
@@ -97,10 +104,21 @@ public class ArcPath extends CommandBase {
   }
 
 
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      builder.addStringProperty("Type",() -> currentSegmentInfo(), null);
+  }
 
+  public String currentSegmentInfo()
+  {
+    if(segments == null)
+      return "";
+    return segments[segmentIndex].toString();
+  }
 
   @Override
   public void initialize() {
+    segmentIndex = 0;
 
     vecVel = new Translation2d(0,0);  
   }
@@ -117,6 +135,7 @@ public class ArcPath extends CommandBase {
       totalLeft -= segments[segmentIndex].getLength();
       if(segmentIndex != segments.length - 1)
         segmentIndex++;
+        
     }
 
 
@@ -124,8 +143,8 @@ public class ArcPath extends CommandBase {
 
     
     velocity = trapezoid.calculate(totalLeft - segments[segmentIndex].distancePassed(pose.getTranslation()), translation2dVelocity.getNorm());
-
-    Translation2d velVector = segments[segmentIndex].calc(pose.getTranslation(), velocity);
+    System.out.println("TRAP: " + velocity);
+    Translation2d velVector = segments[segmentIndex].calc(pose.getTranslation(), 0.5);
     ChassisSpeeds speed = new ChassisSpeeds(velVector.getX(), velVector.getY(), 0);
     chassis.setVelocities(speed);
   }
@@ -138,7 +157,7 @@ public class ArcPath extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return totalLeft <= 0;
+    return segmentIndex > Constants.segmentID;
   }
 
   public void printSegments()

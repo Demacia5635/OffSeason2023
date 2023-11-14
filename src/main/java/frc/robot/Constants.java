@@ -6,6 +6,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 public final class Constants {
   public static final double CYCLE_DT = 0.02;
 
+  public static final double segmentID = 1;
+
   public static class ChassisConstants {
     public final static SwerveModuleConstants MODULE_FRONT_LEFT = new SwerveModuleConstants(
       7, 8, 11, 0, 0, 0,

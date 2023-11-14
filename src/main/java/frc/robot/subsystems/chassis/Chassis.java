@@ -62,10 +62,26 @@ public class Chassis extends SubsystemBase {
   @Override
   public void initSendable(SendableBuilder builder) {
       builder.addDoubleProperty("vel", () -> modules[2].getVelocity(), null);
+      builder.addDoubleProperty("pose X",() -> getPoseX(), null);
+      builder.addDoubleProperty("pose Y",() -> getPoseY(), null);
+      SmartDashboard.putData("reset pose", new InstantCommand(()-> resetPose()));
   }
 
+  public double getPoseX(){
+    return poseEstimator.getEstimatedPosition().getX();
+  }
+
+  public double getPoseY(){
+    return poseEstimator.getEstimatedPosition().getY();
+  }
+  
   public SwerveDrivePoseEstimator getPose(){
     return poseEstimator;
+  }
+
+  public void resetPose(){
+    poseEstimator.resetPosition(new Rotation2d(0), getModulePositions(), new Pose2d());
+    gyro.setFusedHeading(0);
   }
 
   public void stop() {
