@@ -1,51 +1,33 @@
 package frc.robot.Util;
-import frc.robot.Constants;
-
 
 public class Trapezoid {
-    private double deltaV;
+    private final double maxVelocity;
+    private final double acceleration;
+    private final double safeVelocity;
+    private final double endVelocity;
 
-    private double MaxAccel;
-    private double MaxVelocity;
-
-
-
-    public Trapezoid(double MaxAccel, double MaxVelocity){
-        //System.out.println("ENTERED");
-        this.MaxAccel = MaxAccel;
-        this.MaxVelocity = MaxVelocity;
-        deltaV = MaxAccel * Constants.CYCLE_DT;
-
+    public Trapezoid(double maxVelocity, double acceleration, double safeVelocity, double endVelocity) {
+        this.maxVelocity = maxVelocity;
+        this.acceleration = acceleration;
+        this.safeVelocity = safeVelocity;
+        this.endVelocity = endVelocity;
     }
 
-
-
-    public double calculate(double distanceLeft, double CurrentVelocity, double endV){
-
-
-        if (accelDistance() > distanceLeft) {
-            //System.out.println("DEACCEL: " + Math.min(CurrentVelocity - deltaV, endV));
-            return Math.min(CurrentVelocity - deltaV, endV);
-        } 
-        else if(CurrentVelocity >= MaxVelocity){
-            //System.out.println("KEEP");
-            return MaxVelocity;
-            
-        } else{
-            //System.out.println("ACCEL: " + Math.max(CurrentVelocity + deltaV, MaxVelocity));
-            return Math.max(CurrentVelocity + deltaV, endV);
+    public double calculate(double remainingDistance, double currentVelocity) {
+        double accelTime = maxVelocity / acceleration;
+        double accelDistance = 0.5 * acceleration * Math.pow(accelTime, 2);
+        if (currentVelocity < maxVelocity && remainingDistance > accelDistance) {
+            // accelerate
+            return currentVelocity + acceleration * 0.02;
         }
+        else if (remainingDistance > accelDistance) {
+            // keep velocity
+            return maxVelocity;
+        }
+        else if (remainingDistance <= accelDistance) {
+            // deccelerate
+            return Math.max(Math.max(currentVelocity - acceleration * 0.02, safeVelocity), endVelocity);
+        }
+        return endVelocity;
     }
-
-    private double accelDistance(){
-        double t = MaxVelocity / MaxAccel;
-        double d1 = (0.5 * MaxAccel * t * t);
-        //System.out.println("DISTANCE: " + d1);  
-        //System.out.println("DELTA V: " + deltaV);  
-        return d1;
-            
-    }
-
 }
-
-
