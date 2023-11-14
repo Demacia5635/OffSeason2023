@@ -6,6 +6,7 @@ package frc.robot.Util;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import frc.robot.Constants;
 
 /** Add your docs here. */
 public class Arc extends Segment{
@@ -40,7 +41,7 @@ public class Arc extends Segment{
         Translation2d relativePos = pos.minus(p2);
         double dFromCenter = relativePos.getNorm();
 
-        Rotation2d tAngle = new Rotation2d((velocity / radius) * Math.signum(angle.getDegrees()));
+        Rotation2d tAngle = new Rotation2d((velocity / radius) * Math.signum(angle.getDegrees() * Constants.CYCLE_DT));
         System.out.println("tAngle : " + tAngle);
 
 

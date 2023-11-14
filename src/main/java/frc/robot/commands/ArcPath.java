@@ -116,7 +116,8 @@ public class ArcPath extends CommandBase {
     
     if(segments[segmentIndex].distancePassed(pose.getTranslation()) >= segments[segmentIndex].getLength() - distanceOffset){
       totalLeft -= segments[segmentIndex].getLength();
-      segmentIndex++;
+      if(segmentIndex != segments.length - 1)
+        segmentIndex++;
     }
 
 
