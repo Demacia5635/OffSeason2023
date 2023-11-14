@@ -4,14 +4,22 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
+import frc.robot.util.ArmCalc;
 
 public class ArmGoToAngle extends CommandBase {
   Arm arm;
   double wantedAngle;
   double pow = 0.15;
   boolean isStart = false;
+  ArmCalc calc;
+  double maxVel;
+  double minVel;
+  double acc;
+  double dis;
 
   /** Creates a new ArmGoToAngle. */
   public ArmGoToAngle(Arm arm, double angle) {
@@ -19,20 +27,23 @@ public class ArmGoToAngle extends CommandBase {
     this.arm = arm;
     wantedAngle = angle;
     addRequirements(arm);
+    calc = new ArmCalc(arm);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {isStart = false;}
+  public void initialize() {
+    isStart = false;
+    maxVel = 0;
+    minVel = 0;
+    acc = 0;
+    dis = wantedAngle-arm.getAngle();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (arm.getAngle() > wantedAngle){
-      arm.setPow(-pow);
-    } else if(arm.getAngle() < wantedAngle){
-      arm.setPow(pow);
-    }
+    arm.setVel(calc.trapezoid(maxVel, minVel, acc, dis));
 
     if (!arm.getInput()){
       isStart = true;
@@ -42,6 +53,16 @@ public class ArmGoToAngle extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) { arm.stop(); }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      // TODO Auto-generated method stub
+      super.initSendable(builder);
+      SmartDashboard.putNumber("max vel", maxVel);
+      SmartDashboard.putNumber("min vel", minVel);
+      SmartDashboard.putNumber("acc", acc);
+      SmartDashboard.putNumber("dis", dis);
+  }
 
   // Returns true when the command should end.
   @Override

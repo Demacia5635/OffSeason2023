@@ -30,9 +30,6 @@ public class Arm extends SubsystemBase {
 
   /** Creates a new Parraller. */
   public Arm() {
-    // motor.config_kP(0,KP);
-    // motor.config_kP(0,KI);
-    // motor.config_kP(0,KD);
     
     SmartDashboard.putData(this);
   }
@@ -45,15 +42,37 @@ public class Arm extends SubsystemBase {
     setPow(0);
   }
 
-  public double FF(double anglerVel, double angle, double currentAnglerVel){
-    double rad = Math.toRadians(angle);
-    double P = (KS + anglerVel * KV + (anglerVel-currentAnglerVel) * KA + Kalpha * rad + 
-    Ksin * Math.sin(rad) + Kcos*Math.cos(rad) + Kcossin * Math.cos(rad) * Math.sin(rad));
-    return P;
+  public double FF(double wantedAnglerVel){
+    double rad = Math.toRadians(getAngle());
+    int state;
+    
+    if (wantedAnglerVel > 0){
+      if (getAngle() <= 43){
+        state = 1;
+      } else {
+        state = 2;
+      }
+    } else {
+      if (getAngle() <= 43){
+        state = 3;
+      } else {
+        state = 4;
+      }
+    }
+
+    return (
+      KS[state] + 
+      wantedAnglerVel * KV[state] + 
+      (wantedAnglerVel-getCurrentAnglerVel()) * KA[state] + 
+      Kalpha[state] * rad + 
+      Ksin[state] * Math.sin(rad) + 
+      Kcos[state] * Math.cos(rad) + 
+      Kcossin[state] * Math.cos(rad) * Math.sin(rad)
+    );
   }
 
-  public void setVel(double anglerVel){
-    motor.set(ControlMode.Velocity, anglerVel, DemandType.ArbitraryFeedForward, FF(getCurrentAnglerVel(),getAngle(),anglerVel));
+  public void setVel(double wantedAnglerVel){
+    motor.set(ControlMode.Velocity, wantedAnglerVel, DemandType.ArbitraryFeedForward, FF(wantedAnglerVel));
   }
   
   // if false will stop the command; false when colide with the arm;
@@ -77,10 +96,6 @@ public class Arm extends SubsystemBase {
     motor.setNeutralMode(NeutralMode.Coast);
   }
 
-  public double getBaseAngle(){
-    return baseAngle;
-  }
-
   @Override
   public void initSendable(SendableBuilder builder) {
       // TODO Auto-generated method stub
@@ -92,12 +107,6 @@ public class Arm extends SubsystemBase {
       builder.addDoubleProperty("Pow", this::getPow, null);
       builder.addDoubleProperty("Valt", this::getValt, null);
       builder.addDoubleProperty("Velocity accelaration", this::getVelAcc, null);
-      // builder.addDoubleProperty("Base Angle", this::getBaseAngle, null);
-      
-
-      // SmartDashboard.putNumber("KP", KP);
-      // SmartDashboard.putNumber("KI", KI);
-      // SmartDashboard.putNumber("KD", KD);
 
       // SmartDashboard.putNumber("KS", KS);
       // SmartDashboard.putNumber("KV", KV);
