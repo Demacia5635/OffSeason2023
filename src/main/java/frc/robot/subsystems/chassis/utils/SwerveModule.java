@@ -57,7 +57,7 @@ public class SwerveModule implements Sendable {
     }
 
     public double getVelocity() {
-        return moveMotor.getSelectedSensorVelocity() * PULSES_PER_METER * 10;
+        return moveMotor.getSelectedSensorVelocity() /* change to divide */ * PULSES_PER_METER * 10;
     }
 
     public void stop() {
