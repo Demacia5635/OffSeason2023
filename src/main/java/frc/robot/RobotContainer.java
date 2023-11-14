@@ -2,18 +2,23 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.ArcPath;
+import frc.robot.commands.Drive;
 import frc.robot.commands.test;
 import frc.robot.subsystems.chassis.Chassis;
 
 public class RobotContainer {
 
   test test = new test();
+  CommandXboxController controller = new CommandXboxController(0);
   Chassis chassis = new Chassis();
   Translation2d[] points = { new Translation2d(0,0), new Translation2d(4,4),new Translation2d(8,0),new Translation2d(12,4)};
   double[] radius = {2,2};
   ArcPath path = new ArcPath(chassis, points, radius, 0, 0);
+  Drive drive = new Drive(chassis, controller);
   public RobotContainer() {
+    chassis.setDefaultCommand(drive);
 
   }
   
