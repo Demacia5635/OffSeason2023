@@ -36,9 +36,6 @@ public final class Constants {
      * 2 = the arm is going forward and more then angle 43
      * 3 = the arm is going backward and more then angle 43
      * 4 = the arm is going backward and less then angle 43
-     * 
-     * all of this var can be found in the feed forward function in the arm subsystem
-     * https://github.com/Demacia5635/OffSeason2023/blob/Tomer---Gripper-%2B-Arm/src/main/java/frc/robot/subsystems/Arm.java#L45
      */
     public final static double[] KS = {5.16955116, 24.02165666, -85.7094446, -5.614001788};
     public final static double[] KA = {-1.202533577, -58.75892648, 195.9918365, 0.870858412};

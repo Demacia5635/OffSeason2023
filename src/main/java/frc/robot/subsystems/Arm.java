@@ -20,9 +20,6 @@ import static frc.robot.Constants.ArmConstants.*;
 public class Arm extends SubsystemBase {
   
   public TalonFX motor = new TalonFX(motorID);
-  public double baseAngle = 0;
-  double lastVel = 0;
-
   public DigitalInput input = new DigitalInput(DigitalInputID);
 
   /** Creates a new Parraller. */
@@ -31,8 +28,8 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putData(this);
   }
 
-  public void setPow(double AP){
-    motor.set(ControlMode.PercentOutput, AP);
+  public void setPow(double wantedPow){
+    motor.set(ControlMode.PercentOutput, wantedPow);
   }
   
   public void stop(){
@@ -75,12 +72,16 @@ public class Arm extends SubsystemBase {
     motor.set(ControlMode.Velocity, wantedAnglerVel, DemandType.ArbitraryFeedForward, FF(wantedAnglerVel));
   }
   
-  // if false will stop the command; false when colide with the arm;
+  // get flase from the limit switch when close reverse it in this command
   public boolean getInput(){ return !input.get(); }
   public double getCurrentAnglerVel(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle; }
+
+  public double baseAngle = 0;
   public double getAngle(){ return (motor.getSelectedSensorPosition() / pulsePerAngle) - baseAngle; }
   public double getPow(){ return motor.getMotorOutputPercent(); }
   public double getValt(){ return motor.getMotorOutputVoltage(); }
+  
+  double lastVel = 0;
   public double getVelAcc(){ 
     double returnn = (lastVel-getCurrentAnglerVel());
     lastVel = getCurrentAnglerVel();
