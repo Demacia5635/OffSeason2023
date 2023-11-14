@@ -14,20 +14,39 @@ package frc.robot;
  */
 public final class Constants {
   public static class ArmConstants{
+    /*
+     * motor id of the arm
+     * and the id of the limit swtich to the arm
+     */
     public final static int motorID = 30;
     public final static int DigitalInputID = 0;
 
-    public final static double pulesPerRotation = 2048;
-    public final static double gearRatio = 180;
+    /*
+     * get the pules per angle through math
+     * use as the get angle and angelar velocity
+     */
+    private final static double pulesPerRotation = 2048;
+    private final static double gearRatio = 180;
     public final static double pulsePerAngle = pulesPerRotation*gearRatio/360;
 
-    public final static double[] KS = {5.16955116, 24.02165666, 2.162370422, -0.061468493};
-    public final static double[] KA = {-1.202533577, -58.75892648, -0.923979363, 0.125707695};
-    public final static double[] Kalpha = {-15.69829677, -13.97516149, -4.939897152, 0.200128503};
-    public final static double[] KV = {0.005323938, 0.005160888, 0.004178716, 0.004579808};
-    public final static double[] Ksin = {0.180088628, -0.556040007, 0.047218921, -0.001551788};
-    public final static double[] Kcos = {-0.004043448, -0.003561683, 0.005148196, -0.001570722};
-    public final static double[] Kcossin = {1.287228076, 64.46158937, 0.883667392, -0.172153887};
+
+    /*
+     * the four numbers in each array is for every state of the arm
+     * 1 = the arm is going forward and less then angle 43
+     * 2 = the arm is going forward and more then angle 43
+     * 3 = the arm is going backward and more then angle 43
+     * 4 = the arm is going backward and less then angle 43
+     * 
+     * all of this var can be found in the feed forward function in the arm subsystem
+     * https://github.com/Demacia5635/OffSeason2023/blob/Tomer---Gripper-%2B-Arm/src/main/java/frc/robot/subsystems/Arm.java#L45
+     */
+    public final static double[] KS = {5.16955116, 24.02165666, -85.7094446, -5.614001788};
+    public final static double[] KA = {-1.202533577, -58.75892648, 195.9918365, 0.870858412};
+    public final static double[] Kalpha = {-15.69829677, -13.97516149, 57.0788179, 18.36092613};
+    public final static double[] KV = {0.005323938, 0.005160888, 0.005117713, 0.005099339};
+    public final static double[] Ksin = {0.180088628, -0.556040007, 1.717193774, -0.220649252};
+    public final static double[] Kcos = {-0.004043448, -0.003561683, 0.003954434, -0.002012317};
+    public final static double[] Kcossin = {1.287228076, 64.46158937, -213.40185, -0.901637521};
 
   }
   public static class OperatorConstants {

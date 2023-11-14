@@ -35,7 +35,7 @@ public class ArmGoBack extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     arm.stop();
-    arm.baseAngle += arm.getAngle() /*/ Constants.ArmConstants.pulsePerAngle*/;
+    arm.baseAngle += arm.getAngle();
   }
 
   // Returns true when the command should end.

@@ -28,6 +28,7 @@ public class ArmGoToAngle extends CommandBase {
     wantedAngle = angle;
     addRequirements(arm);
     calc = new ArmCalc(arm);
+    SmartDashboard.putData(this);
   }
 
   // Called when the command is initially scheduled.

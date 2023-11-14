@@ -17,9 +17,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.ArmConstants.*;
 
-
-
-
 public class Arm extends SubsystemBase {
   
   public TalonFX motor = new TalonFX(motorID);
@@ -41,10 +38,10 @@ public class Arm extends SubsystemBase {
   public void stop(){
     setPow(0);
   }
-
+  
+  public int state;
   public double FF(double wantedAnglerVel){
     double rad = Math.toRadians(getAngle());
-    int state;
     
     if (wantedAnglerVel > 0){
       if (getAngle() <= 43){
@@ -52,13 +49,16 @@ public class Arm extends SubsystemBase {
       } else {
         state = 2;
       }
-    } else {
+    } else /*if (wantedAngelerVel < 0)*/{
       if (getAngle() <= 43){
         state = 3;
       } else {
         state = 4;
       }
-    }
+    }/*else {
+      return 0;
+    } */
+    state -= 1;
 
     return (
       KS[state] + 
@@ -82,7 +82,7 @@ public class Arm extends SubsystemBase {
   public double getPow(){ return motor.getMotorOutputPercent(); }
   public double getValt(){ return motor.getMotorOutputVoltage(); }
   public double getVelAcc(){ 
-    double returnn = (getCurrentAnglerVel()-lastVel);
+    double returnn = (lastVel-getCurrentAnglerVel());
     lastVel = getCurrentAnglerVel();
     return returnn;
   }
@@ -107,14 +107,7 @@ public class Arm extends SubsystemBase {
       builder.addDoubleProperty("Pow", this::getPow, null);
       builder.addDoubleProperty("Valt", this::getValt, null);
       builder.addDoubleProperty("Velocity accelaration", this::getVelAcc, null);
-
-      // SmartDashboard.putNumber("KS", KS);
-      // SmartDashboard.putNumber("KV", KV);
-      // SmartDashboard.putNumber("KA", KA);
-      // SmartDashboard.putNumber("Ksin", Ksin);
-      // SmartDashboard.putNumber("Kcos", Kcos);
-      // SmartDashboard.putNumber("Kcossin", Kcossin);
-      // SmartDashboard.putNumber("Kalpha", Kalpha);
+      builder.addDoubleProperty("state", ()->state, null);
 
       InstantCommand cmdBrake = new InstantCommand(()-> brake(), this);
       InstantCommand cmdCoast = new InstantCommand(()-> coast(), this);

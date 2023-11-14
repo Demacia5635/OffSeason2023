@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Arm;
@@ -16,11 +15,10 @@ public class ArmControl extends CommandBase {
 
   /** Creates a new Parrelogram. */
   public ArmControl(Arm arm, CommandXboxController controller) {
+    // Use addRequirements() here to declare subsystem dependencies.
     this.arm = arm;
     this.controller = controller;
     addRequirements(arm);
-    SmartDashboard.putData(this);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
