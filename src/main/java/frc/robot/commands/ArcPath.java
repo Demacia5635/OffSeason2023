@@ -29,7 +29,7 @@ public class ArcPath extends CommandBase {
   RoundedPoint[] corners;
   Pose2d pose = new Pose2d();
 
-  double distanceOffset = 0.05;
+  double distanceOffset = 0.01;
 
   double pathLength;
   double totalLeft;
@@ -66,6 +66,7 @@ public class ArcPath extends CommandBase {
     
 
     SmartDashboard.putData(this);
+
     trapezoid = new Trapezoid(maxAcc, maxVel, safeVel, 0);
 
     //calculate the total length of the path
@@ -107,7 +108,10 @@ public class ArcPath extends CommandBase {
   @Override
   public void initSendable(SendableBuilder builder) {
       builder.addStringProperty("Type",() -> currentSegmentInfo(), null);
+      builder.addDoubleProperty("totalLeft",() -> {return totalLeft;}, null);
+      builder.addDoubleProperty("Velocity", () -> {return velocity;}, null);
   }
+
 
   public String currentSegmentInfo()
   {
@@ -144,7 +148,7 @@ public class ArcPath extends CommandBase {
     
     velocity = trapezoid.calculate(totalLeft - segments[segmentIndex].distancePassed(pose.getTranslation()), translation2dVelocity.getNorm());
     System.out.println("TRAP: " + velocity);
-    Translation2d velVector = segments[segmentIndex].calc(pose.getTranslation(), translation2dVelocity.getNorm());
+    Translation2d velVector = segments[segmentIndex].calc(pose.getTranslation(), velocity);
     ChassisSpeeds speed = new ChassisSpeeds(velVector.getX(), velVector.getY(), 0);
     chassis.setVelocities(speed);
   }

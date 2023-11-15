@@ -43,9 +43,9 @@ public final class Constants {
     public static final double ANGULAR_VELOCITY = 360;
     public static final double ANGULAR_ACCELERATION = 720;
 
-    public static final double MOVE_KP = 0.2;
-    public static final double MOVE_KI = 0.002;
-    public static final double MOVE_KD = 0;
+    public static final double MOVE_KP = 0.27;
+    public static final double MOVE_KI = 0.0;
+    public static final double MOVE_KD = 0.12;
     public static final double ANGLE_KP = 0.1;
     public static final double ANGLE_KI = 0;
     public static final double ANGLE_KD = 0;
