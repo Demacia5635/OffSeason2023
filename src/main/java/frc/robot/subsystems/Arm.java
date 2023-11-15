@@ -21,6 +21,8 @@ public class Arm extends SubsystemBase {
   
   public TalonFX motor = new TalonFX(motorID);
   public DigitalInput input = new DigitalInput(DigitalInputID);
+  private double requiredVelocity = 0;
+  private double calculatedPower = 0;
 
   /** Creates a new Parraller. */
   public Arm() {
@@ -38,30 +40,29 @@ public class Arm extends SubsystemBase {
   
   public int state;
   public double FF(double wantedAnglerVel){
-    double rad = Math.toRadians(getAngle());
+    double angle = getAngle();
+    double rad = Math.toRadians(angle);
     
     if (wantedAnglerVel > 0){
-      if (getAngle() <= 43){
-        state = 1;
+      if (angle <= 43){
+        state = 0;
       } else {
-        state = 2;
+        state = 1;
       }
     } else /*if (wantedAngelerVel < 0)*/{
       if (getAngle() <= 43){
-        state = 3;
+        state = 2;
       } else {
-        state = 4;
+        state = 3;
       }
     }/*else {
       return 0;
     } */
-    state -= 1;
-
     return (
       KS[state] + 
       wantedAnglerVel * KV[state] + 
       (wantedAnglerVel-getCurrentAnglerVel()) * KA[state] + 
-      Kalpha[state] * rad + 
+      Kalpha[state] * angle + 
       Ksin[state] * Math.sin(rad) + 
       Kcos[state] * Math.cos(rad) + 
       Kcossin[state] * Math.cos(rad) * Math.sin(rad)
@@ -69,7 +70,14 @@ public class Arm extends SubsystemBase {
   }
 
   public void setVel(double wantedAnglerVel){
-    motor.set(ControlMode.Velocity, wantedAnglerVel, DemandType.ArbitraryFeedForward, FF(wantedAnglerVel));
+    requiredVelocity = wantedAnglerVel;
+    calculatedPower = FF(wantedAnglerVel);
+    System.out.println("arm angle = " + getAngle());
+    System.out.println("arm current vel = " + getCurrentAnglerVel());
+    System.out.println("arm velocity = " + wantedAnglerVel);
+    System.out.println("arm power = " + calculatedPower);
+    // motor.set(ControlMode.PercentOutput, calculatedPower);
+    motor.set(ControlMode.Velocity, wantedAnglerVel*pulsePerAngle/10, DemandType.ArbitraryFeedForward, calculatedPower);
   }
   
   // get flase from the limit switch when close reverse it in this command
@@ -79,7 +87,7 @@ public class Arm extends SubsystemBase {
   public double baseAngle = 0;
   public double getAngle(){ return (motor.getSelectedSensorPosition() / pulsePerAngle) - baseAngle; }
   public double getPow(){ return motor.getMotorOutputPercent(); }
-  public double getValt(){ return motor.getMotorOutputVoltage(); }
+  public double getVolt(){ return motor.getMotorOutputVoltage(); }
   
   double lastVel = 0;
   public double getVelAcc(){ 
@@ -99,16 +107,17 @@ public class Arm extends SubsystemBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-      // TODO Auto-generated method stub
       super.initSendable(builder);
 
       builder.addDoubleProperty("Current Angle Velocity", this::getCurrentAnglerVel, null);
       builder.addDoubleProperty("Angle", this::getAngle, null);
       builder.addBooleanProperty("Input", this::getInput, null);
       builder.addDoubleProperty("Pow", this::getPow, null);
-      builder.addDoubleProperty("Valt", this::getValt, null);
-      builder.addDoubleProperty("Velocity accelaration", this::getVelAcc, null);
+      builder.addDoubleProperty("Volt", this::getVolt, null);
+      builder.addDoubleProperty("Accelaration", this::getVelAcc, null);
       builder.addDoubleProperty("state", ()->state, null);
+      builder.addDoubleProperty("wanted velocity", ()->requiredVelocity, null);
+      builder.addDoubleProperty("feed forward", ()->calculatedPower, null);
 
       InstantCommand cmdBrake = new InstantCommand(()-> brake(), this);
       InstantCommand cmdCoast = new InstantCommand(()-> coast(), this);

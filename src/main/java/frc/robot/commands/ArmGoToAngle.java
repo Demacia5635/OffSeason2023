@@ -13,13 +13,10 @@ import frc.robot.util.ArmCalc;
 public class ArmGoToAngle extends CommandBase {
   Arm arm;
   double wantedAngle;
-  double pow = 0.15;
-  boolean isStart = false;
   ArmCalc calc;
-  double maxVel;
-  double minVel;
-  double acc;
-  double dis;
+  static final double maxVel = 90;
+  static final double minVel = 0;
+  static final double acc = 120;
 
   /** Creates a new ArmGoToAngle. */
   public ArmGoToAngle(Arm arm, double angle) {
@@ -28,46 +25,28 @@ public class ArmGoToAngle extends CommandBase {
     wantedAngle = angle;
     addRequirements(arm);
     calc = new ArmCalc(arm);
-    SmartDashboard.putData(this);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    isStart = false;
-    maxVel = 0;
-    minVel = 0;
-    acc = 0;
-    dis = wantedAngle-arm.getAngle();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    arm.setVel(calc.trapezoid(maxVel, minVel, acc, dis));
+    double vel = calc.trapezoid(arm.getCurrentAnglerVel(), maxVel,minVel, acc, wantedAngle-arm.getAngle());
+    arm.setVel(vel);
 
-    if (!arm.getInput()){
-      isStart = true;
-    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) { arm.stop(); }
 
-  @Override
-  public void initSendable(SendableBuilder builder) {
-      // TODO Auto-generated method stub
-      super.initSendable(builder);
-      SmartDashboard.putNumber("max vel", maxVel);
-      SmartDashboard.putNumber("min vel", minVel);
-      SmartDashboard.putNumber("acc", acc);
-      SmartDashboard.putNumber("dis", dis);
-  }
-
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (arm.getInput()&&isStart) || (Math.abs(arm.getAngle()-wantedAngle)<1);
+    return (arm.getInput()&&wantedAngle == 0) || (Math.abs(arm.getAngle()-wantedAngle)<3);
   }
 }

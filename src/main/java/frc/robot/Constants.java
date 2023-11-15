@@ -37,13 +37,13 @@ public final class Constants {
      * 3 = the arm is going backward and more then angle 43
      * 4 = the arm is going backward and less then angle 43
      */
-    public final static double[] KS = {5.16955116, 24.02165666, -85.7094446, -5.614001788};
-    public final static double[] KA = {-1.202533577, -58.75892648, 195.9918365, 0.870858412};
-    public final static double[] Kalpha = {-15.69829677, -13.97516149, 57.0788179, 18.36092613};
+    public final static double[] Kcossin = {5.16955116, 24.02165666, -85.7094446, -5.614001788};
+    public final static double[] Kcos = {-1.202533577, -58.75892648, 195.9918365, 0.870858412};
+    public final static double[] Ksin = {-15.69829677, -13.97516149, 57.0788179, 18.36092613};
     public final static double[] KV = {0.005323938, 0.005160888, 0.005117713, 0.005099339};
-    public final static double[] Ksin = {0.180088628, -0.556040007, 1.717193774, -0.220649252};
-    public final static double[] Kcos = {-0.004043448, -0.003561683, 0.003954434, -0.002012317};
-    public final static double[] Kcossin = {1.287228076, 64.46158937, -213.40185, -0.901637521};
+    public final static double[] Kalpha = {0.180088628, -0.556040007, 1.717193774, -0.220649252};
+    public final static double[] KA = {-0.004043448, -0.003561683, 0.003954434, -0.002012317};
+    public final static double[] KS = {1.287228076, 64.46158937, -213.40185, -0.901637521};
 
   }
   public static class OperatorConstants {
