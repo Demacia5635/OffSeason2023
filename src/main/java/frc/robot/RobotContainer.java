@@ -12,7 +12,7 @@ public class RobotContainer {
   CommandXboxController controller = new CommandXboxController(0);
   Chassis chassis = new Chassis();
   Translation2d[] points = { new Translation2d(0,0), new Translation2d(2,2),new Translation2d(4,0),new Translation2d(6,2)};
-  double[] radius = {2,2};
+  double[] radius = {0.5,0.5};
   ArcPath path = new ArcPath(chassis, points, radius, 1, 2);
   Drive drive = new Drive(chassis, controller);
   public RobotContainer() {

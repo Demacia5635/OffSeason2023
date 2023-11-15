@@ -29,7 +29,7 @@ public class ArcPath extends CommandBase {
   RoundedPoint[] corners;
   Pose2d pose = new Pose2d();
 
-  double distanceOffset = 0.1;
+  double distanceOffset = 0.05;
 
   double pathLength;
   double totalLeft;
@@ -144,7 +144,7 @@ public class ArcPath extends CommandBase {
     
     velocity = trapezoid.calculate(totalLeft - segments[segmentIndex].distancePassed(pose.getTranslation()), translation2dVelocity.getNorm());
     System.out.println("TRAP: " + velocity);
-    Translation2d velVector = segments[segmentIndex].calc(pose.getTranslation(), 0.5);
+    Translation2d velVector = segments[segmentIndex].calc(pose.getTranslation(), translation2dVelocity.getNorm());
     ChassisSpeeds speed = new ChassisSpeeds(velVector.getX(), velVector.getY(), 0);
     chassis.setVelocities(speed);
   }
@@ -157,7 +157,7 @@ public class ArcPath extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return segmentIndex > Constants.segmentID;
+    return totalLeft <= 0;
   }
 
   public void printSegments()

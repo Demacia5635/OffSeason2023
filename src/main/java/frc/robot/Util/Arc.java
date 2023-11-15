@@ -41,7 +41,7 @@ public class Arc extends Segment{
         Translation2d relativePos = pos.minus(p2);
         double dFromCenter = relativePos.getNorm();
 
-        Rotation2d tAngle = new Rotation2d((velocity / radius) * Math.signum(angle.getDegrees() * Constants.CYCLE_DT));
+        Rotation2d tAngle = new Rotation2d(((velocity * Constants.CYCLE_DT) / radius) * Math.signum(angle.getDegrees()));
         System.out.println("tAngle : " + tAngle);
 
 
