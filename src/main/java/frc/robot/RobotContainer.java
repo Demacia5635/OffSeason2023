@@ -9,12 +9,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util.pathPoint;
 import frc.robot.commands.ArcPath;
 import frc.robot.commands.Drive;
+import frc.robot.commands.DriveLine;
 import frc.robot.subsystems.chassis.Chassis;
 
 public class RobotContainer {
 
   CommandXboxController controller = new CommandXboxController(0);
   Chassis chassis = new Chassis();
+  DriveLine driveLine = new DriveLine(chassis);
   pathPoint[] points = { 
      new pathPoint(0,0, new Rotation2d() ,0.25),
      new pathPoint(1,1, new Rotation2d() ,0.25),
@@ -34,6 +36,6 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return path;
+    return driveLine;
   }
 }
