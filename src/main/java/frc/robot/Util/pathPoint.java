@@ -9,11 +9,22 @@ import edu.wpi.first.math.geometry.Rotation2d;
 
 /** Add your docs here. */
 public class pathPoint extends Pose2d{
-    public double radius;
+    double radius;
 
     public pathPoint(double x, double y, Rotation2d rotation, double radius) {
         super(x,y,rotation);
         this.radius = radius;
       }
+
+    public double getRadius()
+    {
+      return radius;
+    }
+
+    public void setRadius(double radius)
+    {
+      this.radius = radius;
+    }
+
 
 }
