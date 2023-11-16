@@ -1,8 +1,12 @@
 package frc.robot;
 
+import com.fasterxml.jackson.databind.cfg.PackageVersion;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Util.pathPoint;
 import frc.robot.commands.ArcPath;
 import frc.robot.commands.Drive;
 import frc.robot.subsystems.chassis.Chassis;
@@ -11,9 +15,14 @@ public class RobotContainer {
 
   CommandXboxController controller = new CommandXboxController(0);
   Chassis chassis = new Chassis();
-  Translation2d[] points = { new Translation2d(0,0), new Translation2d(1,1),new Translation2d(2,0),new Translation2d(3,1)};
-  double[] radius = {0.25,0.25};
-  ArcPath path = new ArcPath(chassis, points, radius, 1, 2);
+  pathPoint[] points = { 
+     new pathPoint(0,0, new Rotation2d() ,0.25),
+     new pathPoint(1,1, new Rotation2d() ,0.25),
+     new pathPoint(2,0, new Rotation2d(), 0.25),
+     new pathPoint(3, 1, new Rotation2d(), 0.25)
+    };
+     
+  ArcPath path = new ArcPath(chassis, points, 1, 2);
   Drive drive = new Drive(chassis, controller);
   public RobotContainer() {
     chassis.setDefaultCommand(drive);

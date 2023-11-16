@@ -1,5 +1,6 @@
 
 package frc.robot.Util;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.Constants;
@@ -15,13 +16,16 @@ public class RoundedPoint{
     Rotation2d cornerDir;
     Rotation2d cornerAngle;
 
-    public RoundedPoint(double radius, Translation2d aPoint, Translation2d bPoint, Translation2d cPoint){
-        this.radius = radius;
-        this.aPoint = aPoint;
-        this.bPoint = bPoint;
-        this.cPoint = cPoint;
-        vectorAtoB = bPoint.minus(aPoint);
-        vectorBtoC = cPoint.minus(bPoint);
+    public RoundedPoint(pathPoint aPoint, pathPoint bPoint, pathPoint cPoint){
+        this.radius = bPoint.getRadius();
+        this.aPoint = aPoint.getTranslation();
+        this.bPoint = bPoint.getTranslation();
+        this.cPoint = cPoint.getTranslation();
+        
+        vectorAtoB = this.bPoint.minus(this.aPoint);
+        vectorBtoC = this.cPoint.minus(this.bPoint);
+
+
 
         this.cornerAngle = vectorAtoB.times(-1).getAngle().minus(vectorBtoC.getAngle());
         this.cornerDir = vectorAtoB.times(-1).getAngle().minus(this.cornerAngle.div(2));

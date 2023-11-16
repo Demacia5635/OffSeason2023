@@ -21,6 +21,7 @@ import frc.robot.Util.Arc;
 import frc.robot.Util.Leg;
 import frc.robot.Util.RoundedPoint;
 import frc.robot.Util.Trapezoid;
+import frc.robot.Util.pathPoint;
 import frc.robot.subsystems.chassis.*;
 
 public class ArcPath extends CommandBase {
@@ -55,13 +56,13 @@ public class ArcPath extends CommandBase {
    * 
    */
 
-  public ArcPath(Chassis chassis,Translation2d[] points, double[] radius, double maxVel, double maxAcc) {
+  public ArcPath(Chassis chassis,pathPoint[] points, double maxVel, double maxAcc) {
 
 
     corners = new RoundedPoint[points.length - 2];
     for(int i = 0; i < points.length - 2; i++)
     {
-      corners[i] = new RoundedPoint(radius[i], points[i], points[i+1], points[i+2]);
+      corners[i] = new RoundedPoint(points[i], points[i+1], points[i+2]);
     }
     this.chassis = chassis;
     addRequirements(chassis);
