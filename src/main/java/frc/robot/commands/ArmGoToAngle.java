@@ -12,17 +12,19 @@ public class ArmGoToAngle extends CommandBase {
   Arm arm;
   double wantedAngle;
   ArmCalc calc;
-  static final double maxVel = 90;
-  static final double minVel = 0;
-  static final double acc = 120;
+  double maxVel;
+  final static double minVel = 0;
+  double acc;
 
   /** Creates a new ArmGoToAngle. */
-  public ArmGoToAngle(Arm arm, double angle) {
+  public ArmGoToAngle(Arm arm, double angle, double maxVel, double acc) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.arm = arm;
     wantedAngle = angle;
     addRequirements(arm);
     calc = new ArmCalc(arm);
+    this.maxVel = maxVel;
+    this.acc = acc;
   }
 
   // Called when the command is initially scheduled.

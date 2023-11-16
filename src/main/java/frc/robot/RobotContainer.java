@@ -35,10 +35,8 @@ public class RobotContainer {
   private void configureBindings() {
     controller.a().onTrue(new ArmControl(arm, controller));
     controller.b().onTrue(new ArmGoBack(arm));
-    controller.x().onTrue(new ArmGoToAngle(arm, 70));
-
-    // run the caculator that get the state the arm, and run also a command that move the arm to 70 and then back to 0 degrees
-    controller.y().onTrue(new ArmGoToAngle(arm, 70).andThen(new ArmGoToAngle(arm, 0)));
+    controller.x().onTrue(new ArmGoToAngle(arm, 10, 60, 120));
+    controller.y().onTrue(new ArmGoToAngle(arm, 70, 60, 120));
 
     controller.rightBumper().onTrue(new InstantCommand(()-> arm.stop(),arm).ignoringDisable(true));
   }
