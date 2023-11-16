@@ -72,6 +72,7 @@ public class ArcPath extends CommandBase {
     SmartDashboard.putData(this);
 
     driveTrapezoid = new Trapezoid(maxAcc, maxVel, safeVel, 0);
+    rotationTrapezoid = new Trapezoid(180, 360, 30, 0);
 
     //calculate the total length of the path
 
@@ -152,7 +153,7 @@ public class ArcPath extends CommandBase {
     
     velocity = driveTrapezoid.calculate(totalLeft - segments[segmentIndex].distancePassed(pose.getTranslation()), translation2dVelocity.getNorm());
     rotationVelocity = rotationTrapezoid.calculate(wantedAngle.minus(chassis.getAngle()).getDegrees(), rotationVelocity);
-    
+
     Translation2d velVector = segments[segmentIndex].calc(pose.getTranslation(), velocity);
     ChassisSpeeds speed = new ChassisSpeeds(velVector.getX(), velVector.getY(), Math.toRadians(rotationVelocity));
     chassis.setVelocities(speed);
