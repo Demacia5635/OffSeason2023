@@ -28,7 +28,7 @@ public class DriveLine extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Translation2d velocity = new Translation2d(0, trap.calculate(point.getY() - chassis.getPoseY(), chassis.getVelocity().vyMetersPerSecond));
+    Translation2d velocity = new Translation2d(0, trap.calculate(point.getY() - chassis.getPoseY(), chassis.getVelocity()));
     System.out.println("CALC: " + velocity.getY());
     ChassisSpeeds speed = new ChassisSpeeds(0,velocity.getY(), 0);
     chassis.setVelocities(speed);

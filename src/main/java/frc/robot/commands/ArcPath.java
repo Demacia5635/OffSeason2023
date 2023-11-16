@@ -137,7 +137,7 @@ public class ArcPath extends CommandBase {
   @Override
   public void execute() {
     pose = chassis.getPose().getEstimatedPosition();
-    Translation2d translation2dVelocity = new Translation2d(chassis.getVelocity().vxMetersPerSecond, chassis.getVelocity().vyMetersPerSecond);
+    Translation2d translation2dVelocity = new Translation2d(chassis.getVelocity(), chassis.getVelocity());
 
     
     if(segments[segmentIndex].distancePassed(pose.getTranslation()) >= segments[segmentIndex].getLength() - distanceOffset){
