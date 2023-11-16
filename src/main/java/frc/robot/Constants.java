@@ -4,6 +4,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
 public final class Constants {
+  public static final double CYCLE_DT = 0.02;
+
+  public static final double segmentID = 1;
+
   public static class ChassisConstants {
     public final static SwerveModuleConstants MODULE_FRONT_LEFT = new SwerveModuleConstants(
       7, 8, 11, 0, 0, 0,
@@ -39,9 +43,9 @@ public final class Constants {
     public static final double ANGULAR_VELOCITY = 360;
     public static final double ANGULAR_ACCELERATION = 720;
 
-    public static final double MOVE_KP = 0.2;
-    public static final double MOVE_KI = 0;
-    public static final double MOVE_KD = 0;
+    public static final double MOVE_KP = 0.27;
+    public static final double MOVE_KI = 0.0;
+    public static final double MOVE_KD = 0.12;
     public static final double ANGLE_KP = 0.1;
     public static final double ANGLE_KI = 0;
     public static final double ANGLE_KD = 0;

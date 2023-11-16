@@ -26,8 +26,10 @@ public class Chassis extends SubsystemBase {
 
   private final SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field;
+  
 
   public Chassis() {
+
     modules = new SwerveModule[] {
       new SwerveModule(MODULE_FRONT_LEFT),
       new SwerveModule(MODULE_FRONT_RIGHT),
@@ -42,6 +44,7 @@ public class Chassis extends SubsystemBase {
     gyro = new PigeonIMU(GYRO_ID);
 
     poseEstimator = new SwerveDrivePoseEstimator(KINEMATICS, getAngle(), getModulePositions(), new Pose2d());
+    poseEstimator.resetPosition(new Rotation2d(0), getModulePositions(), new Pose2d());
     field = new Field2d();
     SmartDashboard.putData(field);
     SmartDashboard.putData(this);
@@ -59,6 +62,27 @@ public class Chassis extends SubsystemBase {
   @Override
   public void initSendable(SendableBuilder builder) {
       builder.addDoubleProperty("vel", () -> modules[2].getVelocity(), null);
+      builder.addDoubleProperty("pose X",() -> getPoseX(), null);
+      builder.addDoubleProperty("pose Y",() -> getPoseY(), null);
+      builder.addStringProperty("Angle", () -> poseEstimator.getEstimatedPosition().getRotation().toString(), null);
+      SmartDashboard.putData("reset pose", new InstantCommand(()-> resetPose()));
+  }
+
+  public double getPoseX(){
+    return poseEstimator.getEstimatedPosition().getX();
+  }
+
+  public double getPoseY(){
+    return poseEstimator.getEstimatedPosition().getY();
+  }
+  
+  public SwerveDrivePoseEstimator getPose(){
+    return poseEstimator;
+  }
+
+  public void resetPose(){
+    poseEstimator.resetPosition(new Rotation2d(0), getModulePositions(), new Pose2d());
+    gyro.setFusedHeading(0);
   }
 
   public void stop() {
@@ -97,6 +121,8 @@ public class Chassis extends SubsystemBase {
       poseEstimator.update(getAngle(), getModulePositions());
       field.setRobotPose(poseEstimator.getEstimatedPosition());
   }
+
+
 
   public Rotation2d getAngle() {
     return Rotation2d.fromDegrees(gyro.getFusedHeading());
