@@ -64,6 +64,7 @@ public class Chassis extends SubsystemBase {
       builder.addDoubleProperty("vel", () -> modules[2].getVelocity(), null);
       builder.addDoubleProperty("pose X",() -> getPoseX(), null);
       builder.addDoubleProperty("pose Y",() -> getPoseY(), null);
+      builder.addStringProperty("Angle", () -> poseEstimator.getEstimatedPosition().getRotation().toString(), null);
       SmartDashboard.putData("reset pose", new InstantCommand(()-> resetPose()));
   }
 
