@@ -11,27 +11,35 @@ public class Trapez {
     double acc;
     double maxVel;
     double endVel;
+    double deltaV;
 
     public Trapez(double acc, double maxVel, double endVel)
     {
         this.acc = acc;
         this.maxVel = maxVel;
         this.endVel = endVel;
+        deltaV = acc * 0.02 * 4;
     }
 
     public double calc(double rDistance, double cVel)
     {
+        System.out.println("rDistance: " + rDistance);
+        System.out.println("DISTANCE TO SLOW: " + accDistance(cVel));
         //The question is - to accelerate or not accelerate?
-        //Check if the distance that's left after acceleration, is enough for the distance to deaccelerate to the end velocity 
-        if(rDistance - cycDistance(cVel) >= accDistance(cVel))
+        //Check if the distance that's left, is enough for the distance to deaccelerate to the end velocity at an accelerated velocity (cVel + deltaV)
+        if(rDistance > accDistance(cVel))
         {
+
             //If yes, strive for the max velocity
-            return Math.min(maxVel, cVel + acc);
+            System.out.println("STRIVE FOR MAX");
+            System.out.println();
+            return Math.min(maxVel, cVel + deltaV);
         }
         else
         {
             //If no, strive for the min velocity
-            return Math.max(endVel, cVel - acc);
+            System.out.println("STRIVE FOR END");
+            return Math.max(endVel, cVel - deltaV);
         }
     }
 
@@ -40,10 +48,11 @@ public class Trapez {
      * @param cVel - Current Velocity (M/S)
      * @return The distance (meters) passed in the next cycle, with acceleration.
      */
-    private double cycDistance(double cVel)
+    /*private double cycDistance(double cVel)
     {
+        double t = maxVel - cVel;
         return Constants.CYCLE_DT * cVel + 0.5 * acc * Math.pow(Constants.CYCLE_DT, 2);
-    }
+    }*/
 
     /**
      * 
@@ -52,6 +61,9 @@ public class Trapez {
      */
     private double accDistance(double cVel)
     {
-        return (Math.pow(cVel + acc, 2) + Math.pow(endVel, 2)) / (-2 * acc);
+        System.out.println("~accDistance : ");
+        System.out.println("endVel : " + endVel);
+        System.out.println("cVel + deltaV : " + (cVel + deltaV));
+        return (Math.pow(endVel, 2) - Math.pow(cVel + deltaV, 2)) / (-2 * acc);
     }
 }
