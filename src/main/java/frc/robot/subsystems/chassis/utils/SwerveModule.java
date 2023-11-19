@@ -14,6 +14,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import frc.robot.Constants.ChassisConstants.SwerveModuleConstants;
 
 import static frc.robot.Constants.ChassisConstants.*;
+import static frc.robot.Constants.ChassisConstants.SwerveModuleConstants.*;
 
 public class SwerveModule implements Sendable {
     private final TalonFX moveMotor;
@@ -31,8 +32,11 @@ public class SwerveModule implements Sendable {
         absoluteEncoder = new CANCoder(constants.absoluteEncoderId);
         angleOffset = constants.steerOffset;
 
-        moveFF = new SimpleMotorFeedforward(constants.kS, constants.kV, constants.kA);
-        angleFF = new SimpleMotorFeedforward(constants.kS, constants.kV, constants.kA);
+        moveFF = new SimpleMotorFeedforward(MOVE_KS, MOVE_KV, MOVE_KA);
+        angleFF = new SimpleMotorFeedforward(ANGLE_KS, ANGLE_KV, ANGLE_KA);
+        
+        angleMotor.configMotionCruiseVelocity(metricToEncoderSpeed(ANGULAR_VELOCITY));
+        angleMotor.configMotionAcceleration(metricToEncoderSpeed(ANGULAR_ACCELERATION));
     }
 
     @Override
@@ -41,7 +45,7 @@ public class SwerveModule implements Sendable {
     }
 
     public void calibrateOffset() {
-        angleOffset += absoluteEncoder.getAbsolutePosition();
+        angleOffset = absoluteEncoder.getAbsolutePosition();
     }
 
     public void setMovePID(double kP, double kI, double kD) {
@@ -65,8 +69,10 @@ public class SwerveModule implements Sendable {
     }
 
     public void setVelocity(double v) {
+// get currentvvelocity
+// limit velocity change based on max acceleration
         double volts = moveFF.calculate(v, ACCELERATION);
-        moveMotor.set(ControlMode.Velocity, v * PULSES_PER_METER / 10, DemandType.ArbitraryFeedForward, volts / 12);
+        moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(v), DemandType.ArbitraryFeedForward, volts / 12);
     }
 
     public void setPower(double m, double s) {
@@ -88,8 +94,9 @@ public class SwerveModule implements Sendable {
     }
 
     public void setState(SwerveModuleState state) {
-        setVelocity(state.speedMetersPerSecond);
-        setAngle(state.angle);
+        SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
+        setVelocity(optimized.speedMetersPerSecond);
+        setAngle(optimized.angle);
     }
 
     public void setInverted(boolean invert) {
@@ -100,13 +107,16 @@ public class SwerveModule implements Sendable {
         return new SwerveModulePosition(moveMotor.getSelectedSensorPosition() * PULSES_PER_METER, getAngle());
     }
 
-    private double getAngleDifference(double current, double target) {
-        double difference = (target - current) % 360;
-        return difference - ((int)difference / 180) * 360;
+    private Rotation2d getAngleDifference(double current, double target) {
+        return Rotation2d.fromDegrees(target).minus(Rotation2d.fromDegrees(current));
     }
 
     private double calculateTarget(double targetAngle) {
-        double difference = getAngleDifference(getAngle().getDegrees(), targetAngle);
+        double difference = getAngleDifference(getAngle().getDegrees(), targetAngle).getDegrees();
         return angleMotor.getSelectedSensorPosition() + (difference * PULSES_PER_DEGREE);
+    }
+
+    public static double metricToEncoderSpeed(double speed) {
+        return speed * PULSES_PER_METER / 10;
     }
 }

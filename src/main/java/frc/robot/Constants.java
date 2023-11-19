@@ -6,22 +6,22 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 public final class Constants {
   public static class ChassisConstants {
     public final static SwerveModuleConstants MODULE_FRONT_LEFT = new SwerveModuleConstants(
-      7, 8, 11, 0, 0, 0,
+      7, 8, 11,
       new Translation2d(0.26515, 0.2215),
       27.59765625
     );
     public final static SwerveModuleConstants MODULE_FRONT_RIGHT = new SwerveModuleConstants(
-      5, 6, 13, 0, 0, 0,
+      5, 6, 13,
       new Translation2d(0.26515, -0.2215),
       199.16015625
     );
     public final static SwerveModuleConstants MODULE_BACK_LEFT = new SwerveModuleConstants(
-      1, 2, 10, 0, 0, 0,
+      1, 2, 10,
       new Translation2d(-0.25451, 0.2065),
       228.69140625
     );
     public final static SwerveModuleConstants MODULE_BACK_RIGHT = new SwerveModuleConstants(
-      3, 4, 12, 0, 0, 0,
+      3, 4, 12,
       new Translation2d(-0.26515, -0.2215),
       212.607421875
     );
@@ -50,22 +50,23 @@ public final class Constants {
     public static final double PULSES_PER_DEGREE = 72.817777777777777777777777777779;
 
     public static class SwerveModuleConstants {
+      public static final double MOVE_KS = 0;
+      public static final double MOVE_KV = 0;
+      public static final double MOVE_KA = 0;
+      public static final double ANGLE_KS = 0.41398;
+      public static final double ANGLE_KV = 0.0042277;
+      public static final double ANGLE_KA = 0.00013616;
+
       public final int moveMotorId;
       public final int angleMotorId;
       public final int absoluteEncoderId;
-      public final int kS;
-      public final int kV;
-      public final int kA;
       public final Translation2d moduleTranslationOffset;
       public final double steerOffset;
 
-      public SwerveModuleConstants(int moveMotorId, int angleMotorId, int absoluteEncoderId, int kS, int kV, int kA, Translation2d moduleTranslationOffset, double steerOffset) {
+      public SwerveModuleConstants(int moveMotorId, int angleMotorId, int absoluteEncoderId, Translation2d moduleTranslationOffset, double steerOffset) {
         this.moveMotorId = moveMotorId;
         this.angleMotorId = angleMotorId;
         this.absoluteEncoderId = absoluteEncoderId;
-        this.kS = kS;
-        this.kV = kV;
-        this.kA = kA;
         this.moduleTranslationOffset = moduleTranslationOffset;
         this.steerOffset = steerOffset;
       }
