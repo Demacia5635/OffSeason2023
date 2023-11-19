@@ -8,19 +8,27 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Util.Trapez;
 import frc.robot.Util.Trapezoid;
 import frc.robot.subsystems.chassis.Chassis;
 
 public class DriveLine extends CommandBase {
   Translation2d point = new Translation2d(0, 4);
   Chassis chassis;
-  Trapezoid trap = new Trapezoid(2, 1, 0, 0);
+  Translation2d velocity = new Translation2d();
+  Trapez trap = new Trapez(2, 4, 0);
   public DriveLine(Chassis chassis) {
     this.chassis = chassis;
     addRequirements(chassis);
   }
 
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addDoubleProperty("VELOCITY", () -> {return velocity.getY();},null);
+  }
 
   @Override
   public void initialize() {}
@@ -28,8 +36,9 @@ public class DriveLine extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Translation2d velocity = new Translation2d(0, trap.calculate(point.getY() - chassis.getPoseY(), chassis.getVelocity().vyMetersPerSecond));
-    System.out.println("CALC: " + velocity.getY());
+    velocity = new Translation2d(0, trap.calc(point.getY() - chassis.getPoseY(), chassis.getVelocity().vyMetersPerSecond));
+    System.out.println("CALC: " + trap.calc(point.getY() - chassis.getPoseY(), chassis.getVelocity().vyMetersPerSecond));
+    System.out.println("VELOCITY: " + velocity.getY());
     ChassisSpeeds speed = new ChassisSpeeds(0,velocity.getY(), 0);
     chassis.setVelocities(speed);
   }

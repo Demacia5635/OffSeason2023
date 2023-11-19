@@ -24,7 +24,7 @@ public class RobotContainer {
      new pathPoint(3, 1, new Rotation2d(), 0.25)
     };
      
-  ArcPath path = new ArcPath(chassis, points, 1, 2);
+  ArcPath path = new ArcPath(chassis, points, 10, 20);
   Drive drive = new Drive(chassis, controller);
   public RobotContainer() {
     chassis.setDefaultCommand(drive);
