@@ -55,9 +55,8 @@ public class Arm extends SubsystemBase {
       } else {
         state = 3;
       }
-    }/*else {
-      return 0;
-    } */
+    }
+
     return (
       KS[state] + 
       wantedAnglerVel * KV[state] + 
@@ -75,7 +74,7 @@ public class Arm extends SubsystemBase {
     System.out.println("arm angle = " + getAngle());
     System.out.println("arm current vel = " + getCurrentAnglerVel());
     System.out.println("arm velocity = " + wantedAnglerVel);
-    System.out.println("arm power = " + calculatedPower);
+    System.out.println("arm FF = " + calculatedPower);
     // motor.set(ControlMode.PercentOutput, calculatedPower);
     motor.set(ControlMode.Velocity, wantedAnglerVel*pulsePerAngle/10, DemandType.ArbitraryFeedForward, calculatedPower);
   }

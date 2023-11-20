@@ -6,7 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arm;
-import frc.robot.util.ArmCalc;
+import frc.robot.utils.ArmCalc;
 
 public class ArmGoToAngle extends CommandBase {
   Arm arm;
@@ -22,7 +22,7 @@ public class ArmGoToAngle extends CommandBase {
     this.arm = arm;
     wantedAngle = angle;
     addRequirements(arm);
-    calc = new ArmCalc(arm);
+    calc = new ArmCalc();
     this.maxVel = maxVel;
     this.acc = acc;
   }
