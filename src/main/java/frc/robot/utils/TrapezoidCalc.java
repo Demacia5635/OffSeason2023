@@ -28,10 +28,10 @@ public class TrapezoidCalc {
             }
         }
         double timeToAccelerate = (currentVelocity-endVel)/acc;
-        System.out.print(" currentVel =" + currentVelocity +"\n");
+        System.out.print(" currentVel = " + currentVelocity +"\n");
         if(dis > 0) {
             double accelDistance = currentVelocity*timeToAccelerate + acc*Math.pow(timeToAccelerate,2)/2;
-            System.out.print(" accDis =" + accelDistance +"\n");
+            System.out.print(" accDis = " + accelDistance +"\n");
             if(dis > accelDistance) {
                 lastVel = Math.min(currentVelocity + 0.02*acc, maxVel);
             } else {
@@ -39,7 +39,7 @@ public class TrapezoidCalc {
             }
         } else {
             double accelDistance = currentVelocity*timeToAccelerate - acc*Math.pow(timeToAccelerate,2)/2;
-            System.out.print(" accDis =" + accelDistance +"\n");
+            System.out.print(" accDis = " + accelDistance +"\n");
             if(dis < accelDistance) {
                 lastVel =  Math.max(currentVelocity - 0.02*acc, -maxVel);
             } else {
@@ -48,7 +48,7 @@ public class TrapezoidCalc {
         }
         lastTime = time;
         lastAcc = lastVel - currentVelocity;
-        System.out.println(" lastVel =" + lastVel +"\n"+ " lastAcc =" + lastAcc +"\n");
+        System.out.println(" lastVel = " + lastVel +"\n"+ " lastAcc = " + lastAcc +"\n");
         return lastVel;
     }
 }
