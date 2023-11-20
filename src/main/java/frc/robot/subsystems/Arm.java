@@ -62,7 +62,7 @@ public class Arm extends SubsystemBase {
       wantedAnglerVel * KV[state] + 
       (wantedAnglerVel-getCurrentAnglerVel()) * KA[state] + 
       Kalpha[state] * angle + 
-      Ksin[state] * Math.sin(rad) + 
+      Ksin[state] * Math.sin(rad) +   
       Kcos[state] * Math.cos(rad) + 
       Kcossin[state] * Math.cos(rad) * Math.sin(rad)
     );

@@ -28,7 +28,7 @@ public class ArmControl extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    arm.setVel(-1*(controller.getLeftY()*0.5));
+    arm.setPow(-1*(controller.getLeftY()*0.5));
 
   }
 

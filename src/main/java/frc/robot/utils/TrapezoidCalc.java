@@ -8,16 +8,17 @@ package frc.robot.utils;
 import edu.wpi.first.wpilibj.Timer;
 
 /** Add your docs here. */
-public class ArmCalc {
+public class TrapezoidCalc {
     double lastVel = 0;
     double lastAcc = 0;
     double lastTime = 0;
     
-    public ArmCalc(){
+    public TrapezoidCalc(){
     }
 
     public double trapezoid(double currentVelocity, double maxVel, double endVel, double acc, double dis){
         double time = Timer.getFPGATimestamp();
+        System.out.print("Trapezoid: v =" + currentVelocity + " maxv =" + maxVel + " acc =" + acc + "dis =" + dis);
         if(time - lastTime < 0.04) {
             if(lastAcc > 0 && currentVelocity < lastVel) {
                 currentVelocity = lastVel;
@@ -27,8 +28,10 @@ public class ArmCalc {
             }
         }
         double timeToAccelerate = (currentVelocity-endVel)/acc;
+        System.out.print(" cv =" + currentVelocity);
         if(dis > 0) {
             double accelDistance = currentVelocity*timeToAccelerate + acc*Math.pow(timeToAccelerate,2)/2;
+            System.out.print(" accd =" + accelDistance);
             if(dis > accelDistance) {
                 lastVel = Math.min(currentVelocity + 0.02*acc, maxVel);
             } else {
@@ -36,6 +39,7 @@ public class ArmCalc {
             }
         } else {
             double accelDistance = currentVelocity*timeToAccelerate - acc*Math.pow(timeToAccelerate,2)/2;
+            System.out.print(" accd =" + accelDistance);
             if(dis < accelDistance) {
                 lastVel =  Math.max(currentVelocity - 0.02*acc, -maxVel);
             } else {
@@ -44,6 +48,7 @@ public class ArmCalc {
         }
         lastTime = time;
         lastAcc = lastVel - currentVelocity;
+        System.out.println(" lastv =" + lastVel + " lastAcc =" + lastAcc);
         return lastVel;
     }
 }
