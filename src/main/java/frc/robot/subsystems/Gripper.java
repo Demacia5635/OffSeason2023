@@ -4,29 +4,28 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.GripperConstants.*;
 
+
 public class Gripper extends SubsystemBase {
-  private final TalonSRX motor;
+  public TalonSRX motor;
 
   public Gripper() {
     motor = new TalonSRX(MOTOR_ID);
   }
 
-  public boolean isClosed() {
+  private boolean isClosed() {
     return motor.isFwdLimitSwitchClosed() == 1;
   }
 
-  public boolean isOpened() {
+  private boolean isOpened() {
     return motor.isRevLimitSwitchClosed() == 1;
   }
 
-  public void setPower(double p) {
-    motor.set(ControlMode.PercentOutput, p);
+  public void setPower(double pow) {
+    motor.set(ControlMode.PercentOutput, pow);
   }
 
   public void stop() {
@@ -34,14 +33,26 @@ public class Gripper extends SubsystemBase {
   }
 
   public void open() {
-    new FunctionalCommand(null, () -> setPower(OPEN_POWER), (interrupt) -> setPower(0), () -> isOpened(), this);
+    new FunctionalCommand(null, () -> setPower(OPEN_POWER), (interrupt) -> stop(), () -> isOpened(), this);
   }
 
   public void close() {
-    new FunctionalCommand(null, () -> setPower(CLOSE_POWER), (interrupt) -> setPower(0), () -> isClosed(), this);
+    new FunctionalCommand(null, () -> setPower(CLOSE_POWER), (interrupt) -> stop(), () -> isClosed(), this);
   }
 
-  public void toggle() {
-    
+  public GripperState getState() {
+    if (isClosed() && !isOpened()){
+      return GripperState.CLOSE;
+    } else if(isOpened() && !isClosed()){
+      return GripperState.OPEN;
+    } else {
+      return GripperState.BETWEEN;
+    }
+  }
+
+  enum GripperState{
+    CLOSE,
+    OPEN,
+    BETWEEN
   }
 }
