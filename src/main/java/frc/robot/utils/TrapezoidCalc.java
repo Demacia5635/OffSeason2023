@@ -16,7 +16,16 @@ public class TrapezoidCalc {
     public TrapezoidCalc(){
     }
 
+    /**
+     * @param maxVel will always be postive
+     * @param acc will always be postive
+     * @param endVel was only tested as 0
+     * @param dis is the remaing distance to the end
+     * 
+     * @return the needed velocity
+     */
     public double trapezoid(double currentVelocity, double maxVel, double endVel, double acc, double dis){
+        
         double time = Timer.getFPGATimestamp();
         System.out.print("Trapezoid: vel = " + currentVelocity +"\n"+ " maxVel = " + maxVel +"\n"+ " acc =" + acc +"\n"+ "dis =" + dis +"\n");
         if(time - lastTime < 0.04) {
@@ -27,8 +36,10 @@ public class TrapezoidCalc {
                 currentVelocity = lastVel;
             }
         }
+
         double timeToAccelerate = (currentVelocity-endVel)/acc;
         System.out.print(" currentVel = " + currentVelocity +"\n");
+
         if(dis > 0) {
             double accelDistance = currentVelocity*timeToAccelerate + acc*Math.pow(timeToAccelerate,2)/2;
             System.out.print(" accDis = " + accelDistance +"\n");
@@ -37,7 +48,9 @@ public class TrapezoidCalc {
             } else {
                 lastVel = currentVelocity - acc*0.02;
             }
-        } else {
+        }
+
+        else {
             double accelDistance = currentVelocity*timeToAccelerate - acc*Math.pow(timeToAccelerate,2)/2;
             System.out.print(" accDis = " + accelDistance +"\n");
             if(dis < accelDistance) {
@@ -46,9 +59,11 @@ public class TrapezoidCalc {
                 lastVel = currentVelocity + acc*0.02;
             }
         }
+
         lastTime = time;
         lastAcc = lastVel - currentVelocity;
         System.out.println(" lastVel = " + lastVel +"\n"+ " lastAcc = " + lastAcc +"\n");
         return lastVel;
+
     }
 }

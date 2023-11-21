@@ -37,7 +37,7 @@ public class RobotContainer {
     controller.a().onTrue(new ArmControl(arm, controller));
     controller.b().onTrue(new ArmGoBack(arm));
     controller.x().onTrue(new ArmGoToAngle(arm, 10, 60, 120));
-    controller.y().onTrue(new ArmGoToAngle(arm, 70, 60, 120)); 
+    controller.y().onTrue(new ArmGoToAngle(arm, 90, 85, 120)); 
 
     controller.rightBumper().onTrue(new InstantCommand(()-> arm.stop(),arm).ignoringDisable(true));
   }
