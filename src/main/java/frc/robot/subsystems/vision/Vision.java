@@ -32,8 +32,9 @@ public class Vision extends SubsystemBase {
 
     public Vision(Chassis chassis, SwerveDrivePoseEstimator estimator) {
         camera1 = new PhotonCamera(photonCamera1Name);
-        camera2 = new PhotonCamera(photonCamera2Name);
+        //camera2 = new PhotonCamera(photonCamera2Name);
         this.chassis = chassis;
+        this.poseEstimator = estimator;
         checkPose = new Pose2d();
         checkField2d = new Field2d();
         for (int i = 0; i < buf.length; i++) {
@@ -110,7 +111,7 @@ public class Vision extends SubsystemBase {
     public void periodic() {
         super.periodic();
         getNewVisionDataFromCameraX(photonCameraNum1);
-        getNewVisionDataFromCameraX(photonCameraNum2);
+        //getNewVisionDataFromCameraX(photonCameraNum2);
         updateRobotPose();
         
         
