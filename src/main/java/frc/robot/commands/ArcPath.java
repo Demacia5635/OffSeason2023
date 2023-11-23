@@ -39,7 +39,7 @@ public class ArcPath extends CommandBase {
 
   Segment[] segments;
   Translation2d vecVel;
-  Rotation2d wantedAngle = new Rotation2d(90);
+  Rotation2d wantedAngle = new Rotation2d(80);
 
 
   Trapez driveTrapezoid;
@@ -85,6 +85,7 @@ public class ArcPath extends CommandBase {
     int segmentIndexCreator = 1;
     for(int i = 0; i < corners.length - 1; i +=1)
     {
+      
       segments[segmentIndexCreator] = corners[i].getArc(); 
       segments[segmentIndexCreator+1] = new Leg(corners[i].getCurveEnd(), corners[i+1].getCurveStart());
       segmentIndexCreator+=2;
@@ -143,10 +144,12 @@ public class ArcPath extends CommandBase {
     
     if(segments[segmentIndex].distancePassed(pose.getTranslation()) >= segments[segmentIndex].getLength() - distanceOffset){
       totalLeft -= segments[segmentIndex].getLength();
-      if(segmentIndex != segments.length - 1)
+      if(segmentIndex != segments.length - 1 || segments[segmentIndex].getLength() <= 15)
         segmentIndex++;
+      
         
     }
+
 
 
     
