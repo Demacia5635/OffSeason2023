@@ -21,10 +21,12 @@ public class RobotContainer {
      new pathPoint(0,0, new Rotation2d() ,0.25),
      new pathPoint(1,1, new Rotation2d() ,0.25),
      new pathPoint(2,0, new Rotation2d(), 0.25),
-     new pathPoint(3, 1, new Rotation2d(), 0.25)
+     new pathPoint(3, 1, new Rotation2d(), 0.25),
+     new pathPoint(5, 2, new Rotation2d(), 0.25),
+     
     };
      
-  ArcPath path = new ArcPath(chassis, points, 10, 20);
+  ArcPath path = new ArcPath(chassis, points, 2, 2);
   Drive drive = new Drive(chassis, controller);
   public RobotContainer() {
     chassis.setDefaultCommand(drive);
@@ -36,6 +38,6 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return driveLine;
+    return path;
   }
 }
