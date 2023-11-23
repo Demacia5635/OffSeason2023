@@ -28,19 +28,29 @@ public class RoundedPoint{
 
 
         this.cornerAngle = vectorAtoB.times(-1).getAngle().minus(vectorBtoC.getAngle());
+        if(Math.abs(cornerAngle.getDegrees()) >= 175 && Math.abs(cornerAngle.getDegrees()) <= 180)
+            this.radius = 0;
+        else{
+            if(radius > getMaxRadius()){
+                radius = getMaxRadius() - 0.1;
+                System.out.println("radius is bigger then possible, new radius is: " + radius);
+            }
+    
+        }
         this.cornerDir = vectorAtoB.times(-1).getAngle().minus(this.cornerAngle.div(2));
 
         
+        
 
     }
-
+    
     
     public double getMaxRadius()
     {
         return Math.sin(Math.abs(this.cornerAngle.getRadians()) / 2) * Math.min(vectorAtoB.getNorm(), vectorBtoC.getNorm());
     }
 
-
+    
 
     /**
      * 

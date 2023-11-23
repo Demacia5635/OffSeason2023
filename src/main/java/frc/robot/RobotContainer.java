@@ -20,10 +20,9 @@ public class RobotContainer {
   pathPoint[] points = { 
      new pathPoint(0,0, new Rotation2d() ,0.25),
      new pathPoint(1,1, new Rotation2d() ,0.25),
-     new pathPoint(2,0, new Rotation2d(), 0.25),
-     new pathPoint(3, 1, new Rotation2d(), 0.25),
-     new pathPoint(5, 2, new Rotation2d(), 0.25),
-     
+     new pathPoint(2,0, new Rotation2d(), 4),
+     new pathPoint(3,1, new Rotation2d(), 0.25),
+
     };
      
   ArcPath path = new ArcPath(chassis, points, 2, 2);
