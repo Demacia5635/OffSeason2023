@@ -53,17 +53,12 @@ public class ArmGoToAngle extends CommandBase {
   }
 
   private boolean isPassed(){
-    if (wantedAngle-startAngle > 0){
-      if (arm.getAngle() > wantedAngle){
-        return true;
-      }
-    } else if (wantedAngle - startAngle < 0){
-      if (arm.getAngle() < wantedAngle){
-        return true;
-      }
-    } else {
+    if ((wantedAngle-startAngle > 0) && (arm.getAngle() > wantedAngle)){
       return true;
+    } else if ((wantedAngle - startAngle < 0) && (arm.getAngle() < wantedAngle)){
+      return true;
+    } else {
+      return false;
     }
-    return false;
   }
 }
