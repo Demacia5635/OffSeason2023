@@ -99,7 +99,7 @@ public class Vision extends SubsystemBase {
                     Pose2d cameraToAprilTagPose2d = new Pose2d(
                             bestTarget.getBestCameraToTarget().getTranslation().toTranslation2d(),
                             bestTarget.getBestCameraToTarget().getRotation().toRotation2d());
-                    System.out.println("camera to april tag pose before - " + cameraToAprilTagPose2d);
+                    System.out.println("camera to april tag pose,jlvkvkj before - " + cameraToAprilTagPose2d);
                     cameraToAprilTagPose2d = new Pose2d(cameraToAprilTagPose2d.getTranslation().rotateBy(
                         aprilTagToFieldPose2d.getRotation().minus(cameraToAprilTagPose2d.getRotation())), cameraToAprilTagPose2d.getRotation());   
                     System.out.println("april tag pose - " + aprilTagToFieldPose2d);
