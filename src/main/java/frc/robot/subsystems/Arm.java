@@ -20,7 +20,7 @@ import static frc.robot.Constants.ArmConstants.*;
 public class Arm extends SubsystemBase {
   
   public TalonFX motor = new TalonFX(motorID);
-  public DigitalInput input = new DigitalInput(DigitalInputID);
+  public DigitalInput input = new DigitalInput(digitalInputID);
   private double requiredVelocity = 0;
   private double calculatedPower = 0;
 
@@ -114,7 +114,7 @@ public class Arm extends SubsystemBase {
       builder.addDoubleProperty("Pow", this::getPow, null);
       builder.addDoubleProperty("Volt", this::getVolt, null);
       builder.addDoubleProperty("Accelaration", this::getVelAcc, null);
-      builder.addDoubleProperty("state", ()->state, null);
+      builder.addIntegerProperty("state", ()->state, null);
       builder.addDoubleProperty("wanted velocity", ()->requiredVelocity, null);
       builder.addDoubleProperty("feed forward", ()->calculatedPower, null);
 
