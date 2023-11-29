@@ -23,8 +23,10 @@ import frc.robot.Util.Leg;
 import frc.robot.Util.RoundedPoint;
 import frc.robot.Util.pathPoint;
 import frc.robot.subsystems.chassis.*;
+import frc.robot.Constants.*;
 
 public class ArcPath extends CommandBase {
+  Pose2d closestAprilTag = new Pose2d();
 
   Chassis chassis;
   RoundedPoint[] corners;
@@ -134,6 +136,23 @@ public class ArcPath extends CommandBase {
     vecVel = new Translation2d(0,0);  
   }
 
+  public Pose2d getClosestAprilTag(){
+    Translation2d finalVector = new Translation2d();
+    int finalAprilTagIndex = 0;
+    for(int i = 0; i < 8; i++){
+      
+      Translation2d currentAprilTagVector =chassis.getPose().getEstimatedPosition().getTranslation()
+      .minus(Constants.aprilTagsPositions[i].getTranslation());
+
+     if(currentAprilTagVector.getNorm() < finalVector.getNorm()){
+      finalAprilTagIndex++;
+      finalVector = currentAprilTagVector;
+     }
+      
+    }
+    System.out.println("CLOSET APRILTAG: " +  new Pose2d(finalVector, Constants.aprilTagsPositions[finalAprilTagIndex].getRotation()));
+    return new Pose2d(finalVector, Constants.aprilTagsPositions[finalAprilTagIndex].getRotation());
+  }
 
 
   @Override
@@ -154,6 +173,8 @@ public class ArcPath extends CommandBase {
     ChassisSpeeds speed = new ChassisSpeeds();
 
     if (segments[segmentIndex].isAprilTagMode()){
+      //TODO ADD Rotation to closet AprilTag
+      Pose2d closestAprilTag = getClosestAprilTag();
       speed = new ChassisSpeeds(Math.max(velVector.getX(), 1), Math.max(velVector.getY(), 1),Math.toRadians(rotationVelocity));
     }
     else{

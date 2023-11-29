@@ -18,8 +18,8 @@ public class RobotContainer {
   Chassis chassis = new Chassis();
   DriveLine driveLine = new DriveLine(chassis);
   pathPoint[] points = { 
-     new pathPoint(0,0, new Rotation2d() ,0.25, false),
-     new pathPoint(2,0, new Rotation2d() ,1, false),
+     new pathPoint(0,0, new Rotation2d() ,0.25, true),
+     new pathPoint(2,0, new Rotation2d() ,1, true),
      new pathPoint(2,1, new Rotation2d() ,0.25, false),
      new pathPoint(0,1, new Rotation2d() ,1, false),
      new pathPoint(0,0.3, new Rotation2d() ,0.25, false),

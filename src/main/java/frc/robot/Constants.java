@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
@@ -7,6 +9,16 @@ public final class Constants {
   public static final double CYCLE_DT = 0.02;
 
   public static final double segmentID = 1;
+  static Pose2d aprilTag1 = new Pose2d(15.513558, 1.071626, new Rotation2d(180));
+  static Pose2d aprilTag2 = new Pose2d(15.513558, 2.748026, new Rotation2d(180));
+  static Pose2d aprilTag3 = new Pose2d(15.513558, 4.424426, new Rotation2d(180));
+  static Pose2d aprilTag4 = new Pose2d(16.178784, 6.749796, new Rotation2d(180));
+  static Pose2d aprilTag5 = new Pose2d(0.36195, 6.749796, new Rotation2d());
+  static Pose2d aprilTag6 = new Pose2d(1.02743,  4.424426, new Rotation2d());
+  static Pose2d aprilTag7 = new Pose2d(1.02743, 2.748026, new Rotation2d());
+  static Pose2d aprilTag8 = new Pose2d(1.02743, 1.071626, new Rotation2d());
+  public final static Pose2d[] aprilTagsPositions = {aprilTag1, aprilTag2, aprilTag3, aprilTag4, aprilTag5, aprilTag6, aprilTag7, aprilTag8};
+
 
   public static class ChassisConstants {
     public final static SwerveModuleConstants MODULE_FRONT_LEFT = new SwerveModuleConstants(
