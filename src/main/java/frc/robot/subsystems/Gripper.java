@@ -13,14 +13,15 @@ public class Gripper extends SubsystemBase {
   public TalonSRX motor = new TalonSRX(motorID);
 
   public Gripper() {
+    SmartDashboard.putData(this);
   }
 
   private boolean isClosed() {
-    return motor.isFwdLimitSwitchClosed() == 1;
+    return motor.isRevLimitSwitchClosed() == 1;
   }
 
   private boolean isOpened() {
-    return motor.isRevLimitSwitchClosed() == 1;
+    return motor.isFwdLimitSwitchClosed() == 1;
   }
 
   public void setPower(double pow) {
@@ -52,8 +53,5 @@ public class Gripper extends SubsystemBase {
       super.initSendable(builder);
 
       builder.addStringProperty("Gripper state", () -> (getState().toString()), null);
-
-      SmartDashboard.putNumber("Gripper open power", openPower);
-      SmartDashboard.putNumber("Gripper close power", closePower);
   }
 }

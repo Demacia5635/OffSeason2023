@@ -110,13 +110,13 @@ public class Arm extends SubsystemBase {
 
       builder.addDoubleProperty("Arm Current Angle Velocity", this::getCurrentAnglerVel, null);
       builder.addDoubleProperty("Arm Angle", this::getAngle, null);
-      builder.addBooleanProperty("Arm Limit switch", this::getLimitSwitch, null);
-      builder.addDoubleProperty("Arm Pow", this::getPow, null);
-      builder.addDoubleProperty("Arm Volt", this::getVolt, null);
-      builder.addDoubleProperty("Arm Accelaration", this::getVelAcc, null);
-      builder.addIntegerProperty("Arm state", ()->state, null);
-      builder.addDoubleProperty("Arm wanted velocity", ()->requiredVelocity, null);
-      builder.addDoubleProperty("Arm feed forward", ()->calculatedPower, null);
+      // builder.addBooleanProperty("Arm Limit switch", this::getLimitSwitch, null);
+      // builder.addDoubleProperty("Arm Pow", this::getPow, null);
+      // builder.addDoubleProperty("Arm Volt", this::getVolt, null);
+      // builder.addDoubleProperty("Arm Accelaration", this::getVelAcc, null);
+      // builder.addIntegerProperty("Arm state", ()->state, null);
+      // builder.addDoubleProperty("Arm wanted velocity", ()->requiredVelocity, null);
+      // builder.addDoubleProperty("Arm feed forward", ()->calculatedPower, null);
 
       InstantCommand cmdBrake = new InstantCommand(()-> brake(), this);
       InstantCommand cmdCoast = new InstantCommand(()-> coast(), this);

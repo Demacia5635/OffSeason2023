@@ -37,7 +37,7 @@ public final class Constants {
   
   public static class GripperConstants {
 
-    public static final int motorID = 0;
+    public static final int motorID = 20;
 
     public static final double openPower = 1;
     public static final double closePower = -1;

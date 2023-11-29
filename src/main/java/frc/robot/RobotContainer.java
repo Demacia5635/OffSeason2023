@@ -7,12 +7,17 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ArmControl;
 import frc.robot.commands.ArmGoToAngle;
+import frc.robot.commands.GripperClose;
+import frc.robot.commands.GripperControl;
+import frc.robot.commands.GripperOpen;
 import frc.robot.commands.ArmGoBack;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Gripper;
 
 
 public class RobotContainer {
   public Arm arm = new Arm();
+  public Gripper gripper = new Gripper();
   public CommandXboxController controller = new CommandXboxController(0);
   
   public RobotContainer() {
@@ -30,12 +35,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    controller.a().onTrue(new ArmControl(arm, controller));
-    controller.b().onTrue(new ArmGoBack(arm));
-    controller.x().onTrue(new ArmGoToAngle(arm, 10, 60, 120));
-    controller.y().onTrue(new ArmGoToAngle(arm, 90, 85, 120)); 
+    // code for controller to controll the gripper and the parallelogram
 
-    controller.rightBumper().onTrue(new InstantCommand(()-> arm.stop(),arm).ignoringDisable(true));
   }
 
   public Command getAutonomousCommand() {
