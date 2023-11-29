@@ -24,10 +24,10 @@ public class Arc extends Segment{
      * @param p2 - Circle center of arc
      * @param angle - Arc's angle
      */
-    public Arc(Translation2d p1, Translation2d p2, Rotation2d angle)
+    public Arc(Translation2d p1, Translation2d p2, Rotation2d angle, boolean isAprilTagMode)
     {
         //start point
-        super(p1,p2);
+        super(p1,p2, isAprilTagMode);
         this.angle = angle;
 
         startVector = p1.minus(p2);
@@ -68,6 +68,11 @@ public class Arc extends Segment{
       Rotation2d diffAngle = startVector.getAngle().minus(relativePos.getAngle());
       System.out.println("Diff : " + diffAngle);
       return Math.abs(diffAngle.getRadians() * radius);
+    }
+
+    @Override
+    public boolean isAprilTagMode(){
+      return isAprilTagMode;
     }
 
     @Override

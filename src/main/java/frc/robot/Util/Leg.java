@@ -17,9 +17,9 @@ public class Leg extends Segment{
 
     final Translation2d velDirection;
 
-    public Leg(Translation2d p1, Translation2d p2)
+    public Leg(Translation2d p1, Translation2d p2, boolean isAprilTagMode)
     {
-        super(p1,p2);
+        super(p1,p2, isAprilTagMode);
         totalVector = p2.minus(p1);
 
         velDirection = totalVector.div(totalVector.getNorm());
@@ -51,6 +51,11 @@ public class Leg extends Segment{
     public double getLength()
     {
         return totalVector.getNorm();
+    }
+
+    @Override
+    public boolean isAprilTagMode(){
+        return isAprilTagMode;
     }
 
     @Override

@@ -86,7 +86,7 @@ public class ArcPath extends CommandBase {
     for(int i = 0; i < corners.length - 1; i +=1)
     {
       segments[segmentIndexCreator] = corners[i].getArc(); 
-      segments[segmentIndexCreator+1] = new Leg(corners[i].getCurveEnd(), corners[i+1].getCurveStart());
+      segments[segmentIndexCreator+1] = new Leg(corners[i].getCurveEnd(), corners[i+1].getCurveStart(), false);
       segmentIndexCreator+=2;
     }
     segments[segments.length - 2] = corners[corners.length - 1].getArc();
@@ -121,6 +121,7 @@ public class ArcPath extends CommandBase {
 
   public String currentSegmentInfo()
   {
+    
     if(segments == null)
       return "";
     return segments[segmentIndex].toString();
@@ -144,21 +145,22 @@ public class ArcPath extends CommandBase {
     if(segments[segmentIndex].distancePassed(pose.getTranslation()) >= segments[segmentIndex].getLength() - distanceOffset){
       totalLeft -= segments[segmentIndex].getLength();
       if(segmentIndex != segments.length - 1 || segments[segmentIndex].getLength() <= 0.15)
-        segmentIndex++;
-      
-        
+        segmentIndex++;  
     }
 
-
-
-    
-
-    
     velocity = driveTrapezoid.calc(totalLeft - segments[segmentIndex].distancePassed(pose.getTranslation()), translation2dVelocity.getNorm());
     rotationVelocity = rotationTrapezoid.calc(wantedAngle.minus(chassis.getAngle()).getDegrees(), Math.toDegrees(chassis.getVelocity().omegaRadiansPerSecond));
-
     Translation2d velVector = segments[segmentIndex].calc(pose.getTranslation(), velocity);
-    ChassisSpeeds speed = new ChassisSpeeds(velVector.getX(), velVector.getY(),Math.toRadians(rotationVelocity) );
+    ChassisSpeeds speed = new ChassisSpeeds();
+
+    if (segments[segmentIndex].isAprilTagMode()){
+      speed = new ChassisSpeeds(1, 1,Math.toRadians(rotationVelocity));  
+
+    }
+    else{
+      speed = new ChassisSpeeds(velVector.getX(), velVector.getY(),Math.toRadians(rotationVelocity));
+    }
+  
     chassis.setVelocities(speed);
   }
 

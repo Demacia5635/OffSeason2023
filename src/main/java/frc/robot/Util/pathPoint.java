@@ -10,10 +10,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 /** Add your docs here. */
 public class pathPoint extends Pose2d{
     double radius;
+    boolean isAprilTag;
 
-    public pathPoint(double x, double y, Rotation2d rotation, double radius) {
+    public pathPoint(double x, double y, Rotation2d rotation, double radius, boolean isAprilTag) {
         super(x,y,rotation);
         this.radius = radius;
+        this.isAprilTag = isAprilTag;
       }
 
     public double getRadius()
@@ -24,6 +26,9 @@ public class pathPoint extends Pose2d{
     public void setRadius(double radius)
     {
       this.radius = radius;
+    }
+    public boolean isAprilTag(){
+      return isAprilTag;
     }
 
 

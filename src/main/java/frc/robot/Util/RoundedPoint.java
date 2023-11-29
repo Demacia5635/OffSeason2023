@@ -197,16 +197,16 @@ public class RoundedPoint{
 
     public Leg getAtoCurveLeg()
     {
-        return new Leg(aPoint, startRange().plus(getCenterCircle()));
+        return new Leg(aPoint, startRange().plus(getCenterCircle()), false);
     }
     public Leg getCtoCurveLeg()
     {
-        return new Leg(endRange().plus(getCenterCircle()), cPoint);
+        return new Leg(endRange().plus(getCenterCircle()), cPoint, false);
     }
 
     public Arc getArc()
     {
         Rotation2d diffAngle = endRange().getAngle().minus(startRange().getAngle());
-        return new Arc(startRange().plus(getCenterCircle()), getCenterCircle(), diffAngle);
+        return new Arc(startRange().plus(getCenterCircle()), getCenterCircle(), diffAngle, false);
     }
 }
