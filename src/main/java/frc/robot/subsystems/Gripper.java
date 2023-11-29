@@ -3,10 +3,11 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.GripperConstants.*;
-
 
 public class Gripper extends SubsystemBase {
   public TalonSRX motor = new TalonSRX(motorID);
@@ -43,6 +44,16 @@ public class Gripper extends SubsystemBase {
   public enum GripperState{
     CLOSE,
     OPEN,
-    BETWEEN
+    BETWEEN;
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      super.initSendable(builder);
+
+      builder.addStringProperty("Gripper state", () -> (getState().toString()), null);
+
+      SmartDashboard.putNumber("Gripper open power", openPower);
+      SmartDashboard.putNumber("Gripper close power", closePower);
   }
 }

@@ -20,7 +20,7 @@ import static frc.robot.Constants.ArmConstants.*;
 public class Arm extends SubsystemBase {
   
   public TalonFX motor = new TalonFX(motorID);
-  public DigitalInput input = new DigitalInput(digitalInputID);
+  public DigitalInput limitSwitch = new DigitalInput(digitalInputID);
   private double requiredVelocity = 0;
   private double calculatedPower = 0;
 
@@ -49,7 +49,7 @@ public class Arm extends SubsystemBase {
       } else {
         state = 1;
       }
-    } else /*if (wantedAngelerVel < 0)*/{
+    } else {
       if (getAngle() <= 43){
         state = 2;
       } else {
@@ -80,7 +80,7 @@ public class Arm extends SubsystemBase {
   }
   
   // get flase from the limit switch when close reverse it in this command
-  public boolean getInput(){ return !input.get(); }
+  public boolean getLimitSwitch(){ return !limitSwitch.get(); }
   public double getCurrentAnglerVel(){ return motor.getSelectedSensorVelocity() * 10 / pulsePerAngle; }
 
   public double baseAngle = 0;
@@ -108,20 +108,19 @@ public class Arm extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
       super.initSendable(builder);
 
-      builder.addDoubleProperty("Current Angle Velocity", this::getCurrentAnglerVel, null);
-      builder.addDoubleProperty("Angle", this::getAngle, null);
-      builder.addBooleanProperty("Input", this::getInput, null);
-      builder.addDoubleProperty("Pow", this::getPow, null);
-      builder.addDoubleProperty("Volt", this::getVolt, null);
-      builder.addDoubleProperty("Accelaration", this::getVelAcc, null);
-      builder.addIntegerProperty("state", ()->state, null);
-      builder.addDoubleProperty("wanted velocity", ()->requiredVelocity, null);
-      builder.addDoubleProperty("feed forward", ()->calculatedPower, null);
+      builder.addDoubleProperty("Arm Current Angle Velocity", this::getCurrentAnglerVel, null);
+      builder.addDoubleProperty("Arm Angle", this::getAngle, null);
+      builder.addBooleanProperty("Arm Limit switch", this::getLimitSwitch, null);
+      builder.addDoubleProperty("Arm Pow", this::getPow, null);
+      builder.addDoubleProperty("Arm Volt", this::getVolt, null);
+      builder.addDoubleProperty("Arm Accelaration", this::getVelAcc, null);
+      builder.addIntegerProperty("Arm state", ()->state, null);
+      builder.addDoubleProperty("Arm wanted velocity", ()->requiredVelocity, null);
+      builder.addDoubleProperty("Arm feed forward", ()->calculatedPower, null);
 
       InstantCommand cmdBrake = new InstantCommand(()-> brake(), this);
       InstantCommand cmdCoast = new InstantCommand(()-> coast(), this);
-      SmartDashboard.putData("Brake", cmdBrake.ignoringDisable(true));
-      SmartDashboard.putData("Coast", cmdCoast.ignoringDisable(true));
+      SmartDashboard.putData("Arm Brake", cmdBrake.ignoringDisable(true));
+      SmartDashboard.putData("Arm Coast", cmdCoast.ignoringDisable(true));
   }
-
 }

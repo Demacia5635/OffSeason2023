@@ -49,7 +49,7 @@ public class ArmGoToAngle extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (arm.getInput()&&wantedAngle == 0) || (Math.abs(arm.getAngle()-wantedAngle)<3 || isPassed());
+    return (arm.getLimitSwitch()&&wantedAngle == 0) || (Math.abs(arm.getAngle()-wantedAngle)<3 || isPassed());
   }
 
   private boolean isPassed(){
