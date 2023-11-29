@@ -154,8 +154,7 @@ public class ArcPath extends CommandBase {
     ChassisSpeeds speed = new ChassisSpeeds();
 
     if (segments[segmentIndex].isAprilTagMode()){
-      speed = new ChassisSpeeds(1, 1,Math.toRadians(rotationVelocity));  
-
+      speed = new ChassisSpeeds(Math.max(velVector.getX(), 1), Math.max(velVector.getY(), 1),Math.toRadians(rotationVelocity));
     }
     else{
       speed = new ChassisSpeeds(velVector.getX(), velVector.getY(),Math.toRadians(rotationVelocity));
