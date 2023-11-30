@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Drive;
 import frc.robot.commands.DriveSimple;
+import frc.robot.commands.WheelAngles;
 import frc.robot.subsystems.chassis.Chassis;
 
 public class RobotContainer {
@@ -21,6 +22,8 @@ public class RobotContainer {
   Drive drive;
   LedController ledController = new LedController(Constants.LedConstants.ID, Constants.LedConstants.LED_COUNT);
 
+  WheelAngles angles;
+
   public RobotContainer() {
     drive = new Drive(chassis, commandController);
     chassis.setDefaultCommand(new DriveSimple(commandController, chassis));
@@ -28,9 +31,12 @@ public class RobotContainer {
     SmartDashboard.putData("set coast", new InstantCommand(() -> chassis.setNeutralMode(NeutralMode.Coast)).ignoringDisable(true));
     SmartDashboard.putData("set brake", new InstantCommand(() -> chassis.setNeutralMode(NeutralMode.Brake)).ignoringDisable(true));
 
-    SmartDashboard.putData("setting module angles check", new RunCommand(() -> chassis.setWheelAngles(SmartDashboard.getNumber("angle", 0))));
+    SmartDashboard.putNumber("v", 0);
+    SmartDashboard.putData("set wheel angles test command", new RunCommand(() -> chassis.setWheelAngularVelocities(SmartDashboard.getNumber("v", 0))));
 
     ledController.changeColor(new Color(29, 0, 51));
+    ledController.stop();
+
     configureBindings();
   }
 

@@ -14,6 +14,14 @@ public class LedController {
         led.setLength(buffer.getLength());
     }
 
+    public void start() {
+        led.start();
+    }
+
+    public void stop() {
+        led.stop();
+    }
+
     public void changeColor(Color color) {
         for (int i = 0; i < buffer.getLength(); i++) {
             buffer.setLED(i, color);

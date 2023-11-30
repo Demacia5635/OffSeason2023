@@ -36,13 +36,16 @@ public class SwerveModule implements Sendable {
         
         moveMotor.setNeutralMode(NeutralMode.Brake);
         angleMotor.setNeutralMode(NeutralMode.Brake);
+
+        desiredAngle = new Rotation2d();
     }
 
     @Override
     public void initSendable(SendableBuilder builder) {
-        builder.addDoubleProperty("raw angle", () -> absoluteEncoder.getAbsolutePosition(), null);
+        builder.addDoubleProperty("raw angle", absoluteEncoder::getAbsolutePosition, null);
         builder.addDoubleProperty("angle", () -> getAngle().getDegrees(), null);
         builder.addDoubleProperty("velocity", this::getVelocity, null);
+        builder.addDoubleProperty("angular velocity", this::getAngularVelocity, null);
     }
 
     public void setMovePID(double Kp, double Ki, double Kd) {
@@ -80,11 +83,12 @@ public class SwerveModule implements Sendable {
     }
 
     public void update() {
-        double v = angleTrapezoid.calculate(
-            desiredAngle.minus(getAngle()).getDegrees(),
-            getAngularVelocity(),
-            0
-        );
+        // double v = angleTrapezoid.calculate(
+        //     getAngleDifference(getAngle().getDegrees(), desiredAngle.getDegrees()),
+        //     getAngularVelocity(),
+        //     0
+        // );
+        double v = getAngleDifference(getAngle().getDegrees(), desiredAngle.getDegrees()) * PULSES_PER_DEGREE / 10 * 0.8;
         setAngularVelocity(v);
     }
 
@@ -105,6 +109,7 @@ public class SwerveModule implements Sendable {
     }
 
     public void setAngularVelocity(double v) {
+        System.out.println(v * PULSES_PER_DEGREE / 10);
         angleMotor.set(ControlMode.Velocity, v * PULSES_PER_DEGREE / 10);
     }
 

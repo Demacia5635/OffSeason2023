@@ -30,7 +30,7 @@ public final class Constants {
     public static final int GYRO_ID = 14;
 
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
-      MODULE_FRONT_LEFT.moduleTranslationOffset,
+      // MODULE_FRONT_LEFT.moduleTranslationOffset,
       MODULE_FRONT_RIGHT.moduleTranslationOffset,
       MODULE_BACK_LEFT.moduleTranslationOffset,
       MODULE_BACK_RIGHT.moduleTranslationOffset
@@ -38,8 +38,10 @@ public final class Constants {
 
     public static final double VELOCITY = 4;
     public static final double ACCELERATION = 8;
-    public static final double ANGULAR_VELOCITY = 360;
-    public static final double ANGULAR_ACCELERATION = 720;
+    // public static final double ANGULAR_VELOCITY = 360;
+    // public static final double ANGULAR_ACCELERATION = 720;
+    public static final double ANGULAR_VELOCITY = 30;
+    public static final double ANGULAR_ACCELERATION = 15;
 
     public static final double MOVE_KP = 0.007;
     public static final double MOVE_KI = 0;
@@ -47,9 +49,9 @@ public final class Constants {
     public static final double ANGLE_POSITION_KP = 0.35;
     public static final double ANGLE_POSITION_KI = 0;
     public static final double ANGLE_POSITION_KD = 0.029;
-    public static final double ANGLE_VELOCITY_KP = 0;
-    public static final double ANGLE_VELOCITY_KI = 0;
-    public static final double ANGLE_VELOCITY_KD = 0;
+    public static final double ANGLE_VELOCITY_KP = 0.09;
+    public static final double ANGLE_VELOCITY_KI = 0.004;
+    public static final double ANGLE_VELOCITY_KD = 0.05;
 
     public static final double PULSES_PER_METER = 52226.56641604010025062656641604;
     public static final double PULSES_PER_DEGREE = 72.817777777777777777777777777779;

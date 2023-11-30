@@ -29,7 +29,7 @@ public class Chassis extends SubsystemBase {
 
   public Chassis() {
     modules = new SwerveModule[] {
-      new SwerveModule(MODULE_FRONT_LEFT),
+      // new SwerveModule(MODULE_FRONT_LEFT),
       new SwerveModule(MODULE_FRONT_RIGHT),
       new SwerveModule(MODULE_BACK_LEFT),
       new SwerveModule(MODULE_BACK_RIGHT),
@@ -45,10 +45,10 @@ public class Chassis extends SubsystemBase {
     field = new Field2d();
     SmartDashboard.putData(field);
     SmartDashboard.putData(this);
-    SmartDashboard.putData("left front module", modules[0]);
-    SmartDashboard.putData("right front module", modules[1]);
-    SmartDashboard.putData("left back module", modules[2]);
-    SmartDashboard.putData("right back module", modules[3]);
+    // SmartDashboard.putData("left front module", modules[0]);
+    SmartDashboard.putData("right front module", modules[0]);
+    SmartDashboard.putData("left back module", modules[1]);
+    SmartDashboard.putData("right back module", modules[2]);
   }
 
   @Override
@@ -85,7 +85,12 @@ public class Chassis extends SubsystemBase {
 
   public void setWheelAngles(double x) {
     for (SwerveModule module : modules)
-      module.setAngle(Rotation2d.fromDegrees(x));
+      module.setDesiredAngle(Rotation2d.fromDegrees(x));
+  }
+
+  public void setWheelAngularVelocities(double v) {
+    for (SwerveModule module : modules)
+      module.setAngularVelocity(v);
   }
 
   public void setNeutralMode(NeutralMode mode) {
@@ -97,7 +102,7 @@ public class Chassis extends SubsystemBase {
       poseEstimator.update(getAngle(), getModulePositions());
       field.setRobotPose(poseEstimator.getEstimatedPosition());
       
-      Arrays.stream(modules).forEach((module) -> module.update());
+      // Arrays.stream(modules).forEach((module) -> module.update());
   }
 
   public Rotation2d getAngle() {
