@@ -4,6 +4,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
 public final class Constants {
+  public static final double CYCLE_DT = 0.02;
+
   public static class ChassisConstants {
     public final static SwerveModuleConstants MODULE_FRONT_LEFT = new SwerveModuleConstants(
       7, 8, 11,
@@ -39,10 +41,10 @@ public final class Constants {
     public static final double ANGULAR_VELOCITY = 360;
     public static final double ANGULAR_ACCELERATION = 720;
 
-    public static final double MOVE_KP = 0.2;
+    public static final double MOVE_KP = 0.5;
     public static final double MOVE_KI = 0;
-    public static final double MOVE_KD = 0;
-    public static final double ANGLE_KP = 0.00043257;
+    public static final double MOVE_KD = 0;;
+    public static final double ANGLE_KP = 0.0016285;
     public static final double ANGLE_KI = 0;
     public static final double ANGLE_KD = 0;
 
@@ -50,12 +52,12 @@ public final class Constants {
     public static final double PULSES_PER_DEGREE = 72.817777777777777777777777777779;
 
     public static class SwerveModuleConstants {
-      public static final double MOVE_KS = 0;
-      public static final double MOVE_KV = 0;
-      public static final double MOVE_KA = 0;
-      public static final double ANGLE_KS = 0.41398;
-      public static final double ANGLE_KV = 0.0042277;
-      public static final double ANGLE_KA = 0.00013616;
+      public static final double MOVE_KS = 0.24874;
+      public static final double MOVE_KV = 0.86129;
+      public static final double MOVE_KA = 0.10323;
+      public static final double ANGLE_KS = 0.42626;
+      public static final double ANGLE_KV = 0.0041784;
+      public static final double ANGLE_KA = 0.00021224;
 
       public final int moveMotorId;
       public final int angleMotorId;

@@ -2,6 +2,7 @@ package frc.robot.subsystems.chassis.utils;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 
@@ -11,15 +12,21 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import frc.robot.Constants;
 import frc.robot.Constants.ChassisConstants.SwerveModuleConstants;
+import frc.robot.utils.Trapezoid;
 
 import static frc.robot.Constants.ChassisConstants.*;
 import static frc.robot.Constants.ChassisConstants.SwerveModuleConstants.*;
 
 public class SwerveModule implements Sendable {
+    private final double MAX_VELOCITY_CHANGE = ACCELERATION * Constants.CYCLE_DT;
+
     private final TalonFX moveMotor;
     private final TalonFX angleMotor;
     private final CANCoder absoluteEncoder;
+
+    private final Trapezoid trapezoid;
 
     private final SimpleMotorFeedforward moveFF;
     private final SimpleMotorFeedforward angleFF;
@@ -35,8 +42,13 @@ public class SwerveModule implements Sendable {
         moveFF = new SimpleMotorFeedforward(MOVE_KS, MOVE_KV, MOVE_KA);
         angleFF = new SimpleMotorFeedforward(ANGLE_KS, ANGLE_KV, ANGLE_KA);
         
-        angleMotor.configMotionCruiseVelocity(metricToEncoderSpeed(ANGULAR_VELOCITY));
-        angleMotor.configMotionAcceleration(metricToEncoderSpeed(ANGULAR_ACCELERATION));
+        moveMotor.setNeutralMode(NeutralMode.Brake);
+        angleMotor.setNeutralMode(NeutralMode.Brake);
+
+        setMovePID(MOVE_KP, MOVE_KI, MOVE_KD);
+        setAnglePID(ANGLE_KP, ANGLE_KI, ANGLE_KD);
+
+        trapezoid = new Trapezoid(ANGULAR_VELOCITY, ANGULAR_ACCELERATION);
     }
 
     @Override
@@ -61,7 +73,7 @@ public class SwerveModule implements Sendable {
     }
 
     public double getVelocity() {
-        return moveMotor.getSelectedSensorVelocity() /* change to divide */ * PULSES_PER_METER * 10;
+        return moveMotor.getSelectedSensorVelocity() / PULSES_PER_METER * 10;
     }
 
     public void stop() {
@@ -69,10 +81,17 @@ public class SwerveModule implements Sendable {
     }
 
     public void setVelocity(double v) {
-// get currentvvelocity
-// limit velocity change based on max acceleration
-        double volts = moveFF.calculate(v, ACCELERATION);
-        moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(v), DemandType.ArbitraryFeedForward, volts / 12);
+        double currentVelocity = getVelocity();
+        double deltaVelocity = v - currentVelocity;
+        if (Math.abs(deltaVelocity) > MAX_VELOCITY_CHANGE)
+            v = currentVelocity +  Math.signum(deltaVelocity) * MAX_VELOCITY_CHANGE;
+        double volts = moveFF.calculate(v, 0);
+        moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(v));
+    }
+
+    public void setNeutralMode(NeutralMode mode) {
+        moveMotor.setNeutralMode(mode);
+        angleMotor.setNeutralMode(mode);
     }
 
     public void setPower(double m, double s) {
@@ -85,8 +104,13 @@ public class SwerveModule implements Sendable {
     }
 
     public void setAngle(Rotation2d angle) {
+        double velocity = trapezoid.calculate(getAngleDifference(getAngle().getDegrees(), angle.getDegrees()).getDegrees(), getAngularVelocity(), ANGULAR_VELOCITY);
         double volts = angleFF.calculate(ANGULAR_VELOCITY, ANGULAR_ACCELERATION);
-        angleMotor.set(ControlMode.MotionMagic, calculateTarget(angle.getDegrees()), DemandType.ArbitraryFeedForward, volts / 12);
+        angleMotor.set(ControlMode.Position, calculateTarget(angle.getDegrees()));
+    }
+
+    public double getAngularVelocity() {
+        return angleMotor.getSelectedSensorVelocity() / PULSES_PER_METER * 10;
     }
 
     public SwerveModuleState getState() {

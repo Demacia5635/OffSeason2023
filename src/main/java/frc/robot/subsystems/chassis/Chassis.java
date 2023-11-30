@@ -18,6 +18,7 @@ import static frc.robot.Constants.ChassisConstants.*;
 
 import java.util.Arrays;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 public class Chassis extends SubsystemBase {
@@ -45,20 +46,15 @@ public class Chassis extends SubsystemBase {
     field = new Field2d();
     SmartDashboard.putData(field);
     SmartDashboard.putData(this);
-    SmartDashboard.putData("m1 offset", modules[0]);
-    SmartDashboard.putData("m2 offset", modules[1]);
-    SmartDashboard.putData("m3 offset", modules[2]);
-    SmartDashboard.putData("m4 offset", modules[3]);
-
-    modules[0].setInverted(false);
-    modules[1].setInverted(true);
-    modules[2].setInverted(false);
-    modules[3].setInverted(true);
+    SmartDashboard.putData("left front module", modules[0]);
+    SmartDashboard.putData("right front module", modules[1]);
+    SmartDashboard.putData("left back module", modules[2]);
+    SmartDashboard.putData("right back module", modules[3]);
   }
 
   @Override
   public void initSendable(SendableBuilder builder) {
-      builder.addDoubleProperty("vel", () -> modules[2].getVelocity(), null);
+      builder.addDoubleProperty("chassis velocity", () -> getVelocity().getNorm(), null);
   }
 
   public void stop() {
@@ -90,6 +86,10 @@ public class Chassis extends SubsystemBase {
 
   public void setWheelAngles(double x) {
     Arrays.stream(modules).forEach((module) -> module.setAngle(Rotation2d.fromDegrees(x)));
+  }
+
+  public void setNeutralMode(NeutralMode mode) {
+    Arrays.stream(modules).forEach((module) -> module.setNeutralMode(mode));
   }
 
   @Override
