@@ -10,22 +10,22 @@ public final class Constants {
     public final static SwerveModuleConstants MODULE_FRONT_LEFT = new SwerveModuleConstants(
       7, 8, 11,
       new Translation2d(0.26515, 0.2215),
-      27.59765625
+      36.38671875
     );
     public final static SwerveModuleConstants MODULE_FRONT_RIGHT = new SwerveModuleConstants(
       5, 6, 13,
       new Translation2d(0.26515, -0.2215),
-      199.16015625
+      19.599609375
     );
     public final static SwerveModuleConstants MODULE_BACK_LEFT = new SwerveModuleConstants(
       1, 2, 10,
       new Translation2d(-0.25451, 0.2065),
-      228.69140625
+      229.5703125
     );
     public final static SwerveModuleConstants MODULE_BACK_RIGHT = new SwerveModuleConstants(
       3, 4, 12,
       new Translation2d(-0.26515, -0.2215),
-      212.607421875
+      37.001953125
     );
     public static final int GYRO_ID = 14;
 
@@ -41,12 +41,15 @@ public final class Constants {
     public static final double ANGULAR_VELOCITY = 360;
     public static final double ANGULAR_ACCELERATION = 720;
 
-    public static final double MOVE_KP = 0.5;
+    public static final double MOVE_KP = 0.007;
     public static final double MOVE_KI = 0;
-    public static final double MOVE_KD = 0;;
-    public static final double ANGLE_KP = 0.0016285;
-    public static final double ANGLE_KI = 0;
-    public static final double ANGLE_KD = 0;
+    public static final double MOVE_KD = 0.012;
+    public static final double ANGLE_POSITION_KP = 0.35;
+    public static final double ANGLE_POSITION_KI = 0;
+    public static final double ANGLE_POSITION_KD = 0.029;
+    public static final double ANGLE_VELOCITY_KP = 0;
+    public static final double ANGLE_VELOCITY_KI = 0;
+    public static final double ANGLE_VELOCITY_KD = 0;
 
     public static final double PULSES_PER_METER = 52226.56641604010025062656641604;
     public static final double PULSES_PER_DEGREE = 72.817777777777777777777777777779;

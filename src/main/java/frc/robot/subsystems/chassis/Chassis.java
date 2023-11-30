@@ -10,7 +10,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.chassis.utils.SwerveModule;
 
@@ -37,7 +36,7 @@ public class Chassis extends SubsystemBase {
     };
     Arrays.stream(modules).forEach((module) -> {
       module.setMovePID(MOVE_KP, MOVE_KI, MOVE_KD);
-      module.setAnglePID(ANGLE_KP, ANGLE_KI, ANGLE_KD);
+      module.setAnglePID(ANGLE_VELOCITY_KP, ANGLE_VELOCITY_KI, ANGLE_VELOCITY_KP);
     });
 
     gyro = new PigeonIMU(GYRO_ID);
@@ -85,7 +84,8 @@ public class Chassis extends SubsystemBase {
   }
 
   public void setWheelAngles(double x) {
-    Arrays.stream(modules).forEach((module) -> module.setAngle(Rotation2d.fromDegrees(x)));
+    for (SwerveModule module : modules)
+      module.setAngle(Rotation2d.fromDegrees(x));
   }
 
   public void setNeutralMode(NeutralMode mode) {
@@ -96,6 +96,8 @@ public class Chassis extends SubsystemBase {
   public void periodic() {
       poseEstimator.update(getAngle(), getModulePositions());
       field.setRobotPose(poseEstimator.getEstimatedPosition());
+      
+      Arrays.stream(modules).forEach((module) -> module.update());
   }
 
   public Rotation2d getAngle() {
