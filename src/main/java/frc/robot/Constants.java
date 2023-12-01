@@ -1,7 +1,11 @@
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
@@ -79,12 +83,14 @@ public final class Constants {
   public static final class VisionConstants {
 
     public static final String photonCamera1Name = "OV5647";
+    public static final PhotonCamera photonCamera1 = new PhotonCamera(photonCamera1Name);
     public static final String photonCamera2Name = "";
     public static final int photonCameraNum1 = 1;
     public static final int photonCameraNum2 = 2;
-
-    public static final Pose2d cameraToRobotCenter = new Pose2d(new Translation2d(0.23, 0.8),
+    public static final Pose2d robotCenterToCamera = new Pose2d(new Translation2d(0.23, 0.8),
         Rotation2d.fromDegrees(144));
+
+    public static final Transform3d robotCenterToCameraTransform = new Transform3d(new Pose3d(), new Pose3d(robotCenterToCamera));
 
     public static final double maxValidVelcity = 2.0; // m/s - ignoring vision data abve this velocity
     public static final double maxValidAngleDiff = 10.0; // degrees - ignoring vision data if vision heading is off by

@@ -3,14 +3,13 @@ package frc.robot.subsystems.vision;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
-
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,9 +19,9 @@ import frc.robot.subsystems.vision.utils.SwerveDrivePoseEstimator;
 
 import static frc.robot.Constants.VisionConstants.*;
 
-public class Vision extends SubsystemBase {
-    Field2d poseEstimatorField;
-    Field2d visionField;
+public class VisionOld extends SubsystemBase {
+    Field2d checkField2dPoseEstimator;
+    Field2d checkField2dVision;
     PhotonCamera camera1;
     PhotonCamera camera2;
     SwerveDrivePoseEstimator poseEstimator;
@@ -33,25 +32,19 @@ public class Vision extends SubsystemBase {
     double lastUpdateTime;
     boolean firstRun;
 
-    public Vision(Chassis chassis, SwerveDrivePoseEstimator estimator) {
-        camera1 = photonCamera1;
-        // camera1 = new PhotonCamera(photonCamera1Name);
+    public VisionOld(Chassis chassis, SwerveDrivePoseEstimator estimator) {
+        camera1 = new PhotonCamera(photonCamera1Name);
         //camera2 = new PhotonCamera(photonCamera2Name);
         this.chassis = chassis;
         this.poseEstimator = estimator;
-        try {
-            photonPoseEstimator = new PhotonPoseEstimator(AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile), PoseStrategy.AVERAGE_BEST_TARGETS, camera1, robotCenterToCameraTransform);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }        
-        visionField = new Field2d();
-        poseEstimatorField = new Field2d();
+        checkField2dVision = new Field2d();
+        checkField2dPoseEstimator = new Field2d();
         firstRun = true;
         for (int i = 0; i < buf.length; i++) {
             buf[i] = new VisionData(null, 0);
         }
-        SmartDashboard.putData("field check pose estimator", poseEstimatorField);
-        SmartDashboard.putData("field check vision", visionField);
+        SmartDashboard.putData("field check pose estimator", checkField2dPoseEstimator);
+        SmartDashboard.putData("field check vision", checkField2dVision);
         ;
     }
     
@@ -61,10 +54,10 @@ public class Vision extends SubsystemBase {
             if (validBuf(time)) {
                 VisionData vData = median(buf);
                 if (vData != null && vData.pose != null) {
-                    // System.out.println(vData.pose);
-                    poseEstimator.addVisionMeasurement(vData.pose, vData.timeStamp);
-                    poseEstimatorField.setRobotPose(poseEstimator.getEstimatedPosition());
-                    visionField.setRobotPose(vData.pose);
+                    System.out.println(vData.pose);
+                    //poseEstimator.addVisionMeasurement(vData.pose, getTime() - vData.timeStamp);
+                    //checkField2dPoseEstimator.setRobotPose(poseEstimator.getEstimatedPosition());
+                    checkField2dVision.setRobotPose(vData.pose);
                     lastUpdateTime = time;
                     time = vData.timeStamp;
                     for (VisionData vd : buf) {
@@ -81,32 +74,61 @@ public class Vision extends SubsystemBase {
         }
     }
 
-    private void getNewVisionDataFromCamera() {
-        if (chassis.getVelocity().getNorm() <= maxValidVelcity) {
-            var estimatedRobotPose = photonPoseEstimator.update().get();
-            var estimatedPose = estimatedRobotPose.estimatedPose;
-            if(estimatedRobotPose != null){
-                VisionData newVisionData = new VisionData(estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds);
-                if (newVisionData != null && newVisionData.pose != null) {
-                    // if ((newVisionData.pose).getTranslation()
-                    //         .getDistance(estimatedRobotPose.getTranslation()) > maxDistanceOfCameraFromAprilTag)
-                    //     return; removed this filter because they use multiple april tags at the same time
-                    buf[lastData] = newVisionData;
-                }   
-            }
-        }
-    }
+    // private void getNewVisionDataFromCameraX(int x) {
+    //     // Choosing Camera.
+    //     PhotonCamera camera;
+    //     if (x == photonCameraNum1)
+    //         camera = camera1;
+    //     else
+    //         camera = camera2;
+
+    //     if (chassis.getVelocity().getNorm() <= maxValidVelcity) {
+    //         var latestResult = camera.getLatestResult();
+    //         if (latestResult.hasTargets()) {
+    //             var bestTarget = latestResult.getBestTarget();
+    //             if (bestTarget != null) {
+    //                 int targetID = bestTarget.getFiducialId();
+    //                 lastData = next();
+    //                 Pose2d aprilTagToFieldPose2d;
+    //                 try {
+    //                     aprilTagToFieldPose2d = AprilTagFields.k2023ChargedUp.loadAprilTagLayoutField().getTagPose(targetID)
+    //                             .get().toPose2d();
+    //                 } catch (IOException e) {
+    //                     return;
+    //                 }
+    //                 Pose2d cameraToAprilTagPose2d = new Pose2d(
+    //                         bestTarget.getBestCameraToTarget().getTranslation().toTranslation2d(),
+    //                         bestTarget.getBestCameraToTarget().getRotation().toRotation2d());
+    //                 System.out.println("camera to april tag pose,jlvkvkj before - " + cameraToAprilTagPose2d);
+    //                 cameraToAprilTagPose2d = new Pose2d(cameraToAprilTagPose2d.getTranslation().rotateBy(
+    //                     aprilTagToFieldPose2d.getRotation().minus(cameraToAprilTagPose2d.getRotation())), cameraToAprilTagPose2d.getRotation());   
+    //                 System.out.println("april tag pose - " + aprilTagToFieldPose2d);
+    //                 System.out.println("camera to april tag pose after - " + cameraToAprilTagPose2d);
+    //                 Translation2d visionRobotToFieldTranslation2d = aprilTagToFieldPose2d.getTranslation().minus(cameraToRobotCenter.getTranslation()).plus(cameraToAprilTagPose2d.getTranslation());
+    //                 Rotation2d visionRobotToFieldRotation2d = cameraToAprilTagPose2d.getRotation().plus(cameraToRobotCenter.getRotation()).minus(Rotation2d.fromDegrees(180));
+    //                 VisionData newVisionData = new VisionData(new Pose2d(visionRobotToFieldTranslation2d, visionRobotToFieldRotation2d), latestResult.getTimestampSeconds() - (latestResult.getLatencyMillis()/1000));
+    //                 if (newVisionData != null && newVisionData.pose != null) {
+    //                     if ((newVisionData.pose).getTranslation()
+    //                             .getDistance(aprilTagToFieldPose2d.getTranslation()) > maxDistanceOfCameraFromAprilTag)
+    //                         return;
+    //                     buf[lastData] = newVisionData;
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
 
     @Override
     public void periodic() {
         super.periodic();
-        getNewVisionDataFromCamera();
+        // getNewVisionDataFromCameraX(photonCameraNum1);
         //getNewVisionDataFromCameraX(photonCameraNum2);
         updateRobotPose();
         
         
-        
+        // checkFunc(photonCameraNum1);
+        // checkUpdateRobotPose();
     }
 
     int next() {
