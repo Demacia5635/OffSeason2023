@@ -87,8 +87,8 @@ public final class Constants {
     public static final String photonCamera2Name = "";
     public static final int photonCameraNum1 = 1;
     public static final int photonCameraNum2 = 2;
-    public static final Pose2d robotCenterToCamera = new Pose2d(new Translation2d(0.23, 0.8),
-        Rotation2d.fromDegrees(144));
+    public static final Pose2d robotCenterToCamera = new Pose2d(new Translation2d(0.23, -0.8),
+        Rotation2d.fromDegrees(-35));
 
     public static final Transform3d robotCenterToCameraTransform = new Transform3d(new Pose3d(), new Pose3d(robotCenterToCamera));
 
