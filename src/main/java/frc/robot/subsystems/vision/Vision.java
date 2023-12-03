@@ -83,16 +83,20 @@ public class Vision extends SubsystemBase {
 
     private void getNewVisionDataFromCamera() {
         if (chassis.getVelocity().getNorm() <= maxValidVelcity) {
-            var estimatedRobotPose = photonPoseEstimator.update().get();
-            var estimatedPose = estimatedRobotPose.estimatedPose;
-            if(estimatedRobotPose != null){
-                VisionData newVisionData = new VisionData(estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds);
-                if (newVisionData != null && newVisionData.pose != null) {
-                    // if ((newVisionData.pose).getTranslation()
-                    //         .getDistance(estimatedRobotPose.getTranslation()) > maxDistanceOfCameraFromAprilTag)
-                    //     return; removed this filter because they use multiple april tags at the same time
-                    buf[lastData] = newVisionData;
-                }   
+            var PhotonUpdate = photonPoseEstimator.update();
+            if(PhotonUpdate != null && PhotonUpdate.get() != null){
+                var estimatedRobotPose = PhotonUpdate.get();
+                var estimatedPose = estimatedRobotPose.estimatedPose;
+                if(estimatedRobotPose != null){
+                    lastData = next();
+                    VisionData newVisionData = new VisionData(estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds);
+                    if (newVisionData != null && newVisionData.pose != null) {
+                        // if ((newVisionData.pose).getTranslation()
+                        //         .getDistance(estimatedRobotPose.getTranslation()) > maxDistanceOfCameraFromAprilTag)
+                        //     return; removed this filter because they use multiple april tags at the same time
+                        buf[lastData] = newVisionData;
+                    }   
+                }
             }
         }
     }
