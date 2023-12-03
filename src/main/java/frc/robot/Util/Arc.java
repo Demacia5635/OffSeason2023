@@ -38,6 +38,13 @@ public class Arc extends Segment{
     @Override
     public Translation2d calc(Translation2d pos,double velocity)
     {
+        if(Math.abs(velocity) > 1 && isAprilTagMode())
+        {
+          velocity = 1;
+        }
+
+
+          
         Translation2d relativePos = pos.minus(p2);
         double dFromCenter = relativePos.getNorm();
 
@@ -70,10 +77,6 @@ public class Arc extends Segment{
       return Math.abs(diffAngle.getRadians() * radius);
     }
 
-    @Override
-    public boolean isAprilTagMode(){
-      return isAprilTagMode;
-    }
 
     @Override
     public double getLength()

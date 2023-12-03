@@ -1,9 +1,7 @@
 
 package frc.robot.Util;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import frc.robot.Constants;
 
 public class RoundedPoint{
     double smoothnes = 10;

@@ -4,7 +4,6 @@
 
 package frc.robot.Util;
 
-import frc.robot.Constants;
 
 /** Add your docs here. */
 public class Trapez {
@@ -18,7 +17,7 @@ public class Trapez {
         this.acc = acc;
         this.maxVel = maxVel;
         this.endVel = endVel;
-        deltaV = acc * 0.02 * 4;
+        deltaV = acc * 0.02;
     }
 
     public double calc(double rDistance, double cVel)

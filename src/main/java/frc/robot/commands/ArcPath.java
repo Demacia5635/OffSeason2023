@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 
 
-import java.io.Console;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,12 +17,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Util.Segment;
 import frc.robot.Util.Trapez;
 import frc.robot.Constants;
-import frc.robot.Util.Arc;
 import frc.robot.Util.Leg;
 import frc.robot.Util.RoundedPoint;
 import frc.robot.Util.pathPoint;
 import frc.robot.subsystems.chassis.*;
-import frc.robot.Constants.*;
 
 public class ArcPath extends CommandBase {
   Pose2d closestAprilTag = new Pose2d();
@@ -34,7 +31,7 @@ public class ArcPath extends CommandBase {
 
   double distanceOffset = 0.01;
 
-  double pathLength;
+  final double pathLength;
 
   double totalLeft;
   int segmentIndex = 0;
@@ -96,9 +93,11 @@ public class ArcPath extends CommandBase {
 
     System.out.println("Segment length : " + segments.length);
 
+    double segmentSum = 0;
     for (Segment s : segments) {
-      pathLength += s.getLength();
+      segmentSum += s.getLength();
     }
+    pathLength = segmentSum;
     totalLeft = pathLength;
 
     
@@ -131,6 +130,9 @@ public class ArcPath extends CommandBase {
 
   @Override
   public void initialize() {
+
+    totalLeft = pathLength;
+
     segmentIndex = 0;
 
     vecVel = new Translation2d(0,0);  
@@ -168,19 +170,23 @@ public class ArcPath extends CommandBase {
     }
 
     velocity = driveTrapezoid.calc(totalLeft - segments[segmentIndex].distancePassed(pose.getTranslation()), translation2dVelocity.getNorm());
-    rotationVelocity = rotationTrapezoid.calc(wantedAngle.minus(chassis.getAngle()).getDegrees(), Math.toDegrees(chassis.getVelocity().omegaRadiansPerSecond));
+
+    if(!segments[segmentIndex].isAprilTagMode())
+      rotationVelocity = rotationTrapezoid.calc(wantedAngle.minus(chassis.getAngle()).getDegrees(), Math.toDegrees(chassis.getVelocity().omegaRadiansPerSecond));
+    else
+      rotationVelocity = rotationTrapezoid.calc(
+        getClosestAprilTag().getTranslation().minus(chassis.getPose().getEstimatedPosition().getTranslation())
+        .getAngle()
+          .minus(
+            chassis.getAngle()).getDegrees()
+        ,  Math.toDegrees(chassis.getVelocity().omegaRadiansPerSecond));
+
     Translation2d velVector = segments[segmentIndex].calc(pose.getTranslation(), velocity);
     ChassisSpeeds speed = new ChassisSpeeds();
 
-    if (segments[segmentIndex].isAprilTagMode()){
-      //TODO ADD Rotation to closet AprilTag
-      Pose2d closestAprilTag = getClosestAprilTag();
-      speed = new ChassisSpeeds(Math.max(velVector.getX(), 1), Math.max(velVector.getY(), 1),Math.toRadians(rotationVelocity));
-    }
-    else{
-      speed = new ChassisSpeeds(velVector.getX(), velVector.getY(),Math.toRadians(rotationVelocity));
-    }
-  
+    //TODO ADD Rotation to closet AprilTag
+    speed = new ChassisSpeeds(velVector.getX(), velVector.getY(),Math.toRadians(rotationVelocity));
+    
     chassis.setVelocities(speed);
   }
 
