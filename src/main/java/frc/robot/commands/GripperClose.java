@@ -10,34 +10,34 @@ import frc.robot.subsystems.Gripper.GripperState;
 import static frc.robot.Constants.GripperConstants.*;
 
 public class GripperClose extends CommandBase {
-  Gripper gripper;
+    Gripper gripper;
 
-  /** Creates a new GripperOpen. */
-  public GripperClose(Gripper gripper) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.gripper = gripper;
-    addRequirements(gripper);
-  }
+    /** Creates a new GripperOpen. */
+    public GripperClose(Gripper gripper) {
+        // Use addRequirements() here to declare subsystem dependencies.
+        this.gripper = gripper;
+        addRequirements(gripper);
+    }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
+    // Called when the command is initially scheduled.
+    @Override
+    public void initialize() {}
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    gripper.setPower(closePower);
-  }
+    // Called every time the scheduler runs while the command is scheduled.
+    @Override
+    public void execute() {
+        gripper.setPower(closePower);
+    }
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    gripper.stop();
-  }
+    // Called once the command ends or is interrupted.
+    @Override
+    public void end(boolean interrupted) {
+        gripper.stop();
+    }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return gripper.getState() == GripperState.CLOSE;
-  }
+    // Returns true when the command should end.
+    @Override
+    public boolean isFinished() {
+        return gripper.getState() == GripperState.CLOSE;
+    }
 }

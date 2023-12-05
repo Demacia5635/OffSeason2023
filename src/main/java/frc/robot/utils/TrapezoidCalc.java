@@ -17,9 +17,10 @@ public class TrapezoidCalc {
     }
 
     /**
+     * @param currentVelocity the current volocity of the object
      * @param maxVel will always be postive
-     * @param acc will always be postive
      * @param endVel was only tested as 0
+     * @param acc will always be postive
      * @param dis is the remaing distance to the end
      * 
      * @return the needed velocity
@@ -28,11 +29,11 @@ public class TrapezoidCalc {
         
         double time = Timer.getFPGATimestamp();
         System.out.print("Trapezoid: vel = " + currentVelocity +"\n"+ " maxVel = " + maxVel +"\n"+ " acc =" + acc +"\n"+ "dis =" + dis +"\n");
-        if(time - lastTime < 0.04) {
-            if(lastAcc > 0 && currentVelocity < lastVel) {
+        if (time - lastTime < 0.04) {
+            if (lastAcc > 0 && currentVelocity < lastVel) {
                 currentVelocity = lastVel;
             }
-            if(lastAcc < 0 && currentVelocity > lastVel) {
+            if (lastAcc < 0 && currentVelocity > lastVel) {
                 currentVelocity = lastVel;
             }
         }
@@ -40,10 +41,10 @@ public class TrapezoidCalc {
         double timeToAccelerate = (currentVelocity-endVel)/acc;
         System.out.print(" currentVel = " + currentVelocity +"\n");
 
-        if(dis > 0) {
+        if (dis > 0) {
             double accelDistance = currentVelocity*timeToAccelerate + acc*Math.pow(timeToAccelerate,2)/2;
             System.out.print(" accDis = " + accelDistance +"\n");
-            if(dis > accelDistance) {
+            if (dis > accelDistance) {
                 lastVel = Math.min(currentVelocity + 0.02*acc, maxVel);
             } else {
                 lastVel = currentVelocity - acc*0.02;
@@ -53,7 +54,7 @@ public class TrapezoidCalc {
         else {
             double accelDistance = currentVelocity*timeToAccelerate - acc*Math.pow(timeToAccelerate,2)/2;
             System.out.print(" accDis = " + accelDistance +"\n");
-            if(dis < accelDistance) {
+            if (dis < accelDistance) {
                 lastVel =  Math.max(currentVelocity - 0.02*acc, -maxVel);
             } else {
                 lastVel = currentVelocity + acc*0.02;
