@@ -1,12 +1,19 @@
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 
 public final class Constants {
   public static final double CYCLE_DT = 0.02;
+
+ public static final double aprilTagValidTime = 2;
+  
 
   public static final double segmentID = 1;
   static Pose2d aprilTag1 = new Pose2d(15.513558, 1.071626, new Rotation2d(180));
@@ -18,6 +25,27 @@ public final class Constants {
   static Pose2d aprilTag7 = new Pose2d(1.02743, 2.748026, new Rotation2d());
   static Pose2d aprilTag8 = new Pose2d(1.02743, 1.071626, new Rotation2d());
   public final static Pose2d[] aprilTagsPositions = {aprilTag1, aprilTag2, aprilTag3, aprilTag4, aprilTag5, aprilTag6, aprilTag7, aprilTag8};
+
+
+
+  public static final class VisionConstants {
+
+    public static final String photonCamera1Name = "OV5647";
+    public static final PhotonCamera photonCamera1 = new PhotonCamera(photonCamera1Name);
+    public static final String photonCamera2Name = "";
+    public static final int photonCameraNum1 = 1;
+    public static final int photonCameraNum2 = 2;
+    public static final Pose2d robotCenterToCamera = new Pose2d(new Translation2d(0.23, -0.8),
+        Rotation2d.fromDegrees(-35));
+
+    public static final Transform3d robotCenterToCameraTransform = new Transform3d(new Pose3d(), new Pose3d(robotCenterToCamera));
+
+    public static final double maxValidVelcity = 2.0; // m/s - ignoring vision data abve this velocity
+    public static final double maxValidAngleDiff = 10.0; // degrees - ignoring vision data if vision heading is off by
+                                                         // more than this value
+    public static final double maxDistanceOfCameraFromAprilTag = 4; // meters - ignoring vision data if apriltag is
+                                                                    // farther than this value
+  }
 
 
   public static class ChassisConstants {
