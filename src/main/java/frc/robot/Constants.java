@@ -11,17 +11,17 @@ public final class Constants {
     public final static SwerveModuleConstants MODULE_FRONT_LEFT = new SwerveModuleConstants(
       7, 8, 11,
       new Translation2d(0.26515, 0.2215),
-      36.38671875
+      35.068359375
     );
     public final static SwerveModuleConstants MODULE_FRONT_RIGHT = new SwerveModuleConstants(
       5, 6, 13,
       new Translation2d(0.26515, -0.2215),
-      19.599609375
+      18.984375
     );
     public final static SwerveModuleConstants MODULE_BACK_LEFT = new SwerveModuleConstants(
       1, 2, 10,
       new Translation2d(-0.25451, 0.2065),
-      229.5703125
+      227.900390625
     );
     public final static SwerveModuleConstants MODULE_BACK_RIGHT = new SwerveModuleConstants(
       3, 4, 12,
@@ -31,7 +31,7 @@ public final class Constants {
     public static final int GYRO_ID = 14;
 
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
-      // MODULE_FRONT_LEFT.moduleTranslationOffset,
+      MODULE_FRONT_LEFT.moduleTranslationOffset,
       MODULE_FRONT_RIGHT.moduleTranslationOffset,
       MODULE_BACK_LEFT.moduleTranslationOffset,
       MODULE_BACK_RIGHT.moduleTranslationOffset
@@ -56,10 +56,10 @@ public final class Constants {
       public static final double ANGLE_VELOCITY_KI = 0.004;
       public static final double ANGLE_VELOCITY_KD = 0.05;
 
-      public static final double MOVE_KS = 1.009;
-      public static final double MOVE_KV = 0.26667;
-      public static final double ANGLE_KS = -0.016;
-      public static final double ANGLE_KV = 0.0004;
+      public static final double MOVE_KS = 0.0362;
+      public static final double MOVE_KV = 0.0862;
+      public static final double ANGLE_KS = 0.05;
+      public static final double ANGLE_KV = 0.0962;
 
       public final int moveMotorId;
       public final int angleMotorId;
@@ -78,7 +78,7 @@ public final class Constants {
   }
 
   public static class LedConstants {
-    public static final int ID = 0;
+    public static final int LED_ID = 0;
     public static final int LED_COUNT = 171;
   }
 }

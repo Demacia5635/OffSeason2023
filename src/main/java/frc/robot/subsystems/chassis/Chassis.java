@@ -30,7 +30,7 @@ public class Chassis extends SubsystemBase {
 
   public Chassis() {
     modules = new SwerveModule[] {
-      // new SwerveModule(MODULE_FRONT_LEFT),
+      new SwerveModule(MODULE_FRONT_LEFT),
       new SwerveModule(MODULE_FRONT_RIGHT),
       new SwerveModule(MODULE_BACK_LEFT),
       new SwerveModule(MODULE_BACK_RIGHT),
@@ -42,13 +42,19 @@ public class Chassis extends SubsystemBase {
     field = new Field2d();
     SmartDashboard.putData(field);
     SmartDashboard.putData(this);
-    // SmartDashboard.putData("left front module", modules[0]);
-    SmartDashboard.putData("right front module", modules[0]);
-    SmartDashboard.putData("left back module", modules[1]);
-    SmartDashboard.putData("right back module", modules[2]);
+    SmartDashboard.putData("left front module", modules[0]);
+    SmartDashboard.putData("right front module", modules[1]);
+    SmartDashboard.putData("left back module", modules[2]);
+    SmartDashboard.putData("right back module", modules[3]);
 
     SmartDashboard.putData("set coast", new InstantCommand(() -> setNeutralMode(NeutralMode.Coast)).ignoringDisable(true));
     SmartDashboard.putData("set brake", new InstantCommand(() -> setNeutralMode(NeutralMode.Brake)).ignoringDisable(true));
+
+    SmartDashboard.putData("reset wheels", new InstantCommand(() -> {
+      for (SwerveModule module : modules) {
+        module.setAngle(new Rotation2d());
+      }
+    }));
   }
 
   /**
