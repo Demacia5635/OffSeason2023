@@ -17,7 +17,7 @@ public class DriveSimple extends CommandBase {
 
   @Override
     public void execute() {
-      chassis.setDriveVelocity(deadband(controller.getLeftY(), 0.1) * 20);
+      chassis.setWheelAngularVelocities(deadband(controller.getLeftY(), 0.1) * 180);
     }
 
     private double deadband(double x, double minDeadband) {

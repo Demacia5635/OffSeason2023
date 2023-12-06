@@ -38,10 +38,8 @@ public final class Constants {
 
     public static final double VELOCITY = 4;
     public static final double ACCELERATION = 8;
-    // public static final double ANGULAR_VELOCITY = 360;
-    // public static final double ANGULAR_ACCELERATION = 720;
-    public static final double ANGULAR_VELOCITY = 30;
-    public static final double ANGULAR_ACCELERATION = 15;
+    public static final double ANGULAR_VELOCITY = 360;
+    public static final double ANGULAR_ACCELERATION = 720;
 
     public static final double MOVE_KP = 0.007;
     public static final double MOVE_KI = 0;
@@ -49,7 +47,7 @@ public final class Constants {
     public static final double ANGLE_POSITION_KP = 0.35;
     public static final double ANGLE_POSITION_KI = 0;
     public static final double ANGLE_POSITION_KD = 0.029;
-    public static final double ANGLE_VELOCITY_KP = 0.09;
+    public static final double ANGLE_VELOCITY_KP = 0.07;
     public static final double ANGLE_VELOCITY_KI = 0.004;
     public static final double ANGLE_VELOCITY_KD = 0.05;
 
@@ -57,12 +55,10 @@ public final class Constants {
     public static final double PULSES_PER_DEGREE = 72.817777777777777777777777777779;
 
     public static class SwerveModuleConstants {
-      public static final double MOVE_KS = 0.24874;
-      public static final double MOVE_KV = 0.86129;
-      public static final double MOVE_KA = 0.10323;
-      public static final double ANGLE_KS = 0.42626;
-      public static final double ANGLE_KV = 0.0041784;
-      public static final double ANGLE_KA = 0.00021224;
+      public static final double MOVE_KS = 1.009;
+      public static final double MOVE_KV = 0.26667;
+      public static final double ANGLE_KS = -0.016;
+      public static final double ANGLE_KV = 0.0004;
 
       public final int moveMotorId;
       public final int angleMotorId;

@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Drive;
 import frc.robot.commands.DriveSimple;
+import frc.robot.commands.FFCalculationCommand;
+import frc.robot.commands.TrapezoidTest;
 import frc.robot.commands.WheelAngles;
 import frc.robot.subsystems.chassis.Chassis;
 
@@ -31,8 +33,10 @@ public class RobotContainer {
     SmartDashboard.putData("set coast", new InstantCommand(() -> chassis.setNeutralMode(NeutralMode.Coast)).ignoringDisable(true));
     SmartDashboard.putData("set brake", new InstantCommand(() -> chassis.setNeutralMode(NeutralMode.Brake)).ignoringDisable(true));
 
-    SmartDashboard.putNumber("v", 0);
-    SmartDashboard.putData("set wheel angles test command", new RunCommand(() -> chassis.setWheelAngularVelocities(SmartDashboard.getNumber("v", 0))));
+    SmartDashboard.putNumber("angle", 0);
+    SmartDashboard.putData("set wheel angles test command", new TrapezoidTest(chassis));
+
+    SmartDashboard.putData(new FFCalculationCommand(chassis, 0.2).withTimeout(2));
 
     ledController.changeColor(new Color(29, 0, 51));
     ledController.stop();

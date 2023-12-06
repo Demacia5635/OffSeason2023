@@ -1,6 +1,7 @@
 package frc.robot.subsystems.chassis.utils;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
@@ -14,13 +15,13 @@ import frc.robot.Constants.ChassisConstants.SwerveModuleConstants;
 import frc.robot.utils.Trapezoid;
 
 import static frc.robot.Constants.ChassisConstants.*;
+import static frc.robot.Constants.ChassisConstants.SwerveModuleConstants.*;
 
 public class SwerveModule implements Sendable {
     private final TalonFX moveMotor;
     private final TalonFX angleMotor;
     private final CANCoder absoluteEncoder;
 
-    private final Trapezoid angleTrapezoid;
     private final double angleOffset;
     
     private Rotation2d desiredAngle;
@@ -30,14 +31,15 @@ public class SwerveModule implements Sendable {
         angleMotor = new TalonFX(constants.angleMotorId);
         absoluteEncoder = new CANCoder(constants.absoluteEncoderId);
 
-        angleTrapezoid = new Trapezoid(ANGULAR_VELOCITY, ANGULAR_ACCELERATION);
-
         angleOffset = constants.steerOffset;
         
         moveMotor.setNeutralMode(NeutralMode.Brake);
         angleMotor.setNeutralMode(NeutralMode.Brake);
 
         desiredAngle = new Rotation2d();
+
+        angleMotor.configMotionCruiseVelocity(ANGULAR_VELOCITY * PULSES_PER_DEGREE / 10);
+        angleMotor.configMotionAcceleration(ANGULAR_ACCELERATION * PULSES_PER_DEGREE / 10);
     }
 
     @Override
@@ -69,7 +71,11 @@ public class SwerveModule implements Sendable {
     }
 
     public void setVelocity(double v) {
-        moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(v));
+        double volts = MOVE_KS + MOVE_KV * v;
+        if (Math.abs(v) > 0.1)
+            moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(v), DemandType.ArbitraryFeedForward, volts * 0.02);
+        else
+            moveMotor.set(ControlMode.PercentOutput, 0);
     }
 
     public void setNeutralMode(NeutralMode mode) {
@@ -82,26 +88,12 @@ public class SwerveModule implements Sendable {
         angleMotor.set(ControlMode.PercentOutput, s);
     }
 
-    public void update() {
-        // double v = angleTrapezoid.calculate(
-        //     getAngleDifference(getAngle().getDegrees(), desiredAngle.getDegrees()),
-        //     getAngularVelocity(),
-        //     0
-        // );
-        double v = getAngleDifference(getAngle().getDegrees(), desiredAngle.getDegrees()) * PULSES_PER_DEGREE / 10 * 0.8;
-        setAngularVelocity(v);
-    }
-
-    public void setDesiredAngle(Rotation2d angle) {
-        desiredAngle = angle;
-    }
-
     public Rotation2d getAngle() {
         return Rotation2d.fromDegrees(absoluteEncoder.getAbsolutePosition() - angleOffset);
     }
 
     public void setAngle(Rotation2d angle) {
-        angleMotor.set(ControlMode.Position, calculateTarget(angle.getDegrees()));
+        angleMotor.set(ControlMode.MotionMagic, calculateTarget(angle.getDegrees()));
     }
 
     public double getAngularVelocity() {
@@ -109,8 +101,12 @@ public class SwerveModule implements Sendable {
     }
 
     public void setAngularVelocity(double v) {
-        System.out.println(v * PULSES_PER_DEGREE / 10);
-        angleMotor.set(ControlMode.Velocity, v * PULSES_PER_DEGREE / 10);
+        double volts = ANGLE_KS + ANGLE_KV * v;
+        if (Math.abs(v) > 10) {
+            angleMotor.set(ControlMode.Velocity, v * PULSES_PER_DEGREE / 10, DemandType.ArbitraryFeedForward, volts * 0.02);
+        }
+        else
+            angleMotor.set(ControlMode.PercentOutput, 0);
     }
 
     public SwerveModuleState getState() {
@@ -120,7 +116,7 @@ public class SwerveModule implements Sendable {
     public void setState(SwerveModuleState state) {
         SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
         setVelocity(optimized.speedMetersPerSecond);
-        setDesiredAngle(optimized.angle);
+        setAngle(optimized.angle);
     }
 
     public void setInverted(boolean invert) {
@@ -131,13 +127,13 @@ public class SwerveModule implements Sendable {
         return new SwerveModulePosition(moveMotor.getSelectedSensorPosition() * PULSES_PER_METER, getAngle());
     }
 
-    private double getAngleDifference(double current, double target) {
-        double difference = (target - current) % 360;
+    public double getAngleDifference(double target) {
+        double difference = (target - getAngle().getDegrees()) % 360;
         return difference - ((int)difference / 180) * 360;
     }
 
     private double calculateTarget(double targetAngle) {
-        double difference = getAngleDifference(getAngle().getDegrees(), targetAngle);
+        double difference = getAngleDifference(targetAngle);
         return angleMotor.getSelectedSensorPosition() + (difference * PULSES_PER_DEGREE);
     }
 

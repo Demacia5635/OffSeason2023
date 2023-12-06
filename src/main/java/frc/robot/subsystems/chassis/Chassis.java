@@ -7,11 +7,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.chassis.utils.SwerveModule;
+import frc.robot.utils.Trapezoid;
 
 import static frc.robot.Constants.ChassisConstants.*;
 
@@ -26,6 +28,8 @@ public class Chassis extends SubsystemBase {
 
   private final SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field;
+
+  private final Trapezoid angleTrapezoid;
 
   public Chassis() {
     modules = new SwerveModule[] {
@@ -49,6 +53,16 @@ public class Chassis extends SubsystemBase {
     SmartDashboard.putData("right front module", modules[0]);
     SmartDashboard.putData("left back module", modules[1]);
     SmartDashboard.putData("right back module", modules[2]);
+
+    angleTrapezoid = new Trapezoid(ANGULAR_VELOCITY, ANGULAR_ACCELERATION);
+  }
+
+  public double getDifference(double x) {
+    return modules[0].getAngleDifference(x);
+  }
+
+  public double getVel() {
+    return modules[0].getVelocity();
   }
 
   @Override
@@ -83,9 +97,22 @@ public class Chassis extends SubsystemBase {
     Arrays.stream(modules).forEach((module) -> module.setAngle(new Rotation2d(0)));
   }
 
+  public void setWheelsPower(double p) {
+    for (SwerveModule module : modules) {
+      module.setPower(0, p);
+    }
+  }
+
+  public void printVelocities() {
+    for (SwerveModule module : modules) {
+      System.out.println(module.getAngularVelocity());
+    }
+  }
+
   public void setWheelAngles(double x) {
-    for (SwerveModule module : modules)
-      module.setDesiredAngle(Rotation2d.fromDegrees(x));
+    for (SwerveModule module : modules) {
+      module.setAngle(Rotation2d.fromDegrees(x));
+    }
   }
 
   public void setWheelAngularVelocities(double v) {
@@ -101,8 +128,6 @@ public class Chassis extends SubsystemBase {
   public void periodic() {
       poseEstimator.update(getAngle(), getModulePositions());
       field.setRobotPose(poseEstimator.getEstimatedPosition());
-      
-      // Arrays.stream(modules).forEach((module) -> module.update());
   }
 
   public Rotation2d getAngle() {
