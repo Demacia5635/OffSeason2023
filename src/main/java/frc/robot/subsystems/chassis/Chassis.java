@@ -111,6 +111,12 @@ public class Chassis extends SubsystemBase {
     return new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
   }
 
+  public ChassisSpeeds getSpeeds()
+  {
+    ChassisSpeeds speeds = KINEMATICS.toChassisSpeeds(getModuleStates());
+    return speeds;
+  }
+
   /**
    * Sets the neutral mode of every motor in the chassis
    * @param mode
@@ -158,7 +164,7 @@ public class Chassis extends SubsystemBase {
       builder.addDoubleProperty("pose X",() -> getPoseX(), null);
       builder.addDoubleProperty("pose Y",() -> getPoseY(), null);
       builder.addDoubleProperty("Angle", () -> poseEstimator.getEstimatedPosition().getRotation().getDegrees(), null);
-      builder.addDoubleProperty("Angle speed", () -> Math.toDegrees(getVelocity().omegaRadiansPerSecond), null);
+      builder.addDoubleProperty("Angle speed", () -> Math.toDegrees(getSpeeds().omegaRadiansPerSecond), null);
   }
 
   @Override
