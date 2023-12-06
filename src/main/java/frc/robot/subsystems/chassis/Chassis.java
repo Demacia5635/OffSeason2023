@@ -3,6 +3,7 @@ package frc.robot.subsystems.chassis;
 import frc.robot.subsystems.chassis.vision.utils.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -19,6 +20,7 @@ import static frc.robot.Constants.ChassisConstants.*;
 
 import java.util.Arrays;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 public class Chassis extends SubsystemBase {
@@ -38,10 +40,6 @@ public class Chassis extends SubsystemBase {
       new SwerveModule(MODULE_BACK_LEFT),
       new SwerveModule(MODULE_BACK_RIGHT),
     };
-    Arrays.stream(modules).forEach((module) -> {
-      module.setMovePID(MOVE_KP, MOVE_KI, MOVE_KD);
-      module.setAnglePID(ANGLE_KP, ANGLE_KI, ANGLE_KD);
-    });
 
     gyro = new PigeonIMU(GYRO_ID);
 
@@ -51,24 +49,20 @@ public class Chassis extends SubsystemBase {
     field = new Field2d();
     SmartDashboard.putData(field);
     SmartDashboard.putData(this);
-    SmartDashboard.putData("m1 offset", modules[0]);
-    SmartDashboard.putData("m2 offset", modules[1]);
-    SmartDashboard.putData("m3 offset", modules[2]);
-    SmartDashboard.putData("m4 offset", modules[3]);
+    SmartDashboard.putData("left front module", modules[0]);
+    SmartDashboard.putData("right front module", modules[1]);
+    SmartDashboard.putData("left back module", modules[2]);
+    SmartDashboard.putData("right back module", modules[3]);
 
-    modules[0].setInverted(false);
-    modules[1].setInverted(true);
-    modules[2].setInverted(false);
-    modules[3].setInverted(true);
-  }
+    SmartDashboard.putData("set coast", new InstantCommand(() -> setNeutralMode(NeutralMode.Coast)).ignoringDisable(true));
+    SmartDashboard.putData("set brake", new InstantCommand(() -> setNeutralMode(NeutralMode.Brake)).ignoringDisable(true));
 
-  @Override
-  public void initSendable(SendableBuilder builder) {
-      builder.addDoubleProperty("vel", () -> modules[2].getVelocity(), null);
-      builder.addDoubleProperty("pose X",() -> getPoseX(), null);
-      builder.addDoubleProperty("pose Y",() -> getPoseY(), null);
-      builder.addDoubleProperty("Angle", () -> poseEstimator.getEstimatedPosition().getRotation().getDegrees(), null);
-      builder.addDoubleProperty("Angle speed", () -> Math.toDegrees(getVelocity().omegaRadiansPerSecond), null);
+    SmartDashboard.putData("reset wheels", new InstantCommand(() -> {
+      for (SwerveModule module : modules) {
+        module.setAngle(new Rotation2d());
+      }
+    }));
+
       SmartDashboard.putData("reset pose", new InstantCommand(()-> resetPose()));
   }
   
@@ -90,17 +84,13 @@ public class Chassis extends SubsystemBase {
     gyro.setFusedHeading(0);
   }
 
+  /**
+   * Stops the entire chassis
+   */
   public void stop() {
     Arrays.stream(modules).forEach(SwerveModule::stop);
   }
 
-  public void setDrivePower(double power) {
-    Arrays.stream(modules).forEach((module) -> module.setPower(power, 0));
-  }
-
-  public void setDriveVelocity(double velocity) {
-    Arrays.stream(modules).forEach((module) -> module.setVelocity(velocity));
-  }
 
   public boolean timeAfterLastUpdate(){
     return vision.timeAfterLastUpdate();
@@ -112,39 +102,68 @@ public class Chassis extends SubsystemBase {
     setModuleStates(states);
   }
 
-  public ChassisSpeeds getVelocity() {
-    return KINEMATICS.toChassisSpeeds(getModuleStates());
+  /**
+   * Returns the velocity vector
+   * @return Velocity in m/s
+   */
+  public Translation2d getVelocity() {
+    ChassisSpeeds speeds = KINEMATICS.toChassisSpeeds(getModuleStates());
+    return new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
   }
 
-  public void resetWheels() {
-    Arrays.stream(modules).forEach((module) -> module.setAngle(new Rotation2d(0)));
+  /**
+   * Sets the neutral mode of every motor in the chassis
+   * @param mode
+   */
+  public void setNeutralMode(NeutralMode mode) {
+    Arrays.stream(modules).forEach((module) -> module.setNeutralMode(mode));
   }
 
-  public void setWheelAngles(double x) {
-    Arrays.stream(modules).forEach((module) -> module.setAngle(Rotation2d.fromDegrees(x)));
-  }
-
-  @Override
-  public void periodic() {
-      poseEstimator.update(getAngle(), getModulePositions());
-      field.setRobotPose(poseEstimator.getEstimatedPosition());
-  }
-
+  /**
+   * Returns the angle of the gyro
+   */
 
 
   public Rotation2d getAngle() {
     return Rotation2d.fromDegrees(gyro.getFusedHeading());
   }
 
+  /**
+   * Returns the position of every module
+   * @return Position relative to the field
+   */
   public SwerveModulePosition[] getModulePositions() {
     return Arrays.stream(modules).map(SwerveModule::getModulePosition).toArray(SwerveModulePosition[]::new);
   }
 
+  /**
+   * Returns the state of every module
+   * @return Velocity in m/s, angle in Rotation2d
+   */
   public SwerveModuleState[] getModuleStates() {
     return Arrays.stream(modules).map(SwerveModule::getState).toArray(SwerveModuleState[]::new);
   }
 
+  /**
+   * Sets the state of every module
+   * @param states Velocity in m/s, angle in Rotation2d
+   */
   public void setModuleStates(SwerveModuleState[] states) {
     for (int i = 0; i < 4; i++) modules[i].setState(states[i]);
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+      builder.addDoubleProperty("chassis velocity", () -> getVelocity().getNorm(), null);
+      builder.addDoubleProperty("pose X",() -> getPoseX(), null);
+      builder.addDoubleProperty("pose Y",() -> getPoseY(), null);
+      builder.addDoubleProperty("Angle", () -> poseEstimator.getEstimatedPosition().getRotation().getDegrees(), null);
+      builder.addDoubleProperty("Angle speed", () -> Math.toDegrees(getVelocity().omegaRadiansPerSecond), null);
+  }
+
+  @Override
+  public void periodic() {
+      poseEstimator.update(getAngle(), getModulePositions());
+      field.setRobotPose(poseEstimator.getEstimatedPosition());
   }
 }
