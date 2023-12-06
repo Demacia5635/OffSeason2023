@@ -41,20 +41,20 @@ public final class Constants {
     public static final double ANGULAR_VELOCITY = 360;
     public static final double ANGULAR_ACCELERATION = 720;
 
-    public static final double MOVE_KP = 0.007;
-    public static final double MOVE_KI = 0;
-    public static final double MOVE_KD = 0.012;
-    public static final double ANGLE_POSITION_KP = 0.35;
-    public static final double ANGLE_POSITION_KI = 0;
-    public static final double ANGLE_POSITION_KD = 0.029;
-    public static final double ANGLE_VELOCITY_KP = 0.07;
-    public static final double ANGLE_VELOCITY_KI = 0.004;
-    public static final double ANGLE_VELOCITY_KD = 0.05;
-
     public static final double PULSES_PER_METER = 52226.56641604010025062656641604;
     public static final double PULSES_PER_DEGREE = 72.817777777777777777777777777779;
 
     public static class SwerveModuleConstants {
+      public static final double MOVE_KP = 0.007;
+      public static final double MOVE_KI = 0;
+      public static final double MOVE_KD = 0.012;
+      public static final double ANGLE_POSITION_KP = 0.35;
+      public static final double ANGLE_POSITION_KI = 0;
+      public static final double ANGLE_POSITION_KD = 0.029;
+      public static final double ANGLE_VELOCITY_KP = 0.07;
+      public static final double ANGLE_VELOCITY_KI = 0.004;
+      public static final double ANGLE_VELOCITY_KD = 0.05;
+
       public static final double MOVE_KS = 1.009;
       public static final double MOVE_KV = 0.26667;
       public static final double ANGLE_KS = -0.016;

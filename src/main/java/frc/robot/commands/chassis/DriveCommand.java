@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.chassis;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -7,13 +7,13 @@ import frc.robot.subsystems.chassis.Chassis;
 
 import static frc.robot.Constants.ChassisConstants.*;
 
-public class Drive extends CommandBase {
+public class DriveCommand extends CommandBase {
   private final Chassis chassis;
   private final CommandXboxController controller;
   
   private boolean precisionDrive;
 
-  public Drive(Chassis chassis, CommandXboxController controller) {
+  public DriveCommand(Chassis chassis, CommandXboxController controller) {
     this.chassis = chassis;
     this.controller = controller;
 

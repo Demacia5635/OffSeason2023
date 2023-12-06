@@ -7,13 +7,12 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.chassis.utils.SwerveModule;
-import frc.robot.utils.Trapezoid;
 
 import static frc.robot.Constants.ChassisConstants.*;
 
@@ -29,8 +28,6 @@ public class Chassis extends SubsystemBase {
   private final SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field;
 
-  private final Trapezoid angleTrapezoid;
-
   public Chassis() {
     modules = new SwerveModule[] {
       // new SwerveModule(MODULE_FRONT_LEFT),
@@ -38,10 +35,6 @@ public class Chassis extends SubsystemBase {
       new SwerveModule(MODULE_BACK_LEFT),
       new SwerveModule(MODULE_BACK_RIGHT),
     };
-    Arrays.stream(modules).forEach((module) -> {
-      module.setMovePID(MOVE_KP, MOVE_KI, MOVE_KD);
-      module.setAnglePID(ANGLE_VELOCITY_KP, ANGLE_VELOCITY_KI, ANGLE_VELOCITY_KP);
-    });
 
     gyro = new PigeonIMU(GYRO_ID);
 
@@ -54,15 +47,73 @@ public class Chassis extends SubsystemBase {
     SmartDashboard.putData("left back module", modules[1]);
     SmartDashboard.putData("right back module", modules[2]);
 
-    angleTrapezoid = new Trapezoid(ANGULAR_VELOCITY, ANGULAR_ACCELERATION);
+    SmartDashboard.putData("set coast", new InstantCommand(() -> setNeutralMode(NeutralMode.Coast)).ignoringDisable(true));
+    SmartDashboard.putData("set brake", new InstantCommand(() -> setNeutralMode(NeutralMode.Brake)).ignoringDisable(true));
   }
 
-  public double getDifference(double x) {
-    return modules[0].getAngleDifference(x);
+  /**
+   * Stops the entire chassis
+   */
+  public void stop() {
+    Arrays.stream(modules).forEach(SwerveModule::stop);
   }
 
-  public double getVel() {
-    return modules[0].getVelocity();
+  /**
+   * Sets the velocity of the chassis
+   * @param speeds In m/s and rad/s
+   */
+  public void setVelocities(ChassisSpeeds speeds) {
+    ChassisSpeeds relativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getAngle());
+    SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(relativeSpeeds);
+    setModuleStates(states);
+  }
+
+  /**
+   * Returns the velocity vector
+   * @return Velocity in m/s
+   */
+  public Translation2d getVelocity() {
+    ChassisSpeeds speeds = KINEMATICS.toChassisSpeeds(getModuleStates());
+    return new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
+  }
+
+  /**
+   * Sets the neutral mode of every motor in the chassis
+   * @param mode
+   */
+  public void setNeutralMode(NeutralMode mode) {
+    Arrays.stream(modules).forEach((module) -> module.setNeutralMode(mode));
+  }
+
+  /**
+   * Returns the angle of the gyro
+   */
+  public Rotation2d getAngle() {
+    return Rotation2d.fromDegrees(gyro.getFusedHeading());
+  }
+
+  /**
+   * Returns the position of every module
+   * @return Position relative to the field
+   */
+  public SwerveModulePosition[] getModulePositions() {
+    return Arrays.stream(modules).map(SwerveModule::getModulePosition).toArray(SwerveModulePosition[]::new);
+  }
+
+  /**
+   * Returns the state of every module
+   * @return Velocity in m/s, angle in Rotation2d
+   */
+  public SwerveModuleState[] getModuleStates() {
+    return Arrays.stream(modules).map(SwerveModule::getState).toArray(SwerveModuleState[]::new);
+  }
+
+  /**
+   * Sets the state of every module
+   * @param states Velocity in m/s, angle in Rotation2d
+   */
+  public void setModuleStates(SwerveModuleState[] states) {
+    for (int i = 0; i < 4; i++) modules[i].setState(states[i]);
   }
 
   @Override
@@ -70,79 +121,9 @@ public class Chassis extends SubsystemBase {
       builder.addDoubleProperty("chassis velocity", () -> getVelocity().getNorm(), null);
   }
 
-  public void stop() {
-    Arrays.stream(modules).forEach(SwerveModule::stop);
-  }
-
-  public void setDrivePower(double power) {
-    Arrays.stream(modules).forEach((module) -> module.setPower(power, 0));
-  }
-
-  public void setDriveVelocity(double velocity) {
-    Arrays.stream(modules).forEach((module) -> module.setVelocity(velocity));
-  }
-
-  public void setVelocities(ChassisSpeeds speeds) {
-    ChassisSpeeds relativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getAngle());
-    SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(relativeSpeeds);
-    setModuleStates(states);
-  }
-
-  public Translation2d getVelocity() {
-    ChassisSpeeds speeds = KINEMATICS.toChassisSpeeds(getModuleStates());
-    return new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
-  }
-
-  public void resetWheels() {
-    Arrays.stream(modules).forEach((module) -> module.setAngle(new Rotation2d(0)));
-  }
-
-  public void setWheelsPower(double p) {
-    for (SwerveModule module : modules) {
-      module.setPower(0, p);
-    }
-  }
-
-  public void printVelocities() {
-    for (SwerveModule module : modules) {
-      System.out.println(module.getAngularVelocity());
-    }
-  }
-
-  public void setWheelAngles(double x) {
-    for (SwerveModule module : modules) {
-      module.setAngle(Rotation2d.fromDegrees(x));
-    }
-  }
-
-  public void setWheelAngularVelocities(double v) {
-    for (SwerveModule module : modules)
-      module.setAngularVelocity(v);
-  }
-
-  public void setNeutralMode(NeutralMode mode) {
-    Arrays.stream(modules).forEach((module) -> module.setNeutralMode(mode));
-  }
-
   @Override
   public void periodic() {
       poseEstimator.update(getAngle(), getModulePositions());
       field.setRobotPose(poseEstimator.getEstimatedPosition());
-  }
-
-  public Rotation2d getAngle() {
-    return Rotation2d.fromDegrees(gyro.getFusedHeading());
-  }
-
-  public SwerveModulePosition[] getModulePositions() {
-    return Arrays.stream(modules).map(SwerveModule::getModulePosition).toArray(SwerveModulePosition[]::new);
-  }
-
-  public SwerveModuleState[] getModuleStates() {
-    return Arrays.stream(modules).map(SwerveModule::getState).toArray(SwerveModuleState[]::new);
-  }
-
-  public void setModuleStates(SwerveModuleState[] states) {
-    for (int i = 0; i < 4; i++) modules[i].setState(states[i]);
   }
 }
