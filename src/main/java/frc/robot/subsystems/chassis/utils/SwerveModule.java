@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import frc.robot.Constants;
 import frc.robot.Constants.ChassisConstants.SwerveModuleConstants;
 
 import static frc.robot.Constants.ChassisConstants.*;
@@ -81,9 +82,10 @@ public class SwerveModule implements Sendable {
      * @param v Velocity in m/s
      */
     public void setVelocity(double v) {
+        double newVelocity = getVelocity() + ACCELERATION * Constants.CYCLE_DT;
         double volts = MOVE_KS + MOVE_KV * v;
         if (Math.abs(v) > MOVE_KS)
-            moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(v), DemandType.ArbitraryFeedForward, volts * 0.02);
+            moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(newVelocity), DemandType.ArbitraryFeedForward, volts * Constants.CYCLE_DT);
         else
             moveMotor.set(ControlMode.PercentOutput, 0);
     }
@@ -128,9 +130,10 @@ public class SwerveModule implements Sendable {
      * @param v Velocity in deg/s
      */
     public void setAngularVelocity(double v) {
+        double newVelocity = getAngularVelocity() + ANGULAR_ACCELERATION * Constants.CYCLE_DT;
         double volts = ANGLE_KS + ANGLE_KV * v;
         if (Math.abs(v) >= ANGLE_KS) {
-            angleMotor.set(ControlMode.Velocity, v * PULSES_PER_DEGREE / 10, DemandType.ArbitraryFeedForward, volts * 0.02);
+            angleMotor.set(ControlMode.Velocity, angularToEncoderSpeed(newVelocity), DemandType.ArbitraryFeedForward, volts * Constants.CYCLE_DT);
         }
         else
             angleMotor.set(ControlMode.PercentOutput, 0);

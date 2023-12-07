@@ -11,6 +11,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.chassis.utils.SwerveModule;
 
@@ -50,11 +51,11 @@ public class Chassis extends SubsystemBase {
     SmartDashboard.putData("set coast", new InstantCommand(() -> setNeutralMode(NeutralMode.Coast)).ignoringDisable(true));
     SmartDashboard.putData("set brake", new InstantCommand(() -> setNeutralMode(NeutralMode.Brake)).ignoringDisable(true));
 
-    SmartDashboard.putData("reset wheels", new InstantCommand(() -> {
+    SmartDashboard.putData("reset wheels", new RunCommand(() -> {
       for (SwerveModule module : modules) {
         module.setAngle(new Rotation2d());
       }
-    }));
+    }).ignoringDisable(true));
   }
 
   /**
