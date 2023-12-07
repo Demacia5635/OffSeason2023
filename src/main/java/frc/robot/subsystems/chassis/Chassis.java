@@ -1,6 +1,6 @@
 package frc.robot.subsystems.chassis;
 
-import frc.robot.subsystems.chassis.vision.utils.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -12,8 +12,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.chassis.utils.SwerveModule;
-import frc.robot.subsystems.chassis.vision.Vision;
-import frc.robot.subsystems.chassis.vision.utils.SwerveDrivePoseEstimator;
 
 import static frc.robot.Constants.ChassisConstants.*;
 
@@ -28,7 +26,6 @@ public class Chassis extends SubsystemBase {
   private final SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field;
   
-  Vision vision;
 
   public Chassis() {
 
@@ -47,7 +44,6 @@ public class Chassis extends SubsystemBase {
 
     poseEstimator = new SwerveDrivePoseEstimator(KINEMATICS, getAngle(), getModulePositions(), new Pose2d());
     poseEstimator.resetPosition(new Rotation2d(0), getModulePositions(), new Pose2d());
-    vision = new Vision(this, poseEstimator); 
     field = new Field2d();
     SmartDashboard.putData(field);
     SmartDashboard.putData(this);
@@ -100,10 +96,6 @@ public class Chassis extends SubsystemBase {
 
   public void setDriveVelocity(double velocity) {
     Arrays.stream(modules).forEach((module) -> module.setVelocity(velocity));
-  }
-
-  public boolean timeAfterLastUpdate(){
-    return vision.timeAfterLastUpdate();
   }
 
   public void setVelocities(ChassisSpeeds speeds) {

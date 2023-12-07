@@ -57,6 +57,7 @@ public class ArcPath extends CommandBase {
    */
 
   public ArcPath(Chassis chassis,pathPoint[] points, double maxVel, double maxAcc) {
+
     wantedAngle = points[points.length - 1].getRotation();
     corners = new RoundedPoint[points.length - 2];
     for(int i = 0; i < points.length - 2; i++)
@@ -160,17 +161,16 @@ public class ArcPath extends CommandBase {
   public void execute() {
     pose = chassis.getPose().getEstimatedPosition();
     Translation2d translation2dVelocity = new Translation2d(chassis.getVelocity().vxMetersPerSecond, chassis.getVelocity().vyMetersPerSecond);
+
+    
     if(segments[segmentIndex].distancePassed(pose.getTranslation()) >= segments[segmentIndex].getLength() - distanceOffset){
       totalLeft -= segments[segmentIndex].getLength();
-
-    if(segmentIndex != segments.length - 1 || segments[segmentIndex].getLength() <= 0.15)
+      if(segmentIndex != segments.length - 1 || segments[segmentIndex].getLength() <= 0.15)
         segmentIndex++;  
     }
 
     velocity = driveTrapezoid.calc(totalLeft - segments[segmentIndex].distancePassed(pose.getTranslation()), translation2dVelocity.getNorm());
-    if(chassis.timeAfterLastUpdate()){
-      segments[segmentIndex].setAprilTagMode(false);
-    }
+
     if(!segments[segmentIndex].isAprilTagMode())
       rotationVelocity = rotationTrapezoid.calc(wantedAngle.minus(chassis.getAngle()).getDegrees(), Math.toDegrees(chassis.getVelocity().omegaRadiansPerSecond));
     else
