@@ -10,8 +10,6 @@ import frc.robot.commands.Drive;
 import frc.robot.commands.DriveLine;
 import frc.robot.subsystems.chassis.Chassis;
 
-import static frc.robot.Constants.LedConstants.*;
-
 public class RobotContainer {
 
   CommandXboxController controller = new CommandXboxController(0);
@@ -38,11 +36,8 @@ public class RobotContainer {
   private void configureBindings() {
   }
 
-
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    // return new FunctionalCommand(() -> chassis.setDrivePower(0.2), null, null, null, chassis);
     return path;
-    // return null;
   }
 }

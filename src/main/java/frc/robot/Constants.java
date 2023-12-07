@@ -47,28 +47,27 @@ public final class Constants {
                                                                     // farther than this value
   }
 
-  public static final int CONTROLLER_PORT = 0;
 
   public static class ChassisConstants {
     public final static SwerveModuleConstants MODULE_FRONT_LEFT = new SwerveModuleConstants(
-      7, 8, 11,
+      7, 8, 11, 0, 0, 0,
       new Translation2d(0.26515, 0.2215),
-      35.068359375
+      27.59765625
     );
     public final static SwerveModuleConstants MODULE_FRONT_RIGHT = new SwerveModuleConstants(
-      5, 6, 13,
+      5, 6, 13, 0, 0, 0,
       new Translation2d(0.26515, -0.2215),
-      18.984375
+      199.16015625
     );
     public final static SwerveModuleConstants MODULE_BACK_LEFT = new SwerveModuleConstants(
-      1, 2, 10,
+      1, 2, 10, 0, 0, 0,
       new Translation2d(-0.25451, 0.2065),
-      227.900390625
+      228.69140625
     );
     public final static SwerveModuleConstants MODULE_BACK_RIGHT = new SwerveModuleConstants(
-      3, 4, 12,
+      3, 4, 12, 0, 0, 0,
       new Translation2d(-0.26515, -0.2215),
-      37.001953125
+      212.607421875
     );
     public static final int GYRO_ID = 14;
 
@@ -84,43 +83,36 @@ public final class Constants {
     public static final double ANGULAR_VELOCITY = 360;
     public static final double ANGULAR_ACCELERATION = 720;
 
+    public static final double MOVE_KP = 0.27;
+    public static final double MOVE_KI = 0.0;
+    public static final double MOVE_KD = 0.12;
+    public static final double ANGLE_KP = 0.1;
+    public static final double ANGLE_KI = 0;
+    public static final double ANGLE_KD = 0;
+
     public static final double PULSES_PER_METER = 52226.56641604010025062656641604;
     public static final double PULSES_PER_DEGREE = 72.817777777777777777777777777779;
 
     public static class SwerveModuleConstants {
-      public static final double MOVE_KP = 0.007;
-      public static final double MOVE_KI = 0;
-      public static final double MOVE_KD = 0.012;
-      public static final double ANGLE_POSITION_KP = 0.35;
-      public static final double ANGLE_POSITION_KI = 0;
-      public static final double ANGLE_POSITION_KD = 0.029;
-      public static final double ANGLE_VELOCITY_KP = 0.07;
-      public static final double ANGLE_VELOCITY_KI = 0.004;
-      public static final double ANGLE_VELOCITY_KD = 0.05;
-
-      public static final double MOVE_KS = 0.0362;
-      public static final double MOVE_KV = 0.0862;
-      public static final double ANGLE_KS = 0.05;
-      public static final double ANGLE_KV = 0.0962;
-
       public final int moveMotorId;
       public final int angleMotorId;
       public final int absoluteEncoderId;
+      public final int kS;
+      public final int kV;
+      public final int kA;
       public final Translation2d moduleTranslationOffset;
       public final double steerOffset;
 
-      public SwerveModuleConstants(int moveMotorId, int angleMotorId, int absoluteEncoderId, Translation2d moduleTranslationOffset, double steerOffset) {
+      public SwerveModuleConstants(int moveMotorId, int angleMotorId, int absoluteEncoderId, int kS, int kV, int kA, Translation2d moduleTranslationOffset, double steerOffset) {
         this.moveMotorId = moveMotorId;
         this.angleMotorId = angleMotorId;
         this.absoluteEncoderId = absoluteEncoderId;
+        this.kS = kS;
+        this.kV = kV;
+        this.kA = kA;
         this.moduleTranslationOffset = moduleTranslationOffset;
         this.steerOffset = steerOffset;
       }
     }
-  }
-
-  public static class LedConstants {
-    public static final int LED_ID = 0;
-    public static final int LED_COUNT = 171;
   }
 }
