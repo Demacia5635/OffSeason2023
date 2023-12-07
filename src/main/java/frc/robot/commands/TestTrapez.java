@@ -19,7 +19,7 @@ public class TestTrapez extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("Calc : " + trapez.calc(-0.000001, -1));
+    System.out.println("Calc : " + trapez.calc(-2, -5));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
