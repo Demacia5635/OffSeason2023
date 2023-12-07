@@ -63,6 +63,6 @@ public class Trapez {
         System.out.println("~accDistance : ");
         System.out.println("endVel : " + endVel);
         System.out.println("cVel + deltaV : " + (cVel + deltaV * Math.signum(cVel)));
-        return (Math.pow(endVel, 2) - Math.pow(cVel + deltaV * Math.signum(cVel), 2)) / (-2 * acc);
+        return (Math.pow(endVel, 2) - Math.pow(cVel + deltaV * Math.signum(cVel), 2)) / (-2 * acc * Math.signum(cVel));
     }
 }
