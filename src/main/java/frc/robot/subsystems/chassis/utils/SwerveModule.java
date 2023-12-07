@@ -38,19 +38,20 @@ public class SwerveModule implements Sendable {
         angleMotor.configMotionAcceleration(angularToEncoderSpeed(ANGULAR_ACCELERATION));
 
         setMovePID(MOVE_KP, MOVE_KI, MOVE_KD);
-        setAnglePID(ANGLE_VELOCITY_KP, ANGLE_VELOCITY_KI, ANGLE_VELOCITY_KD);
+        setAnglePID(ANGLE_VELOCITY_KP, ANGLE_VELOCITY_KI, ANGLE_VELOCITY_KD, ANGLE_KV);
     }
 
-    public void setMovePID(double Kp, double Ki, double Kd) {
-        moveMotor.config_kP(0, Kp);
-        moveMotor.config_kI(0, Ki);
-        moveMotor.config_kD(0, Kd);
+    public void setMovePID(double kP, double kI, double kD) {
+        moveMotor.config_kP(0, kP);
+        moveMotor.config_kI(0, kI);
+        moveMotor.config_kD(0, kD);
     }
 
-    public void setAnglePID(double Kp, double Ki, double Kd) {
-        angleMotor.config_kP(0, Kp);
-        angleMotor.config_kI(0, Ki);
-        angleMotor.config_kD(0, Kd);
+    public void setAnglePID(double kP, double kI, double kD, double kF) {
+        angleMotor.config_kP(0, kP);
+        angleMotor.config_kI(0, kI);
+        angleMotor.config_kD(0, kD);
+        angleMotor.config_kF(0, kF);
     }
 
     /**
@@ -106,8 +107,7 @@ public class SwerveModule implements Sendable {
      * Sets the angle of the module with MotionMagic control
      */
     public void setAngle(Rotation2d angle) {
-        double volts = ANGLE_KS + getAngularVelocity() * ANGLE_KV;
-        angleMotor.set(ControlMode.MotionMagic, calculateTarget(angle.getDegrees()), DemandType.ArbitraryFeedForward, volts / 12);
+        angleMotor.set(ControlMode.MotionMagic, calculateTarget(angle.getDegrees()), DemandType.ArbitraryFeedForward, ANGLE_KS / 12);
     }
 
     /**

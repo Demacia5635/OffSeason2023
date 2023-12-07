@@ -11,22 +11,22 @@ public final class Constants {
     public final static SwerveModuleConstants MODULE_FRONT_LEFT = new SwerveModuleConstants(
       7, 8, 11,
       new Translation2d(0.26515, 0.2215),
-      35.068359375
+      215.595703125
     );
     public final static SwerveModuleConstants MODULE_FRONT_RIGHT = new SwerveModuleConstants(
       5, 6, 13,
       new Translation2d(0.26515, -0.2215),
-      18.984375
+      198.28125
     );
     public final static SwerveModuleConstants MODULE_BACK_LEFT = new SwerveModuleConstants(
       1, 2, 10,
       new Translation2d(-0.25451, 0.2065),
-      227.900390625
+      50.185546875
     );
     public final static SwerveModuleConstants MODULE_BACK_RIGHT = new SwerveModuleConstants(
       3, 4, 12,
       new Translation2d(-0.26515, -0.2215),
-      37.001953125
+      217.6171875
     );
     public static final int GYRO_ID = 14;
 
@@ -39,8 +39,8 @@ public final class Constants {
 
     public static final double VELOCITY = 2;
     public static final double ACCELERATION = 4;
-    public static final double ANGULAR_VELOCITY = 180;
-    public static final double ANGULAR_ACCELERATION = 360;
+    public static final double ANGULAR_VELOCITY = 360;
+    public static final double ANGULAR_ACCELERATION = 720;
 
     public static final double PULSES_PER_METER = 52226.56641604010025062656641604;
     public static final double PULSES_PER_DEGREE = 72.817777777777777777777777777779;
