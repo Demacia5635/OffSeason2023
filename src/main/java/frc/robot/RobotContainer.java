@@ -8,6 +8,7 @@ import frc.robot.Util.pathPoint;
 import frc.robot.commands.ArcPath;
 import frc.robot.commands.Drive;
 import frc.robot.commands.DriveLine;
+import frc.robot.commands.TestTrapez;
 import frc.robot.subsystems.chassis.Chassis;
 
 public class RobotContainer {
@@ -28,6 +29,8 @@ public class RobotContainer {
      
   ArcPath path = new ArcPath(chassis, points, 2, 2);
   Drive drive = new Drive(chassis, controller);
+
+  TestTrapez trapez = new TestTrapez();
   public RobotContainer() {
     chassis.setDefaultCommand(drive);
 
@@ -38,6 +41,6 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return path;
+    return trapez;
   }
 }
