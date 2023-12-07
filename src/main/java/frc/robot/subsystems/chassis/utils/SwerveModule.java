@@ -85,9 +85,9 @@ public class SwerveModule implements Sendable {
         double newVelocity = getVelocity() + ACCELERATION * Constants.CYCLE_DT;
         double volts = MOVE_KS + MOVE_KV * v;
         if (Math.abs(v) > MOVE_KS)
-            moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(newVelocity), DemandType.ArbitraryFeedForward, volts * Constants.CYCLE_DT);
+            moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(newVelocity), DemandType.ArbitraryFeedForward, volts / 12);
         else
-            moveMotor.set(ControlMode.PercentOutput, 0);
+            setPower(0);
     }
 
     /**
@@ -106,7 +106,8 @@ public class SwerveModule implements Sendable {
      * Sets the angle of the module with MotionMagic control
      */
     public void setAngle(Rotation2d angle) {
-        angleMotor.set(ControlMode.MotionMagic, calculateTarget(angle.getDegrees()));
+        double volts = ANGLE_KS + getAngularVelocity() * ANGLE_KV;
+        angleMotor.set(ControlMode.MotionMagic, calculateTarget(angle.getDegrees()), DemandType.ArbitraryFeedForward, volts / 12);
     }
 
     /**
@@ -133,7 +134,7 @@ public class SwerveModule implements Sendable {
         double newVelocity = getAngularVelocity() + ANGULAR_ACCELERATION * Constants.CYCLE_DT;
         double volts = ANGLE_KS + ANGLE_KV * v;
         if (Math.abs(v) >= ANGLE_KS) {
-            angleMotor.set(ControlMode.Velocity, angularToEncoderSpeed(newVelocity), DemandType.ArbitraryFeedForward, volts * Constants.CYCLE_DT);
+            angleMotor.set(ControlMode.Velocity, angularToEncoderSpeed(newVelocity), DemandType.ArbitraryFeedForward, volts / 12);
         }
         else
             angleMotor.set(ControlMode.PercentOutput, 0);
