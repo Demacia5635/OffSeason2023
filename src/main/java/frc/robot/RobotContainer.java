@@ -2,7 +2,9 @@ package frc.robot;
 
 
 import edu.wpi.first.math.geometry.Rotation2d;
+
 import edu.wpi.first.wpilibj2.command.Command;
+
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Util.pathPoint;
 import frc.robot.commands.ArcPath;
@@ -31,11 +33,14 @@ public class RobotContainer {
   Drive drive = new Drive(chassis, controller);
 
   TestTrapez trapez = new TestTrapez();
+
+  
   public RobotContainer() {
+    configureBindings();
     chassis.setDefaultCommand(drive);
 
+    
   }
-  
   private void configureBindings() {
   }
 

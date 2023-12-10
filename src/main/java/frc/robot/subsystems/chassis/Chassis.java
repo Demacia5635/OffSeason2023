@@ -7,6 +7,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -25,6 +26,7 @@ public class Chassis extends SubsystemBase {
 
   private final SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field;
+  private final Timer timer = new Timer();
   
 
   public Chassis() {
@@ -56,6 +58,9 @@ public class Chassis extends SubsystemBase {
     modules[1].setInverted(true);
     modules[2].setInverted(false);
     modules[3].setInverted(true);
+
+    timer.start();
+
   }
 
   @Override
@@ -139,4 +144,7 @@ public class Chassis extends SubsystemBase {
   public void setModuleStates(SwerveModuleState[] states) {
     for (int i = 0; i < 4; i++) modules[i].setState(states[i]);
   }
+  public double getTime() {
+    return timer.get();
+}
 }
