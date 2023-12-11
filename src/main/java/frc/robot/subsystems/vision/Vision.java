@@ -53,6 +53,7 @@ public class Vision extends SubsystemBase {
         try {
             photonPoseEstimator = new PhotonPoseEstimator(AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile), PoseStrategy.AVERAGE_BEST_TARGETS, camera1, robotCenterToCameraTransform);
         } catch (IOException e) {
+            System.out.println("problem");
             e.printStackTrace();
         }     
         visionField= new Field2d();   
@@ -131,13 +132,17 @@ public class Vision extends SubsystemBase {
                     if(estimatedRobotPose != null){
                         lastData = next();
                         lastData5 = next5();
+
                         VisionData newVisionData = new VisionData(estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds);
+
                         if (newVisionData != null && newVisionData.pose != null) {
                             // if ((newVisionData.pose).getTranslation()
                             //         .getDistance(estimatedRobotPose.getTranslation()) > maxDistanceOfCameraFromAprilTag)
                             //     return; removed this filter because they use multiple april tags at the same time
+
                             buf3[lastData] = newVisionData;
                             buf5[lastData5] = newVisionData;
+
                             // System.out.println("-----------------------------");
                             // System.out.println(lastData5 + " : " + buf5[lastData5].timeStamp);
                             // for(int i = 0; i < buf5.length; i++) {
@@ -150,7 +155,7 @@ public class Vision extends SubsystemBase {
                         }   
                     }
                 } catch (NoSuchElementException e) {
-                    System.out.println("No Robot Pose Found print");
+                    //System.out.println("No Robot Pose Found print");
                 }
             }
         }
@@ -180,7 +185,6 @@ public class Vision extends SubsystemBase {
         SmartDashboard.putNumber("buf 5 avg X", vision5avgPose.getX());
         SmartDashboard.putNumber("buf 5 avg Y", vision5avgPose.getY());    
 
-            
     }
     //util
     Comparator<VisionData> comperator = new Comparator<VisionData>() {
@@ -252,7 +256,6 @@ public class Vision extends SubsystemBase {
     private boolean validBuf5(double time) {
         double minTime = time - 2;
         for (VisionData vData : buf5) {
-            System.out.println(vData.timeStamp);
             if (vData.timeStamp < minTime) {
                 return false;
             }
