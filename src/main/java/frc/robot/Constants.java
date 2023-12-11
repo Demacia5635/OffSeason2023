@@ -83,7 +83,7 @@ public final class Constants {
   public static final class VisionConstants {
 
     public static final String photonCamera1Name = "Limelight2";
-    public static final PhotonCamera photonCamera1 = new PhotonCamera(photonCamera1Name);
+    //public static final PhotonCamera photonCamera1 = new PhotonCamera(photonCamera1Name);
     public static final String photonCamera2Name = "";
     public static final int photonCameraNum1 = 1;
     public static final int photonCameraNum2 = 2;
