@@ -106,17 +106,15 @@ public class Vision extends SubsystemBase {
     }
 
     public void updateRobotPose5() {
-        double time5 = getTime();
-        if (validBuf5(time5)) {
-            VisionData vData5 = median5(buf5);
-            VisionData vData5Avg = avg(buf5);
+        double time = getTime();
+        if (validBuf5(time)) {
+            VisionData vData5 = median(buf5);
             if (vData5 != null && vData5.pose != null) {
                 // poseEstimator.addVisionMeasurement(vData5.pose, vData5.timeStamp);
                 // poseEstimatorField.setRobotPose(poseEstimator.getEstimatedPosition());
                 visionField5.setRobotPose(vData5.pose);
-                visionFieldavg5.setRobotPose(vData5Avg.pose);
-                lastUpdateTime5 = time5;
-                time5 = vData5.timeStamp;
+                lastUpdateTime5 = time;
+                time = vData5.timeStamp;
                 for (VisionData vd : buf5) {
                     vd.recalc(time5);
                 }
@@ -129,35 +127,30 @@ public class Vision extends SubsystemBase {
             var PhotonUpdate = photonPoseEstimator.update();
             if(PhotonUpdate != null){
                 try {
-                    {
-                        var estimatedRobotPose = PhotonUpdate.get();
-                        var estimatedPose = estimatedRobotPose.estimatedPose;
-                        if(estimatedRobotPose != null){
-                            lastData = next();
-                            lastData5 = next5();
-                            Pose2d robotPose2d = estimatedPose.toPose2d();
-                            VisionData newVisionData = new VisionData(robotPose2d, estimatedRobotPose.timestampSeconds);
-                            if (newVisionData != null && newVisionData.pose != null) {
-                                // if ((newVisionData.pose).getTranslation()
-                                //         .getDistance(estimatedRobotPose.getTranslation()) > maxDistanceOfCameraFromAprilTag)
-                                //     return; removed this filter because they use multiple april tags at the same time
-
-                                buf3[lastData] = newVisionData;
-                                buf5[lastData5] = newVisionData;
-                                // System.out.println("-----------------------------");
-                                // System.out.println(lastData5 + " : " + buf5[lastData5].timeStamp);
-                                // for(int i = 0; i < buf5.length; i++) {
-                                //     System.out.println(i + " : " + buf5[i].timeStamp);
-                                    
-                                // }
-
-
-                                visionField.setRobotPose(newVisionData.pose);
+                    var estimatedRobotPose = PhotonUpdate.get();
+                    var estimatedPose = estimatedRobotPose.estimatedPose;
+                    if(estimatedRobotPose != null){
+                        lastData = next();
+                        lastData5 = next5();
+                        VisionData newVisionData = new VisionData(estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds);
+                        if (newVisionData != null && newVisionData.pose != null) {
+                            // if ((newVisionData.pose).getTranslation()
+                            //         .getDistance(estimatedRobotPose.getTranslation()) > maxDistanceOfCameraFromAprilTag)
+                            //     return; removed this filter because they use multiple april tags at the same time
+                            buf3[lastData] = newVisionData;
+                            buf5[lastData5] = newVisionData;
+                            System.out.println("-----------------------------");
+                            System.out.println(lastData5 + " : " + buf5[lastData5].timeStamp);
+                            for(int i = 0; i < buf5.length; i++) {
+                                System.out.println(i + " : " + buf5[i].timeStamp);
+                                
                             }
+                            System.out.println(validBuf5(getTime()));
+                            visionField.setRobotPose(newVisionData.pose);
                         }   
                     }
                 } catch (NoSuchElementException e) {
-                    // System.out.println("No Robot Pose Found print");
+                    // TODO: handle exception
                 }
             }
         }
@@ -257,8 +250,9 @@ public class Vision extends SubsystemBase {
 
     private boolean validBuf5(double time) {
         double minTime = time - 2;
-        for (VisionData vData5 : buf5) {
-            if (vData5.timeStamp < minTime) {
+        for (VisionData vData : buf5) {
+            System.out.println(vData.timeStamp);
+            if (vData.timeStamp < minTime) {
                 return false;
             }
         }
@@ -288,7 +282,7 @@ public class Vision extends SubsystemBase {
             this.pose = pose;
             this.timeStamp = timeStamp;
             if (timeStamp > 0) {
-                // setDiffrence();
+                setDiffrence();
             } else {
                 clear();
             }
@@ -297,7 +291,7 @@ public class Vision extends SubsystemBase {
         void recalc(double time) {
             // for newer data - recalc the twsit
             if (timeStamp > time) {
-                // setDiffrence();
+                setDiffrence();
             } else {
                 clear();
             }
