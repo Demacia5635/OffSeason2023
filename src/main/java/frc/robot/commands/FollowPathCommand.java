@@ -5,6 +5,7 @@ import java.nio.file.Path;
 
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.chassis.Chassis;
 
@@ -12,10 +13,11 @@ public class FollowPathCommand extends CommandBase {
    private final Chassis chassis;
    private final Trajectory trajectory;
 
-   public FollowPathCommand(Chassis chassis, Path path) {
+   public FollowPathCommand(Chassis chassis, String file) {
        this.chassis = chassis;
        try {
-           this.trajectory = TrajectoryUtil.fromPathweaverJson(path);
+           Path trakPath = Filesystem.getDeployDirectory().toPath().resolve(file);
+           trajectory = TrajectoryUtil.fromPathweaverJson(trakPath);
        } catch (IOException e) {
            throw new RuntimeException("Unable to load path", e);
        }
