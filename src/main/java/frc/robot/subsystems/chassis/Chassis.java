@@ -58,6 +58,8 @@ public class Chassis extends SubsystemBase {
     modules[1].setInverted(true);
     modules[2].setInverted(false);
     modules[3].setInverted(true);
+    
+    
 
     timer.start();
 
@@ -70,7 +72,13 @@ public class Chassis extends SubsystemBase {
       builder.addDoubleProperty("pose Y",() -> getPoseY(), null);
       builder.addDoubleProperty("Angle", () -> poseEstimator.getEstimatedPosition().getRotation().getDegrees(), null);
       builder.addDoubleProperty("Angle speed", () -> Math.toDegrees(getVelocity().omegaRadiansPerSecond), null);
-      SmartDashboard.putData("reset pose", new InstantCommand(()-> resetPose()));
+
+      SmartDashboard.putData("reset pose", new InstantCommand(() -> resetPose()) {
+      @Override
+        public boolean runsWhenDisabled() {
+          return true;
+        }
+      });
   }
   
 
