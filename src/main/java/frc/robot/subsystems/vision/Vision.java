@@ -252,7 +252,7 @@ public class Vision extends SubsystemBase {
     private boolean validBuf5(double time) {
         double minTime = time - 2;
         for (VisionData vData : buf5) {
-            System.out.println(vData.timeStamp);
+            //System.out.println(vData.timeStamp);
             if (vData.timeStamp < minTime) {
                 return false;
             }
