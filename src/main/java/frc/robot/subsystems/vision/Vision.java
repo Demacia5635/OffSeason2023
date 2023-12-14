@@ -47,17 +47,28 @@ public class Vision extends SubsystemBase {
 
     public Vision(Chassis chassis, SwerveDrivePoseEstimator estimator) {
         camera1 = new PhotonCamera("Limelight2");
+        camera2 = null;
         // camera1 = new PhotonCamera(photonCamera1Name);
         //camera2 = new PhotonCamera(photonCamera2Name);
         this.chassis = chassis;
         this.poseEstimator = estimator;
         try {
-            System.out.println((camera1 == null) + " print");
-            photonPoseEstimator = new PhotonPoseEstimator(AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile), PoseStrategy.AVERAGE_BEST_TARGETS, camera1, robotCenterToCameraTransform);
+            photonPoseEstimator = new PhotonPoseEstimator(AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile),
+             PoseStrategy.AVERAGE_BEST_TARGETS, camera1, robotCenterToCameraTransform);
         } catch (IOException e) {
             System.out.println("problem");
             e.printStackTrace();
-        }     
+        } 
+
+        //setting up buffers
+        for (int i = 0; i < buf3.length; i++) {
+            buf3[i] = new VisionData(null, 0);
+        }
+        for (int i = 0; i < buf5.length; i++) {
+            buf5[i] = new VisionData(null, 0);
+        }
+
+        //fields for testing
         visionField= new Field2d();   
         visionField3 = new Field2d();
         visionField5 = new Field2d();
@@ -66,17 +77,12 @@ public class Vision extends SubsystemBase {
 
 
         poseEstimatorField = new Field2d();
-        for (int i = 0; i < buf3.length; i++) {
-            buf3[i] = new VisionData(null, 0);
-        }
-        for (int i = 0; i < buf5.length; i++) {
-            buf5[i] = new VisionData(null, 0);
-        }
+        
         // SmartDashboard.putData("field check pose estimator", poseEstimatorField);
         SmartDashboard.putData("vision3", visionField3);
         SmartDashboard.putData("vision5", visionField5);
+        
         SmartDashboard.putData("vision", visionField);
-
         
         SmartDashboard.putData("visionavg3", visionFieldavg3);
         SmartDashboard.putData("visionavg5", visionFieldavg5);
@@ -91,8 +97,8 @@ public class Vision extends SubsystemBase {
                 VisionData vData = median(buf3);
                 VisionData vDataAvg = avg(buf3);
                 if (vData != null && vData.pose != null) {
-                    // poseEstimator.addVisionMeasurement(vData.pose, vData.timeStamp);
-                    // poseEstimatorField.setRobotPose(poseEstimator.getEstimatedPosition());
+                    poseEstimator.addVisionMeasurement(vData.pose, vData.timeStamp);
+                    //poseEstimatorField.setRobotPose(poseEstimator.getEstimatedPosition());
                     visionField3.setRobotPose(vData.pose);
                     visionFieldavg3.setRobotPose(vDataAvg.pose);
                     lastUpdateTime = time;
@@ -116,7 +122,7 @@ public class Vision extends SubsystemBase {
                 lastUpdateTime5 = time;
                 time = vData5.timeStamp;
                 for (VisionData vd : buf5) {
-                    vd.recalc(time5);
+                    vd.recalc(time);
                 }
             }
         } 
@@ -139,18 +145,12 @@ public class Vision extends SubsystemBase {
                             //     return; removed this filter because they use multiple april tags at the same time
                             buf3[lastData] = newVisionData;
                             buf5[lastData5] = newVisionData;
-                            System.out.println("-----------------------------");
-                            System.out.println(lastData5 + " : " + buf5[lastData5].timeStamp);
-                            for(int i = 0; i < buf5.length; i++) {
-                                System.out.println(i + " : " + buf5[i].timeStamp);
-                                
-                            }
-                            System.out.println(validBuf5(getTime()));
+                            
                             visionField.setRobotPose(newVisionData.pose);
                         }   
                     }
                 } catch (NoSuchElementException e) {
-                    // TODO: handle exception
+                    //System.out.println("");
                 }
             }
         }
@@ -216,6 +216,12 @@ public class Vision extends SubsystemBase {
         return new VisionData((new Pose2d(averageX, averageY, new Rotation2d(averageRotation))), avarageTimeStamp);
     }
 
+    private VisionData median(VisionData[] visionDataArr) {
+        Arrays.sort(visionDataArr, comperator);
+        return visionDataArr[visionDataArr.length / 2];
+    }
+
+
     // BUF 3
     int next() {
         return (lastData + 1) % buf3.length;
@@ -229,11 +235,6 @@ public class Vision extends SubsystemBase {
             }
         }
         return true;
-    }
-
-    private VisionData median(VisionData[] visionDataArr) {
-        Arrays.sort(visionDataArr, comperator);
-        return visionDataArr[visionDataArr.length / 2];
     }
 
     public double lastUpdateLatency() {
@@ -257,11 +258,6 @@ public class Vision extends SubsystemBase {
             }
         }
         return true;
-    }
-   
-    private VisionData median5(VisionData[] visionDataArr) {
-        Arrays.sort(visionDataArr, comperator);
-        return visionDataArr[3];
     }
    
     public double lastUpdateLatency5() {
@@ -303,6 +299,7 @@ public class Vision extends SubsystemBase {
                     && Math.abs(poseSample.getRotation().minus(pose.getRotation()).getDegrees()) < maxValidAngleDiff) {
                 diffrence = poseSample.getTranslation().getDistance(pose.getTranslation());
             } else {
+                System.out.println("cleared on setDifference() func");
                 clear();
             }
         }
@@ -311,6 +308,7 @@ public class Vision extends SubsystemBase {
             diffrence = -1;
             pose = null;
             timeStamp = 0;
+            System.out.println("Cleared.");
         }
     }
 
