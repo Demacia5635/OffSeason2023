@@ -19,14 +19,12 @@ public class RobotContainer {
   CommandXboxController controller = new CommandXboxController(0);
   Chassis chassis = new Chassis();
   DriveLine driveLine = new DriveLine(chassis);
-  FollowPathCommand fpc = new FollowPathCommand(chassis, "Path.wpilib.json");
+  FollowPathCommand fpc = new FollowPathCommand(chassis, "deploy/pathplanner/generatedJSON/test.wpilib.json");
   pathPoint[] points = { 
      new pathPoint(0,0, new Rotation2d() ,0.25, true),
-     new pathPoint(2,0, new Rotation2d() ,1, true),
-     new pathPoint(2,1, new Rotation2d() ,0.25, false),
-     new pathPoint(0,1, new Rotation2d() ,1, false),
-     new pathPoint(0,0.3, new Rotation2d() ,0.25, false),
-     new pathPoint(1,0.3, new Rotation2d() ,0.5, false)
+     new pathPoint(1,1, new Rotation2d() ,1, true),
+     new pathPoint(2,0, new Rotation2d() ,0.25, false),
+
     
     
     };
@@ -47,6 +45,6 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return fpc;
+    return path;
   }
 }
