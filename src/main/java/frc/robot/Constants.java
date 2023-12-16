@@ -1,6 +1,5 @@
 package frc.robot;
 
-import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -82,18 +81,18 @@ public final class Constants {
 
   public static final class VisionConstants {
 
-    public static final String photonCamera1Name = "Limelight2";
-    public static final String photonCamera2Name = "";
-    public static final int photonCameraNum1 = 1;
-    public static final int photonCameraNum2 = 2;
-    public static final Pose2d robotCenterToCamera = new Pose2d(new Translation2d(0.23, -0.8),Rotation2d.fromDegrees(-35));
+    public static final String Limelight2Name = "Limelight2";
+    public static final String Limelight3Name = "Limelight3";
 
-    public static final Transform3d robotCenterToCameraTransform = new Transform3d(new Pose3d(), new Pose3d(robotCenterToCamera));
+    public static final Pose2d robotCenterToLimelight2 = new Pose2d(new Translation2d(0.23, -0.8),Rotation2d.fromDegrees(-35));
+    public static final Transform3d robotCenterToLimelight2Transform = new Transform3d(new Pose3d(), new Pose3d(robotCenterToLimelight2));
+
+    public static final Pose2d robotCenterToLimelight3 = new Pose2d(new Translation2d(-0.23, -0.8),Rotation2d.fromDegrees(35));
+    public static final Transform3d robotCenterToLimelight3Transform = new Transform3d(new Pose3d(), new Pose3d(robotCenterToLimelight3));
+
 
     public static final double maxValidVelcity = 2.0; // m/s - ignoring vision data abve this velocity
-    public static final double maxValidAngleDiff = 10.0; // degrees - ignoring vision data if vision heading is off by
-                                                         // more than this value
-    public static final double maxDistanceOfCameraFromAprilTag = 4; // meters - ignoring vision data if apriltag is
-                                                                    // farther than this value
+    public static final double maxValidAngleDiff = 10.0; // degrees - ignoring vision data if vision heading is off by more than this value
+    public static final double maxDistanceOfCameraFromAprilTag = 4; // meters - ignoring vision data if apriltag is farther than this value
   }
 }

@@ -14,7 +14,7 @@ import frc.robot.subsystems.vision.utils.SwerveDrivePoseEstimator;
 
 import static frc.robot.Constants.VisionConstants.*;
 
-public class VisionOld extends SubsystemBase {
+public class VisionWithoutPhotonEstimator extends SubsystemBase {
     Field2d checkField2dPoseEstimator;
     Field2d checkField2dVision;
     PhotonCamera camera1;
@@ -27,8 +27,8 @@ public class VisionOld extends SubsystemBase {
     double lastUpdateTime;
     boolean firstRun;
 
-    public VisionOld(Chassis chassis, SwerveDrivePoseEstimator estimator) {
-        camera1 = new PhotonCamera(photonCamera1Name);
+    public VisionWithoutPhotonEstimator(Chassis chassis, SwerveDrivePoseEstimator estimator) {
+        camera1 = new PhotonCamera(Limelight2Name);
         //camera2 = new PhotonCamera(photonCamera2Name);
         this.chassis = chassis;
         this.poseEstimator = estimator;

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -31,10 +30,13 @@ public class Vision extends SubsystemBase {
     Field2d visionFieldavg3;
     Field2d visionFieldavg5;
 
-    PhotonCamera camera1;
-    PhotonCamera camera2;
+    PhotonCamera Limelight2;
+    PhotonPoseEstimator photonPoseEstimatorForLimelight2;
+
+    PhotonCamera Limelight3;
+    PhotonPoseEstimator photonPoseEstimatorForLimelight3;
+
     SwerveDrivePoseEstimator poseEstimator;
-    PhotonPoseEstimator photonPoseEstimator;
     Chassis chassis;
     VisionData[] buf3 = new VisionData[3];
     VisionData[] buf5 = new VisionData[5];
@@ -46,20 +48,23 @@ public class Vision extends SubsystemBase {
 
 
     public Vision(Chassis chassis, SwerveDrivePoseEstimator estimator) {
-        camera1 = new PhotonCamera("Limelight2");
-        camera2 = null;
-        // camera1 = new PhotonCamera(photonCamera1Name);
-        //camera2 = new PhotonCamera(photonCamera2Name);
         this.chassis = chassis;
         this.poseEstimator = estimator;
+        
+        Limelight2 = new PhotonCamera(Limelight2Name);
+        Limelight3 = new PhotonCamera(Limelight3Name);
+   
         try {
-            photonPoseEstimator = new PhotonPoseEstimator(AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile),
-             PoseStrategy.AVERAGE_BEST_TARGETS, camera1, robotCenterToCameraTransform);
+            photonPoseEstimatorForLimelight2 = new PhotonPoseEstimator(AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile),
+             PoseStrategy.AVERAGE_BEST_TARGETS, Limelight2, robotCenterToLimelight2Transform);
+
+            photonPoseEstimatorForLimelight3 = new PhotonPoseEstimator(AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile),
+             PoseStrategy.AVERAGE_BEST_TARGETS, Limelight3, robotCenterToLimelight3Transform);
         } catch (IOException e) {
-            System.out.println("problem");
+            System.out.println("problem with photon pose estimators");
             e.printStackTrace();
         } 
-
+        
         //setting up buffers
         for (int i = 0; i < buf3.length; i++) {
             buf3[i] = new VisionData(null, 0);
@@ -128,7 +133,14 @@ public class Vision extends SubsystemBase {
         } 
     }
 
-    private void getNewVisionDataFromCamera() {
+    private void getNewDataFromLimelightX(Limelight x) {
+        //determines camera
+        PhotonPoseEstimator photonPoseEstimator;
+        if(x.equals(Limelight.Limelight2))
+            photonPoseEstimator = photonPoseEstimatorForLimelight2;
+        else
+            photonPoseEstimator = photonPoseEstimatorForLimelight3;
+
         if (chassis.getVelocity().getNorm() <= maxValidVelcity) {
             var PhotonUpdate = photonPoseEstimator.update();
             if(PhotonUpdate != null){
@@ -136,8 +148,6 @@ public class Vision extends SubsystemBase {
                     var estimatedRobotPose = PhotonUpdate.get();
                     var estimatedPose = estimatedRobotPose.estimatedPose;
                     if(estimatedRobotPose != null){
-                        lastData = next();
-                        lastData5 = next5();
                         VisionData newVisionData = new VisionData(estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds);
                         if (newVisionData != null && newVisionData.pose != null) {
                             // if ((newVisionData.pose).getTranslation()
@@ -145,7 +155,8 @@ public class Vision extends SubsystemBase {
                             //     return; removed this filter because they use multiple april tags at the same time
                             buf3[lastData] = newVisionData;
                             buf5[lastData5] = newVisionData;
-                            
+                            lastData = next();
+                            lastData5 = next5();
                             visionField.setRobotPose(newVisionData.pose);
                         }   
                     }
@@ -160,7 +171,8 @@ public class Vision extends SubsystemBase {
     @Override
     public void periodic() {
         super.periodic();
-        getNewVisionDataFromCamera();
+        getNewDataFromLimelightX(Limelight.Limelight2);
+        getNewDataFromLimelightX(Limelight.Limelight3);
         updateRobotPose();
         updateRobotPose5();
         Pose2d visionPose = visionField.getRobotPose();
@@ -312,4 +324,8 @@ public class Vision extends SubsystemBase {
         }
     }
 
+    enum Limelight{
+        Limelight2,
+        Limelight3
+    }
 }
