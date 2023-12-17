@@ -36,9 +36,10 @@ public class SwerveModule implements Sendable {
 
         angleMotor.configMotionCruiseVelocity(angularToEncoderSpeed(ANGULAR_VELOCITY));
         angleMotor.configMotionAcceleration(angularToEncoderSpeed(ANGULAR_ACCELERATION));
+        angleMotor.configMotionSCurveStrength(1);
 
         setMovePID(MOVE_KP, MOVE_KI, MOVE_KD);
-        setAnglePID(ANGLE_VELOCITY_KP, ANGLE_VELOCITY_KI, ANGLE_VELOCITY_KD, ANGLE_KV);
+        setAnglePIDF(ANGLE_VELOCITY_KP, ANGLE_VELOCITY_KI, ANGLE_VELOCITY_KD, ANGLE_KV);
     }
 
     public void setMovePID(double kP, double kI, double kD) {
@@ -47,11 +48,15 @@ public class SwerveModule implements Sendable {
         moveMotor.config_kD(0, kD);
     }
 
-    public void setAnglePID(double kP, double kI, double kD, double kF) {
+    public void setAnglePIDF(double kP, double kI, double kD, double kF) {
         angleMotor.config_kP(0, kP);
         angleMotor.config_kI(0, kI);
         angleMotor.config_kD(0, kD);
         angleMotor.config_kF(0, kF);
+    }
+
+    public void setInverted(boolean invert) {
+        moveMotor.setInverted(invert);
     }
 
     /**
@@ -86,7 +91,7 @@ public class SwerveModule implements Sendable {
         double newVelocity = getVelocity() + ACCELERATION * Constants.CYCLE_DT;
         double volts = MOVE_KS + MOVE_KV * v;
         if (Math.abs(v) > MOVE_KS)
-            moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(newVelocity), DemandType.ArbitraryFeedForward, volts / 12);
+            moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(newVelocity), DemandType.ArbitraryFeedForward, volts);
         else
             setPower(0);
     }
@@ -107,7 +112,7 @@ public class SwerveModule implements Sendable {
      * Sets the angle of the module with MotionMagic control
      */
     public void setAngle(Rotation2d angle) {
-        angleMotor.set(ControlMode.MotionMagic, calculateTarget(angle.getDegrees()), DemandType.ArbitraryFeedForward, ANGLE_KS / 12);
+        angleMotor.set(ControlMode.MotionMagic, calculateTarget(angle.getDegrees()));
     }
 
     /**
@@ -162,7 +167,7 @@ public class SwerveModule implements Sendable {
      * @return Position relative to the field
      */
     public SwerveModulePosition getModulePosition() {
-        return new SwerveModulePosition(moveMotor.getSelectedSensorPosition() * PULSES_PER_METER, getAngle());
+        return new SwerveModulePosition(moveMotor.getSelectedSensorPosition() / PULSES_PER_METER, getAngle());
     }
 
     private double getAngleDifference(double target) {

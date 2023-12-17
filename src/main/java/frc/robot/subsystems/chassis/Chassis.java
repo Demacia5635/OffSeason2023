@@ -48,6 +48,11 @@ public class Chassis extends SubsystemBase {
     SmartDashboard.putData("left back module", modules[2]);
     SmartDashboard.putData("right back module", modules[3]);
 
+    modules[0].setInverted(false);
+    modules[1].setInverted(true);
+    modules[2].setInverted(false);
+    modules[3].setInverted(true);
+
     SmartDashboard.putData("set coast", new InstantCommand(() -> setNeutralMode(NeutralMode.Coast)).ignoringDisable(true));
     SmartDashboard.putData("set brake", new InstantCommand(() -> setNeutralMode(NeutralMode.Brake)).ignoringDisable(true));
 
@@ -80,8 +85,12 @@ public class Chassis extends SubsystemBase {
    * @return Velocity in m/s
    */
   public Translation2d getVelocity() {
-    ChassisSpeeds speeds = KINEMATICS.toChassisSpeeds(getModuleStates());
+    ChassisSpeeds speeds = getChassisSpeeds();
     return new Translation2d(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
+  }
+
+  public ChassisSpeeds getChassisSpeeds() {
+    return KINEMATICS.toChassisSpeeds(getModuleStates());
   }
 
   /**
@@ -123,14 +132,24 @@ public class Chassis extends SubsystemBase {
     for (int i = 0; i < 4; i++) modules[i].setState(states[i]);
   }
 
+  public Pose2d getPose() {
+    return poseEstimator.getEstimatedPosition();
+  }
+
+  public void updateField() {
+    field.setRobotPose(getPose());
+  }
+
   @Override
   public void initSendable(SendableBuilder builder) {
       builder.addDoubleProperty("chassis velocity", () -> getVelocity().getNorm(), null);
+      builder.addDoubleProperty("chassis ang velocity", () -> Math.toDegrees(getChassisSpeeds().omegaRadiansPerSecond), null);
   }
+
 
   @Override
   public void periodic() {
       poseEstimator.update(getAngle(), getModulePositions());
-      field.setRobotPose(poseEstimator.getEstimatedPosition());
+      updateField();
   }
 }
