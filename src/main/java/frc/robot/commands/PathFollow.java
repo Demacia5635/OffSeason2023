@@ -14,23 +14,21 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Util.Segment;
-import frc.robot.Util.Trapez;
 import frc.robot.Constants;
-import frc.robot.Util.Leg;
-import frc.robot.Util.RoundedPoint;
-import frc.robot.Util.pathPoint;
+import frc.robot.PathFollow.Util.Leg;
+import frc.robot.PathFollow.Util.RoundedPoint;
+import frc.robot.PathFollow.Util.Segment;
+import frc.robot.PathFollow.Util.Trapez;
+import frc.robot.PathFollow.Util.pathPoint;
 import frc.robot.subsystems.chassis.*;
 
-public class ArcPath extends CommandBase {
+public class PathFollow extends CommandBase {
   Pose2d closestAprilTag = new Pose2d();
-
   Chassis chassis;
   RoundedPoint[] corners;
-  Pose2d pose = new Pose2d();
 
+  Pose2d chassisPose = new Pose2d();
   double distanceOffset = 0.01;
-
   final double pathLength;
 
   double totalLeft;
@@ -55,8 +53,8 @@ public class ArcPath extends CommandBase {
    * @param maxAccel the max accel in m/s2 (squared)
    * 
    */
-
-  public ArcPath(Chassis chassis,pathPoint[] points, double maxVel, double maxAcc) {
+  
+  public PathFollow(Chassis chassis,pathPoint[] points, double maxVel, double maxAcc) {
 
     wantedAngle = points[points.length - 1].getRotation();
     corners = new RoundedPoint[points.length - 2];
@@ -114,9 +112,11 @@ public class ArcPath extends CommandBase {
 
   @Override
   public void initSendable(SendableBuilder builder) {
-      builder.addStringProperty("Type",() -> currentSegmentInfo(), null);
-      builder.addDoubleProperty("totalLeft",() -> {return totalLeft;}, null);
+      builder.addStringProperty("Current Segment",() -> currentSegmentInfo(), null);
+      builder.addDoubleProperty("Total Left",() -> {return totalLeft;}, null);
       builder.addDoubleProperty("Velocity", () -> {return velocity;}, null);
+      builder.addDoubleProperty("Rotation Velocity", () -> {return rotationVelocity;}, null);
+      builder.addDoubleProperty("Angle", () -> {return chassisPose.getRotation().getDegrees();}, null);
   }
 
 
@@ -159,17 +159,17 @@ public class ArcPath extends CommandBase {
 
   @Override
   public void execute() {
-    pose = chassis.getPose().getEstimatedPosition();
+    chassisPose = chassis.getPose().getEstimatedPosition();
     Translation2d translation2dVelocity = new Translation2d(chassis.getVelocity().vxMetersPerSecond, chassis.getVelocity().vyMetersPerSecond);
 
     
-    if(segments[segmentIndex].distancePassed(pose.getTranslation()) >= segments[segmentIndex].getLength() - distanceOffset){
+    if(segments[segmentIndex].distancePassed(chassisPose.getTranslation()) >= segments[segmentIndex].getLength() - distanceOffset){
       totalLeft -= segments[segmentIndex].getLength();
       if(segmentIndex != segments.length - 1 || segments[segmentIndex].getLength() <= 0.15)
         segmentIndex++;  
     }
 
-    velocity = driveTrapezoid.calc(totalLeft - segments[segmentIndex].distancePassed(pose.getTranslation()), translation2dVelocity.getNorm());
+    velocity = driveTrapezoid.calc(totalLeft - segments[segmentIndex].distancePassed(chassisPose.getTranslation()), translation2dVelocity.getNorm());
 
     if(!segments[segmentIndex].isAprilTagMode())
       rotationVelocity = rotationTrapezoid.calc(wantedAngle.minus(chassis.getAngle()).getDegrees(), Math.toDegrees(chassis.getVelocity().omegaRadiansPerSecond));
@@ -178,14 +178,12 @@ public class ArcPath extends CommandBase {
         getClosestAprilTag().getTranslation().minus(chassis.getPose().getEstimatedPosition().getTranslation())
         .getAngle()
           .minus(
-            chassis.getAngle()).getDegrees()
-        ,  Math.toDegrees(chassis.getVelocity().omegaRadiansPerSecond));
+            chassis.getAngle()).getDegrees(),
+            Math.toDegrees(chassis.getVelocity().omegaRadiansPerSecond));
 
-    Translation2d velVector = segments[segmentIndex].calc(pose.getTranslation(), velocity);
-    ChassisSpeeds speed = new ChassisSpeeds();
+    Translation2d velVector = segments[segmentIndex].calc(chassisPose.getTranslation(), velocity);
 
-    //TODO ADD Rotation to closet AprilTag
-    speed = new ChassisSpeeds(velVector.getX(), velVector.getY(),Math.toRadians(rotationVelocity));
+    ChassisSpeeds speed = new ChassisSpeeds(velVector.getX(), velVector.getY(),Math.toRadians(rotationVelocity));
     
     chassis.setVelocities(speed);
   }
@@ -204,7 +202,7 @@ public class ArcPath extends CommandBase {
   public void printSegments()
   {
     for (Segment s : segments) {
-      System.out.println(s);
+      System.out.println(s); 
     }
   }
 }

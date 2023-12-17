@@ -1,5 +1,5 @@
 
-package frc.robot.Util;
+package frc.robot.PathFollow.Util;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
@@ -85,48 +85,7 @@ public class RoundedPoint{
         return new Translation2d(radius, vectorBtoC.getAngle().minus(new Rotation2d((Math.PI/2) * Math.signum(cornerAngle.getDegrees()))));
     }
 
-    // /**
-    //  * 
-    //  * @param position chassis position in Translation2d
-    //  * @param velocity chassis velocity in m/s
-    //  * @return Returns a vector that represents the required velocity, According to the chassis position 
-    //  */
-    // public Translation2d getVelDirection(Translation2d pos,double velocity)
-    // {
 
-    //     //calculates the position relative to the center circle
-    //     Translation2d relativePos = pos.minus(getCenterCircle());
-    //     System.out.println("RelativPos : " + relativePos);
-    //     System.out.println("StartRange : " + startRange());
-    //     System.out.println("EndRange : " + endRange());
-
-    //     //calculates the angle between the start and the end of the circle
-    //     double diffAngle =  endRange().getAngle().getDegrees() - startRange().getAngle().getDegrees();
-    //     System.out.println("diffAngle start to end : " + diffAngle);
-
-    //     //calculates the relative angle between the start and the end of the circle
-    //     double startDiffAngle = relativePos.getAngle().getDegrees() - startRange().getAngle().getDegrees();
-    //     double endDiffAngle =  relativePos.getAngle().getDegrees() - endRange().getAngle().getDegrees();
-    //     System.out.println("diffAngle pos to start : " + startDiffAngle);
-    //     System.out.println("diffAngle pos to end : " + endDiffAngle);
-    //     System.out.println("sum : " + (startDiffAngle + endDiffAngle));
-
-    //     Translation2d unitVel;
-    //     if(endDiffAngle + startDiffAngle == 0)
-    //     {
-    //         System.out.println("curve");
-    //         unitVel = relativePos.rotateBy(new Rotation2d(Math.toRadians(90 * Math.signum(diffAngle)))).div(relativePos.getNorm());
-            
-    //     }
-    //     else
-    //     {
-    //         unitVel = new Translation2d(0,0);
-    //     }
-        
-        
-        
-    //     return unitVel.times(velocity * Constants.cycleTime);
-    // }
 
     /**
      * 
@@ -188,10 +147,6 @@ public class RoundedPoint{
         return getCtoCurvelength() + getCurveLength() + getAtoCurvelength();
     }
 
-    // public ArcDrive getArcDrive(Chassis chassis)
-    // {
-    //     return new ArcDrive(chassis, getCenterCircle().plus(startRange()), getCenterCircle(), endRange().getAngle().minus(startRange().getAngle()), 5);
-    // }
 
     public Leg getAtoCurveLeg()
     {

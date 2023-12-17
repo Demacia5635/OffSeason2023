@@ -8,7 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Util.Trapez;
+import frc.robot.PathFollow.Util.Trapez;
 import frc.robot.subsystems.chassis.Chassis;
 
 public class DriveLine extends CommandBase {
