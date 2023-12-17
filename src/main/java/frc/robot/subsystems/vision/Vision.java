@@ -108,27 +108,30 @@ public class Vision extends SubsystemBase {
                     visionFieldavg3.setRobotPose(vDataAvg.pose);
                     lastUpdateTime = time;
                     time = vData.timeStamp;
-                    for (VisionData vd : buf3) {
-                        vd.recalc(time);
-                    }
+                    // for (VisionData vd : buf3) {
+                    //     vd.recalc(time);
+                    // }
                 }
             } 
         }
     }
 
     public void updateRobotPose5() {
+        
         double time = getTime();
         if (validBuf5(time)) {
             VisionData vData5 = median(buf5);
+            VisionData vDataAvg5 = avg(buf5);
             if (vData5 != null && vData5.pose != null) {
                 // poseEstimator.addVisionMeasurement(vData5.pose, vData5.timeStamp);
                 // poseEstimatorField.setRobotPose(poseEstimator.getEstimatedPosition());
                 visionField5.setRobotPose(vData5.pose);
+                visionFieldavg5.setRobotPose(vDataAvg5.pose);
                 lastUpdateTime5 = time;
                 time = vData5.timeStamp;
-                for (VisionData vd : buf5) {
-                    vd.recalc(time);
-                }
+                // for (VisionData vd : buf5) {
+                //     vd.recalc(time);
+                // }
             }
         } 
     }
@@ -140,7 +143,6 @@ public class Vision extends SubsystemBase {
             photonPoseEstimator = photonPoseEstimatorForLimelight2;
         else
             photonPoseEstimator = photonPoseEstimatorForLimelight3;
-
         if (chassis.getVelocity().getNorm() <= maxValidVelcity) {
             var PhotonUpdate = photonPoseEstimator.update();
             if(PhotonUpdate != null){
@@ -153,10 +155,18 @@ public class Vision extends SubsystemBase {
                             // if ((newVisionData.pose).getTranslation()
                             //         .getDistance(estimatedRobotPose.getTranslation()) > maxDistanceOfCameraFromAprilTag)
                             //     return; removed this filter because they use multiple april tags at the same time
+                            lastData = next();
+                            lastData5 = next5(); 
                             buf3[lastData] = newVisionData;
                             buf5[lastData5] = newVisionData;
-                            lastData = next();
-                            lastData5 = next5();
+
+                            // System.out.println(newVisionData.timeStamp + ", in index:" + lastData5);
+                            // System.out.println("---------------------------");
+                            // for (int i = 0; i < buf5.length; i++) {
+                            //     VisionData visionBill = buf5[i];
+                            //     System.out.println(visionBill.timeStamp + ", in index:" + i);
+                            // }
+                            // System.out.println("---------------------------");
                             visionField.setRobotPose(newVisionData.pose);
                         }   
                     }
@@ -173,6 +183,8 @@ public class Vision extends SubsystemBase {
         super.periodic();
         getNewDataFromLimelightX(Limelight.Limelight2);
         getNewDataFromLimelightX(Limelight.Limelight3);
+        System.out.println(lastData5);
+        //System.out.println(buf5[lastData5].timeStamp);
         updateRobotPose();
         updateRobotPose5();
         Pose2d visionPose = visionField.getRobotPose();
@@ -213,11 +225,13 @@ public class Vision extends SubsystemBase {
         double avarageTimeStamp = 0.0;
 
         for (VisionData vData : visionDataArr) {
-            Pose2d pose = vData.pose;
-            averageX += pose.getTranslation().getX();
-            averageY += pose.getTranslation().getY();
-            averageRotation += pose.getRotation().getRadians();
-            avarageTimeStamp += vData.timeStamp;
+            if(vData != null && vData.pose != null){
+                Pose2d pose = vData.pose;
+                averageX += pose.getTranslation().getX();
+                averageY += pose.getTranslation().getY();
+                averageRotation += pose.getRotation().getRadians();
+                avarageTimeStamp += vData.timeStamp;
+            }
         }
 
         averageX /= visionDataArr.length;
@@ -260,9 +274,9 @@ public class Vision extends SubsystemBase {
     int next5() {
         return (lastData5 + 1) % buf5.length;
     }
-
+    
     private boolean validBuf5(double time) {
-        double minTime = time - 2;
+        double minTime = time - 2.5;
         for (VisionData vData : buf5) {
             //System.out.println(vData.timeStamp);
             if (vData.timeStamp < minTime) {
@@ -289,24 +303,28 @@ public class Vision extends SubsystemBase {
         VisionData(Pose2d pose, double timeStamp) {
             this.pose = pose;
             this.timeStamp = timeStamp;
-            if (timeStamp > 0) {
-                setDiffrence();
-            } else {
+            if (timeStamp < 0) {
+                System.out.println("cleared at constructor, " + timeStamp);
                 clear();
+                
+            } else {
+                setDiffrence();
             }
         }
 
-        void recalc(double time) {
+        protected void recalc(double time) {
             // for newer data - recalc the twsit
-            if (timeStamp > time) {
-                setDiffrence();
+            if (timeStamp < time) {
+                //setDiffrence();
             } else {
+                System.out.println("cleared at recalc");
                 clear();
             }
         }
 
-        void setDiffrence() {
+        protected void setDiffrence() {
             Pose2d poseSample = poseEstimator.getSample(timeStamp);
+            System.out.println(poseSample!=null);
             if (poseSample != null
                     && Math.abs(poseSample.getRotation().minus(pose.getRotation()).getDegrees()) < maxValidAngleDiff) {
                 diffrence = poseSample.getTranslation().getDistance(pose.getTranslation());
@@ -316,7 +334,7 @@ public class Vision extends SubsystemBase {
             }
         }
 
-        void clear() {
+        protected void clear() {
             diffrence = -1;
             pose = null;
             timeStamp = 0;
