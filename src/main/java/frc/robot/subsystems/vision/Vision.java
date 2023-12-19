@@ -13,6 +13,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -45,6 +46,7 @@ public class Vision extends SubsystemBase {
     int lastData5 = -1;
     double lastUpdateTime;
     double lastUpdateTime5;
+    boolean firstRun;
 
 
     public Vision(Chassis chassis, SwerveDrivePoseEstimator estimator) {
@@ -92,7 +94,7 @@ public class Vision extends SubsystemBase {
         SmartDashboard.putData("visionavg3", visionFieldavg3);
         SmartDashboard.putData("visionavg5", visionFieldavg5);
 
-        
+        this.firstRun = true;
     }
     
     public void updateRobotPose() {
@@ -111,6 +113,7 @@ public class Vision extends SubsystemBase {
                     // for (VisionData vd : buf3) {
                     //     vd.recalc(time);
                     // }
+                    
                 }
             } 
         }
@@ -151,6 +154,17 @@ public class Vision extends SubsystemBase {
                     var estimatedPose = estimatedRobotPose.estimatedPose;
                     if(estimatedRobotPose != null){
                         VisionData newVisionData = new VisionData(estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds);
+                        if(firstRun == true){
+                            SwerveModulePosition[] positions = new SwerveModulePosition[4];
+                            for (int i = 0; i < positions.length; i++) {                            
+                                positions[i] = new SwerveModulePosition();
+                            }
+                            SmartDashboard.putBoolean("isSwerveNull", positions[2] == null);
+                            SmartDashboard.putNumber("pose temp", 1    /*newVisionData.falsePose.getX()*/);
+                            System.out.println("hi " + newVisionData.falsePose.getX());
+                            poseEstimator.resetPosition(newVisionData.falsePose.getRotation(), positions, newVisionData.falsePose);
+                            firstRun = true;
+                        }
                         if (newVisionData != null && newVisionData.pose != null) {
                             // if ((newVisionData.pose).getTranslation()
                             //         .getDistance(estimatedRobotPose.getTranslation()) > maxDistanceOfCameraFromAprilTag)
@@ -183,7 +197,7 @@ public class Vision extends SubsystemBase {
         super.periodic();
         getNewDataFromLimelightX(Limelight.Limelight2);
         getNewDataFromLimelightX(Limelight.Limelight3);
-        System.out.println(lastData5);
+
         //System.out.println(buf5[lastData5].timeStamp);
         updateRobotPose();
         updateRobotPose5();
@@ -299,15 +313,21 @@ public class Vision extends SubsystemBase {
         private Pose2d pose;
         private double timeStamp;
         private double diffrence; // difference than odometry
+        private Pose2d falsePose;
+        private double falsetimeStamp;
+
 
         VisionData(Pose2d pose, double timeStamp) {
             this.pose = pose;
             this.timeStamp = timeStamp;
+            this.falsePose = pose;
+            this.falsetimeStamp = timeStamp;
             if (timeStamp < 0) {
                 System.out.println("cleared at constructor, " + timeStamp);
                 clear();
                 
             } else {
+                
                 setDiffrence();
             }
         }
@@ -324,12 +344,13 @@ public class Vision extends SubsystemBase {
 
         protected void setDiffrence() {
             Pose2d poseSample = poseEstimator.getSample(timeStamp);
-            System.out.println(poseSample!=null);
+            if(poseSample != null)
+                //System.out.println(/*poseSample.getRotation().getDegrees()*/ poseEstimator.getEstimatedPosition().getRotation().getDegrees() + " " + pose.getRotation().getDegrees());
             if (poseSample != null
                     && Math.abs(poseSample.getRotation().minus(pose.getRotation()).getDegrees()) < maxValidAngleDiff) {
                 diffrence = poseSample.getTranslation().getDistance(pose.getTranslation());
             } else {
-                System.out.println("cleared on setDifference() func");
+                //System.out.println("cleared on setDifference() func");
                 clear();
             }
         }
@@ -338,7 +359,7 @@ public class Vision extends SubsystemBase {
             diffrence = -1;
             pose = null;
             timeStamp = 0;
-            System.out.println("Cleared.");
+           // System.out.println("Cleared.");
         }
     }
 
