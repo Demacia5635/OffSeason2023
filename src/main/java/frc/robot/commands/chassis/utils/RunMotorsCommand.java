@@ -1,4 +1,4 @@
-package frc.robot.commands.chassis;
+package frc.robot.commands.chassis.utils;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
@@ -7,13 +7,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.chassis.Chassis;
 
 public class RunMotorsCommand extends CommandBase {
-    private final Chassis chassis;
     private final double power;
     private final double pulsesPerUnit;
     private final TalonFX[] motors;
 
     public RunMotorsCommand(Chassis chassis, double pulsesPerUnit, double power, int[] ids) {
-        this.chassis = chassis;
         this.power = power;
         this.pulsesPerUnit = pulsesPerUnit;
 
@@ -21,6 +19,8 @@ public class RunMotorsCommand extends CommandBase {
         for (int i = 0; i < ids.length; i++) {
             motors[i] = new TalonFX(ids[i]);
         }
+
+        addRequirements(chassis);
     }
 
     @Override

@@ -38,8 +38,7 @@ public final class Constants {
     );
 
     public static final double MAX_DRIVE_VELOCITY = 1;
-    public static final double DRIVE_ACCELERATION = 4
-    ;
+    public static final double DRIVE_ACCELERATION = 4;
     public static final double MAX_ANGULAR_VELOCITY = 360;
     public static final double ANGULAR_ACCELERATION = 720;
 

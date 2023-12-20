@@ -10,9 +10,11 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.chassis.utils.ResetWheelCommand;
 import frc.robot.subsystems.chassis.utils.SwerveModule;
 
 import static frc.robot.Constants.ChassisConstants.*;
@@ -61,6 +63,15 @@ public class Chassis extends SubsystemBase {
         module.setAngle(new Rotation2d());
       }
     }).ignoringDisable(true));
+  }
+
+  public void resetWheels() {
+    Command cmd = new ResetWheelCommand(modules[0]);
+    cmd = cmd.alongWith(new ResetWheelCommand(modules[1]));
+    cmd = cmd.alongWith(new ResetWheelCommand(modules[2]));
+    cmd = cmd.alongWith(new ResetWheelCommand(modules[3]));
+
+    cmd.schedule();
   }
 
   /**
