@@ -2,7 +2,6 @@ package frc.robot;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// import frc.robot.Constants.OperatorConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -14,15 +13,23 @@ import frc.robot.subsystems.Gripper;
 
 
 public class RobotContainer {
-  CommandXboxController commandController = new CommandXboxController(Constants.CONTROLLER_PORT);
-  Chassis chassis = new Chassis();
-  DriveCommand drive = new DriveCommand(chassis, commandController);
+  CommandXboxController commandController;
+  Chassis chassis;
+  DriveCommand drive;
+  public Arm arm;
+  public Gripper gripper;
 
   public RobotContainer() {
+
+    commandController = new CommandXboxController(Constants.CONTROLLER_PORT);
+    chassis = new Chassis();
+    drive = new DriveCommand(chassis, commandController);
+    arm = new Arm();
+    gripper = new Gripper();
+
     chassis.setDefaultCommand(drive);
 
     SmartDashboard.putData("set velocity", new RunCommand(() -> chassis.setVelocities(new ChassisSpeeds(1.2, 0.6, Math.toRadians(39)))));
-
     configureBindings();
   }
 
@@ -40,8 +47,8 @@ public class RobotContainer {
         // code for controller to controll the gripper and the parallelogram
 
         // safty buttons to stop the arm and/or the gripper
-        controller.leftBumper().onTrue(new InstantCommand(()-> gripper.stop(), gripper));
-        controller.rightBumper().onTrue(new InstantCommand(()-> arm.stop(), arm));
+        commandController.leftBumper().onTrue(new InstantCommand(()-> gripper.stop(), gripper));
+        commandController.rightBumper().onTrue(new InstantCommand(()-> arm.stop(), arm));
     }
 
   /**
@@ -51,6 +58,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    return new InstantCommand();
   }
 }
