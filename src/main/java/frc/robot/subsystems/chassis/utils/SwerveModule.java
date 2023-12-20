@@ -1,6 +1,8 @@
 package frc.robot.subsystems.chassis.utils;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 
@@ -13,26 +15,24 @@ import frc.robot.Constants;
 import frc.robot.Constants.ChassisConstants.SwerveModuleConstants;
 
 import static frc.robot.Constants.ChassisConstants.*;
+import static frc.robot.Constants.ChassisConstants.SwerveModuleConstants.*;
 
 public class SwerveModule implements Sendable {
     private final TalonFX moveMotor;
     private final TalonFX angleMotor;
     private final CANCoder absoluteEncoder;
 
-    // private final SimpleMotorFeedforward moveFF;
-    // private final SimpleMotorFeedforward angleFF;
-
-    private double angleOffset;
+    private final double angleOffset;
 
     public SwerveModule(SwerveModuleConstants constants) {
         moveMotor = new TalonFX(constants.moveMotorId);
         angleMotor = new TalonFX(constants.angleMotorId);
         absoluteEncoder = new CANCoder(constants.absoluteEncoderId);
-        angleOffset = constants.steerOffset;
 
-        // moveFF = new SimpleMotorFeedforward(constants.kS, constants.kV, constants.kA);
-        // angleFF = new SimpleMotorFeedforward(constants.kS, constants.kV, constants.kA);
-    }
+        angleOffset = constants.steerOffset;
+        
+        moveMotor.setNeutralMode(NeutralMode.Brake);
+        angleMotor.setNeutralMode(NeutralMode.Brake);
 
         angleMotor.configMotionCruiseVelocity(angularToEncoderSpeed(MAX_ANGULAR_VELOCITY));
         angleMotor.configMotionAcceleration(angularToEncoderSpeed(ANGULAR_ACCELERATION));
@@ -59,14 +59,34 @@ public class SwerveModule implements Sendable {
         moveMotor.setInverted(invert);
     }
 
+    /**
+     * Returns the velocity of the module drive motor
+     * @return Velocity in m/s
+     */
     public double getVelocity() {
-        return moveMotor.getSelectedSensorVelocity() / PULSES_PER_METER * 10;
+        return encoderToMetricSpeed(moveMotor.getSelectedSensorVelocity());
     }
 
+    /**
+     * Stops the module completely
+     */
     public void stop() {
-        setPower(0, 0);
+        setPower(0);
+        setAngularPower(0);
     }
 
+    /**
+     * Sets the neutral mode of both motors
+     */
+    public void setNeutralMode(NeutralMode mode) {
+        moveMotor.setNeutralMode(mode);
+        angleMotor.setNeutralMode(mode);
+    }
+
+    /**
+     * Sets the velocity of the module
+     * @param v Velocity in m/s
+     */
     public void setVelocity(double v) {
         double newVelocity = getVelocity();
         if (Math.abs(newVelocity) < MAX_DRIVE_VELOCITY)
@@ -78,15 +98,21 @@ public class SwerveModule implements Sendable {
             setPower(0);
     }
 
-    public void setPower(double m, double s) {
-        moveMotor.set(ControlMode.PercentOutput, m);
-        angleMotor.set(ControlMode.PercentOutput, s);
+    /**
+     * Sets the power of the module
+     * @param p Power in precent of the module (0%..100%)
+     */
+    public void setPower(double p) {
+        moveMotor.set(ControlMode.PercentOutput, p);
     }
 
     public Rotation2d getAngle() {
         return Rotation2d.fromDegrees(absoluteEncoder.getAbsolutePosition() - angleOffset);
     }
 
+    /**
+     * Sets the angle of the module with MotionMagic control
+     */
     public void setAngle(Rotation2d angle) {
         angleMotor.set(ControlMode.MotionMagic, calculateTarget(angle.getDegrees()));
     }
@@ -123,31 +149,62 @@ public class SwerveModule implements Sendable {
             angleMotor.set(ControlMode.PercentOutput, 0);
     }
 
+    /**
+     * Returns the state of the module
+     * @return Velocity in m/s
+     */
     public SwerveModuleState getState() {
         return new SwerveModuleState(getVelocity(), getAngle());
     }
 
+    /**
+     * Sets the state of the module
+     */
     public void setState(SwerveModuleState state) {
-        SwerveModuleState s = SwerveModuleState.optimize(state, getAngle());
-        setVelocity(s.speedMetersPerSecond);
-        setAngle(s.angle);
+        SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
+        setVelocity(optimized.speedMetersPerSecond);
+        setAngle(optimized.angle);
     }
 
-    public void setInverted(boolean invert) {
-        moveMotor.setInverted(invert);
-    }
-
+    /**
+     * Returns the module position
+     * @return Position relative to the field
+     */
     public SwerveModulePosition getModulePosition() {
         return new SwerveModulePosition(moveMotor.getSelectedSensorPosition() / PULSES_PER_METER, getAngle());
     }
 
-    private double getAngleDifference(double current, double target) {
-        double difference = (target - current) % 360;
+    private double getAngleDifference(double target) {
+        double difference = (target - getAngle().getDegrees()) % 360;
         return difference - ((int)difference / 180) * 360;
     }
 
     private double calculateTarget(double targetAngle) {
-        double difference = getAngleDifference(getAngle().getDegrees(), targetAngle);
+        double difference = getAngleDifference(targetAngle);
         return angleMotor.getSelectedSensorPosition() + (difference * PULSES_PER_DEGREE);
+    }
+
+    public static double metricToEncoderSpeed(double speed) {
+        return speed * PULSES_PER_METER / 10;
+    }
+
+    public static double encoderToMetricSpeed(double speed) {
+        return speed / PULSES_PER_METER * 10;
+    }
+
+    public static double angularToEncoderSpeed(double speed) {
+        return speed * PULSES_PER_DEGREE / 10;
+    }
+    
+    public static double encoderToAngularSpeed(double speed) {
+        return speed / PULSES_PER_DEGREE * 10;
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.addDoubleProperty("raw angle", absoluteEncoder::getAbsolutePosition, null);
+        builder.addDoubleProperty("angle", () -> getAngle().getDegrees(), null);
+        builder.addDoubleProperty("velocity", this::getVelocity, null);
+        builder.addDoubleProperty("angular velocity", this::getAngularVelocity, null);
     }
 }

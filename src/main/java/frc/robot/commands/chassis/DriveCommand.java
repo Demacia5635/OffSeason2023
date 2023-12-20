@@ -32,7 +32,7 @@ public class DriveCommand extends CommandBase {
   public void execute() {
     double joyX = -deadband(controller.getLeftX(), 0.1);
     double joyY = -deadband(controller.getLeftY(), 0.1);
-    double rot = -(deadband(controller.getRightTriggerAxis(), 0.1) - deadband(controller.getLeftTriggerAxis(), 0.1));
+    double rot = -(deadband(controller.getLeftTriggerAxis(), 0.1) - deadband(controller.getRightTriggerAxis(), 0.1));
     
     double velX = joyY * MAX_DRIVE_VELOCITY;
     double velY = joyX * MAX_DRIVE_VELOCITY;

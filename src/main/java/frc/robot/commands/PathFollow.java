@@ -117,6 +117,8 @@ public class PathFollow extends CommandBase {
       builder.addDoubleProperty("Velocity", () -> {return velocity;}, null);
       builder.addDoubleProperty("Rotation Velocity", () -> {return rotationVelocity;}, null);
       builder.addDoubleProperty("Angle", () -> {return chassisPose.getRotation().getDegrees();}, null);
+      builder.addDoubleProperty("Pose X", ()-> chassis.getPose().getX(), null);
+      builder.addDoubleProperty("Pose Y", ()-> chassis.getPose().getY(), null);
   }
 
 
@@ -143,7 +145,7 @@ public class PathFollow extends CommandBase {
     int finalAprilTagIndex = 0;
     for(int i = 0; i < 8; i++){
       
-      Translation2d currentAprilTagVector =chassis.getPose().getEstimatedPosition().getTranslation()
+      Translation2d currentAprilTagVector =chassis.getPose().getTranslation()
       .minus(Constants.aprilTagsPositions[i].getTranslation());
 
      if(currentAprilTagVector.getNorm() < finalVector.getNorm()){
@@ -159,8 +161,8 @@ public class PathFollow extends CommandBase {
 
   @Override
   public void execute() {
-    chassisPose = chassis.getPose().getEstimatedPosition();
-    Translation2d translation2dVelocity = new Translation2d(chassis.getVelocity().vxMetersPerSecond, chassis.getVelocity().vyMetersPerSecond);
+    chassisPose = chassis.getPose();
+    Translation2d translation2dVelocity = new Translation2d(chassis.getChassisSpeeds().vxMetersPerSecond, chassis.getChassisSpeeds().vyMetersPerSecond);
 
     
     if(segments[segmentIndex].distancePassed(chassisPose.getTranslation()) >= segments[segmentIndex].getLength() - distanceOffset){
@@ -171,20 +173,20 @@ public class PathFollow extends CommandBase {
 
     velocity = driveTrapezoid.calc(totalLeft - segments[segmentIndex].distancePassed(chassisPose.getTranslation()), translation2dVelocity.getNorm());
 
-    if(!segments[segmentIndex].isAprilTagMode())
-      rotationVelocity = rotationTrapezoid.calc(wantedAngle.minus(chassis.getAngle()).getDegrees(), Math.toDegrees(chassis.getVelocity().omegaRadiansPerSecond));
-    else
+    //if(!segments[segmentIndex].isAprilTagMode())
+    rotationVelocity = rotationTrapezoid.calc(wantedAngle.minus(chassis.getAngle()).getDegrees(), Math.toDegrees(chassis.getChassisSpeeds().omegaRadiansPerSecond));
+    /*else
       rotationVelocity = rotationTrapezoid.calc(
-        getClosestAprilTag().getTranslation().minus(chassis.getPose().getEstimatedPosition().getTranslation())
+        getClosestAprilTag().getTranslation().minus(chassis.getPose().getTranslation())
         .getAngle()
           .minus(
             chassis.getAngle()).getDegrees(),
-            Math.toDegrees(chassis.getVelocity().omegaRadiansPerSecond));
-
+            Math.toDegrees(chassis.getChassisSpeeds().omegaRadiansPerSecond));
+    */
     Translation2d velVector = segments[segmentIndex].calc(chassisPose.getTranslation(), velocity);
 
     ChassisSpeeds speed = new ChassisSpeeds(velVector.getX(), velVector.getY(),Math.toRadians(rotationVelocity));
-    
+    //ChassisSpeeds speed = new ChassisSpeeds(2, 2, 0);
     chassis.setVelocities(speed);
   }
 

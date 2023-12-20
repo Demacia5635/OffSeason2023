@@ -32,8 +32,8 @@ public class DriveLine extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    velocity = new Translation2d(0, trap.calc(point.getY() - chassis.getPoseY(), chassis.getVelocity().vyMetersPerSecond));
-    System.out.println("CALC: " + trap.calc(point.getY() - chassis.getPoseY(), chassis.getVelocity().vyMetersPerSecond));
+    velocity = new Translation2d(0, trap.calc(point.getY() - chassis.getPose().getY(), chassis.getChassisSpeeds().vyMetersPerSecond));
+    System.out.println("CALC: " + trap.calc(point.getY() - chassis.getPose().getY(), chassis.getChassisSpeeds().vyMetersPerSecond));
     System.out.println("VELOCITY: " + velocity.getY());
     ChassisSpeeds speed = new ChassisSpeeds(0,velocity.getY(), 0);
     chassis.setVelocities(speed);
@@ -48,6 +48,6 @@ public class DriveLine extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return chassis.getPose().getEstimatedPosition().getTranslation().getNorm() >= point.getNorm();
+    return chassis.getPose().getTranslation().getNorm() >= point.getNorm();
   }
 }

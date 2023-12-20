@@ -143,6 +143,17 @@ public class Chassis extends SubsystemBase {
     for (int i = 0; i < 4; i++) modules[i].setState(states[i]);
   }
 
+  public void setModulesAngles(double angle) {
+    Rotation2d rot = Rotation2d.fromDegrees(angle);
+    SwerveModuleState[] currentStates = getModuleStates();
+    SwerveModuleState[] states = new SwerveModuleState[4];
+    states[0] = new SwerveModuleState(currentStates[0].speedMetersPerSecond, rot);
+    states[1] = new SwerveModuleState(currentStates[1].speedMetersPerSecond, rot);
+    states[2] = new SwerveModuleState(currentStates[2].speedMetersPerSecond, rot);
+    states[3] = new SwerveModuleState(currentStates[3].speedMetersPerSecond, rot);
+    for (int i = 0; i < 4; i++) modules[i].setState(states[i]);
+  }
+
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
@@ -151,10 +162,16 @@ public class Chassis extends SubsystemBase {
     field.setRobotPose(getPose());
   }
 
+  private void resetPose(){
+    poseEstimator.resetPosition(new Rotation2d(0), getModulePositions(), new Pose2d());
+    gyro.setFusedHeading(0);
+  }
+
   @Override
   public void initSendable(SendableBuilder builder) {
       builder.addDoubleProperty("chassis velocity", () -> getVelocity().getNorm(), null);
       builder.addDoubleProperty("chassis ang velocity", () -> Math.toDegrees(getChassisSpeeds().omegaRadiansPerSecond), null);
+      SmartDashboard.putData("reset pose", new InstantCommand(()-> resetPose()));
   }
 
 

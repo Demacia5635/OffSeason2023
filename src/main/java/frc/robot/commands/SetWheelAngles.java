@@ -25,7 +25,7 @@ public class SetWheelAngles extends CommandBase {
 
   @Override
   public void execute() {
-    chassis.setWheelAngles(angle);
+    chassis.setModulesAngles(angle);
   }
 
   @Override
