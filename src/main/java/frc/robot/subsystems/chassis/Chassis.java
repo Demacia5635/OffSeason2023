@@ -49,9 +49,9 @@ public class Chassis extends SubsystemBase {
     SmartDashboard.putData("right back module", modules[3]);
 
     modules[0].setInverted(false);
-    modules[1].setInverted(true);
+    modules[1].setInverted(false);
     modules[2].setInverted(false);
-    modules[3].setInverted(true);
+    modules[3].setInverted(false);
 
     SmartDashboard.putData("set coast", new InstantCommand(() -> setNeutralMode(NeutralMode.Coast)).ignoringDisable(true));
     SmartDashboard.putData("set brake", new InstantCommand(() -> setNeutralMode(NeutralMode.Brake)).ignoringDisable(true));

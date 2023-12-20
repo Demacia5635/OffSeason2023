@@ -37,17 +37,18 @@ public final class Constants {
       MODULE_BACK_RIGHT.moduleTranslationOffset
     );
 
-    public static final double VELOCITY = 2;
-    public static final double ACCELERATION = 4;
-    public static final double ANGULAR_VELOCITY = 30;
-    public static final double ANGULAR_ACCELERATION = 90;
+    public static final double MAX_DRIVE_VELOCITY = 1;
+    public static final double DRIVE_ACCELERATION = 4
+    ;
+    public static final double MAX_ANGULAR_VELOCITY = 360;
+    public static final double ANGULAR_ACCELERATION = 720;
 
     public static final double PULSES_PER_METER = 52226.56641604010025062656641604;
     public static final double PULSES_PER_DEGREE = 72.817777777777777777777777777779;
 
     public static class SwerveModuleConstants {
       public static final double MOVE_KP = 0.002;
-      public static final double MOVE_KI = 0.0004;
+      public static final double MOVE_KI = 0.0008;
       public static final double MOVE_KD = 0.016;
       public static final double ANGLE_POSITION_KP = 0.35;
       public static final double ANGLE_POSITION_KI = 0;

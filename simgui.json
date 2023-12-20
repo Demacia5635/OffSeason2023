@@ -3,8 +3,12 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/reset wheels": "Command",
+      "/SmartDashboard/set angles": "Command",
       "/SmartDashboard/set brake": "Command",
-      "/SmartDashboard/set coast": "Command"
+      "/SmartDashboard/set coast": "Command",
+      "/SmartDashboard/set state": "Command",
+      "/SmartDashboard/set velocity": "Command"
     }
   }
 }

@@ -34,7 +34,7 @@ public class SwerveModule implements Sendable {
         moveMotor.setNeutralMode(NeutralMode.Brake);
         angleMotor.setNeutralMode(NeutralMode.Brake);
 
-        angleMotor.configMotionCruiseVelocity(angularToEncoderSpeed(ANGULAR_VELOCITY));
+        angleMotor.configMotionCruiseVelocity(angularToEncoderSpeed(MAX_ANGULAR_VELOCITY));
         angleMotor.configMotionAcceleration(angularToEncoderSpeed(ANGULAR_ACCELERATION));
         angleMotor.configMotionSCurveStrength(1);
 
@@ -88,7 +88,9 @@ public class SwerveModule implements Sendable {
      * @param v Velocity in m/s
      */
     public void setVelocity(double v) {
-        double newVelocity = getVelocity() + ACCELERATION * Constants.CYCLE_DT;
+        double newVelocity = getVelocity();
+        if (Math.abs(newVelocity) < MAX_DRIVE_VELOCITY)
+            newVelocity += Math.signum(v) * DRIVE_ACCELERATION * Constants.CYCLE_DT;
         double volts = MOVE_KS + MOVE_KV * v;
         if (Math.abs(v) > MOVE_KS)
             moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(newVelocity), DemandType.ArbitraryFeedForward, volts);
@@ -136,7 +138,9 @@ public class SwerveModule implements Sendable {
      * @param v Velocity in deg/s
      */
     public void setAngularVelocity(double v) {
-        double newVelocity = getAngularVelocity() + ANGULAR_ACCELERATION * Constants.CYCLE_DT;
+        double newVelocity = getAngularVelocity();
+        if (Math.abs(newVelocity) < MAX_ANGULAR_VELOCITY)
+            newVelocity += Math.signum(v) * ANGULAR_ACCELERATION * Constants.CYCLE_DT;
         double volts = ANGLE_KS + ANGLE_KV * v;
         if (Math.abs(v) >= ANGLE_KS) {
             angleMotor.set(ControlMode.Velocity, angularToEncoderSpeed(newVelocity), DemandType.ArbitraryFeedForward, volts / 12);

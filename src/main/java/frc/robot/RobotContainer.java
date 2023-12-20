@@ -1,7 +1,6 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -16,14 +15,8 @@ public class RobotContainer {
 
   public RobotContainer() {
     chassis.setDefaultCommand(drive);
-    SmartDashboard.putNumber("angle", 0);
-    SmartDashboard.putData("set angles", new RunCommand(() -> {
-      SwerveModuleState[] states = new SwerveModuleState[4];
-      for (int i = 0; i < 4; i++) {
-        states[i] = new SwerveModuleState(0, Rotation2d.fromDegrees(SmartDashboard.getNumber("angle", 0)));
-      }
-      chassis.setModuleStates(states);
-    }, chassis));
+
+    SmartDashboard.putData("set velocity", new RunCommand(() -> chassis.setVelocities(new ChassisSpeeds(1.2, 0.6, Math.toRadians(39)))));
 
     configureBindings();
   }
