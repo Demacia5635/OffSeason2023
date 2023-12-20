@@ -2,7 +2,6 @@ package frc.robot.commands.chassis.utils;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.chassis.Chassis;
 import frc.robot.subsystems.chassis.utils.SwerveModule;
 
 public class ResetWheelCommand extends CommandBase {
