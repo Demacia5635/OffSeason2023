@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import frc.robot.Constants;
 import frc.robot.Constants.ChassisConstants.SwerveModuleConstants;
 
 import static frc.robot.Constants.ChassisConstants.*;
@@ -33,14 +34,12 @@ public class SwerveModule implements Sendable {
         // angleFF = new SimpleMotorFeedforward(constants.kS, constants.kV, constants.kA);
     }
 
-    @Override
-    public void initSendable(SendableBuilder builder) {
-        builder.addDoubleProperty("offset", () -> absoluteEncoder.getAbsolutePosition(), null);
-    }
+        angleMotor.configMotionCruiseVelocity(angularToEncoderSpeed(MAX_ANGULAR_VELOCITY));
+        angleMotor.configMotionAcceleration(angularToEncoderSpeed(ANGULAR_ACCELERATION));
+        angleMotor.configMotionSCurveStrength(1);
 
-    public void calibrateOffset() {
-        angleOffset += absoluteEncoder.getAbsolutePosition();
-        // angleMotor.setSelectedSensorPosition(angleOffset * PULSES_PER_DEGREE);
+        setMovePID(MOVE_KP, MOVE_KI, MOVE_KD);
+        setAnglePIDF(ANGLE_VELOCITY_KP, ANGLE_VELOCITY_KI, ANGLE_VELOCITY_KD, ANGLE_KV);
     }
 
     public void setMovePID(double kP, double kI, double kD) {
@@ -49,10 +48,15 @@ public class SwerveModule implements Sendable {
         moveMotor.config_kD(0, kD);
     }
 
-    public void setAnglePID(double kP, double kI, double kD) {
+    public void setAnglePIDF(double kP, double kI, double kD, double kF) {
         angleMotor.config_kP(0, kP);
         angleMotor.config_kI(0, kI);
         angleMotor.config_kD(0, kD);
+        angleMotor.config_kF(0, kF);
+    }
+
+    public void setInverted(boolean invert) {
+        moveMotor.setInverted(invert);
     }
 
     public double getVelocity() {
@@ -64,8 +68,14 @@ public class SwerveModule implements Sendable {
     }
 
     public void setVelocity(double v) {
-        // double volts = moveFF.calculate(getVelocity(), v, Constants.CYCLE_DT);
-        moveMotor.set(ControlMode.Velocity, v * PULSES_PER_METER / 10);
+        double newVelocity = getVelocity();
+        if (Math.abs(newVelocity) < MAX_DRIVE_VELOCITY)
+            newVelocity += Math.signum(v) * DRIVE_ACCELERATION * Constants.CYCLE_DT;
+        double volts = MOVE_KS + MOVE_KV * v;
+        if (Math.abs(v) > MOVE_KS)
+            moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(newVelocity), DemandType.ArbitraryFeedForward, volts);
+        else
+            setPower(0);
     }
 
     public void setPower(double m, double s) {
@@ -78,8 +88,39 @@ public class SwerveModule implements Sendable {
     }
 
     public void setAngle(Rotation2d angle) {
-        // double volts = angleFF.calculate(ANGULAR_VELOCITY, ANGULAR_ACCELERATION);
-        angleMotor.set(ControlMode.Position, calculateTarget(angle.getDegrees()));
+        angleMotor.set(ControlMode.MotionMagic, calculateTarget(angle.getDegrees()));
+    }
+
+    /**
+     * Sets the rotational power of the module
+     * @param p Power in precent of the module (0%..100%)
+     */
+    public void setAngularPower(double p) {
+        angleMotor.set(ControlMode.PercentOutput, p);
+    }
+
+    /**
+     * Returns the rotational velocity of the module
+     * @return Velocity in deg/s
+     */
+    public double getAngularVelocity() {
+        return encoderToAngularSpeed(angleMotor.getSelectedSensorVelocity());
+    }
+
+    /**
+     * Sets the angular velocity of the module
+     * @param v Velocity in deg/s
+     */
+    public void setAngularVelocity(double v) {
+        double newVelocity = getAngularVelocity();
+        if (Math.abs(newVelocity) < MAX_ANGULAR_VELOCITY)
+            newVelocity += Math.signum(v) * ANGULAR_ACCELERATION * Constants.CYCLE_DT;
+        double volts = ANGLE_KS + ANGLE_KV * v;
+        if (Math.abs(v) >= ANGLE_KS) {
+            angleMotor.set(ControlMode.Velocity, angularToEncoderSpeed(newVelocity), DemandType.ArbitraryFeedForward, volts / 12);
+        }
+        else
+            angleMotor.set(ControlMode.PercentOutput, 0);
     }
 
     public SwerveModuleState getState() {
