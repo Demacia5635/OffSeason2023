@@ -104,7 +104,7 @@ public class Vision extends SubsystemBase {
                 VisionData vData = median(buf3);
                 VisionData vDataAvg = avg(buf3);
                 if (vData != null && vData.pose != null) {
-                    poseEstimator.addVisionMeasurement(vData.pose, vData.timeStamp);
+                    //poseEstimator.addVisionMeasurement(vData.pose, vData.timeStamp);
                     //poseEstimatorField.setRobotPose(poseEstimator.getEstimatedPosition());
                     visionField3.setRobotPose(vData.pose);
                     visionFieldavg3.setRobotPose(vDataAvg.pose);
@@ -126,7 +126,7 @@ public class Vision extends SubsystemBase {
             VisionData vData5 = median(buf5);
             VisionData vDataAvg5 = avg(buf5);
             if (vData5 != null && vData5.pose != null) {
-                // poseEstimator.addVisionMeasurement(vData5.pose, vData5.timeStamp);
+                //poseEstimator.addVisionMeasurement(vData5.pose, vData5.timeStamp);
                 // poseEstimatorField.setRobotPose(poseEstimator.getEstimatedPosition());
                 visionField5.setRobotPose(vData5.pose);
                 visionFieldavg5.setRobotPose(vDataAvg5.pose);
@@ -154,16 +154,17 @@ public class Vision extends SubsystemBase {
                     var estimatedPose = estimatedRobotPose.estimatedPose;
                     if(estimatedRobotPose != null){
                         VisionData newVisionData = new VisionData(estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds);
-                        if(firstRun == true){
+                        if(firstRun){
                             SwerveModulePosition[] positions = new SwerveModulePosition[4];
                             for (int i = 0; i < positions.length; i++) {                            
                                 positions[i] = new SwerveModulePosition();
                             }
                             SmartDashboard.putBoolean("isSwerveNull", positions[2] == null);
-                            SmartDashboard.putNumber("pose temp", 1    /*newVisionData.falsePose.getX()*/);
-                            System.out.println("hi " + newVisionData.falsePose.getX());
+                            SmartDashboard.putNumber("pose temp", newVisionData.falsePose.getRotation().getDegrees());
                             poseEstimator.resetPosition(newVisionData.falsePose.getRotation(), positions, newVisionData.falsePose);
-                            firstRun = true;
+                            SmartDashboard.putNumber("pose temp after", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+
+                            firstRun = false;
                         }
                         if (newVisionData != null && newVisionData.pose != null) {
                             // if ((newVisionData.pose).getTranslation()
@@ -195,6 +196,8 @@ public class Vision extends SubsystemBase {
     @Override
     public void periodic() {
         super.periodic();
+        SmartDashboard.putNumber("pereiodic pose rotation", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+
         getNewDataFromLimelightX(Limelight.Limelight2);
         getNewDataFromLimelightX(Limelight.Limelight3);
 
@@ -267,6 +270,10 @@ public class Vision extends SubsystemBase {
         return (lastData + 1) % buf3.length;
     }
 
+    /*
+     * @param bla
+     * @return bal2
+     */
     private boolean validBuf(double time) {
         double minTime = time - 1.2;
         for (VisionData vData : buf3) {
@@ -328,7 +335,7 @@ public class Vision extends SubsystemBase {
                 
             } else {
                 
-                setDiffrence();
+                //setDiffrence();
             }
         }
 
@@ -342,18 +349,18 @@ public class Vision extends SubsystemBase {
             }
         }
 
-        protected void setDiffrence() {
-            Pose2d poseSample = poseEstimator.getSample(timeStamp);
-            if(poseSample != null)
-                //System.out.println(/*poseSample.getRotation().getDegrees()*/ poseEstimator.getEstimatedPosition().getRotation().getDegrees() + " " + pose.getRotation().getDegrees());
-            if (poseSample != null
-                    && Math.abs(poseSample.getRotation().minus(pose.getRotation()).getDegrees()) < maxValidAngleDiff) {
-                diffrence = poseSample.getTranslation().getDistance(pose.getTranslation());
-            } else {
-                //System.out.println("cleared on setDifference() func");
-                clear();
-            }
-        }
+        // protected void setDiffrence() {
+        //     Pose2d poseSample = poseEstimator.getSample(timeStamp);
+        //     if(poseSample != null)
+        //        // System.out.println(/*poseSample.getRotation().getDegrees()*/ poseEstimator.getEstimatedPosition().getRotation().getDegrees() + " " + pose.getRotation().getDegrees());
+        //     if (poseSample != null
+        //             && Math.abs(poseSample.getRotation().minus(pose.getRotation()).getDegrees()) < maxValidAngleDiff) {
+        //         diffrence = poseSample.getTranslation().getDistance(pose.getTranslation());
+        //     } else {
+        //         //System.out.println("cleared on setDifference() func");
+        //         clear();
+        //     }
+        // }
 
         protected void clear() {
             diffrence = -1;
