@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -37,7 +38,7 @@ public class PathFollow extends CommandBase {
   Segment[] segments;
   Translation2d vecVel;
   Rotation2d wantedAngle;
-
+  Field2d trajField;
 
   Trapez driveTrapezoid;
   Trapez rotationTrapezoid;
@@ -55,6 +56,7 @@ public class PathFollow extends CommandBase {
    */
   
   public PathFollow(Chassis chassis,pathPoint[] points, double maxVel, double maxAcc) {
+    
 
     wantedAngle = points[points.length - 1].getRotation();
     corners = new RoundedPoint[points.length - 2];
@@ -65,7 +67,10 @@ public class PathFollow extends CommandBase {
     this.chassis = chassis;
     addRequirements(chassis);
 
+    trajField = new Field2d();
     
+
+
 
     SmartDashboard.putData(this);
 
@@ -183,9 +188,9 @@ public class PathFollow extends CommandBase {
             chassis.getAngle()).getDegrees(),
             Math.toDegrees(chassis.getChassisSpeeds().omegaRadiansPerSecond));
     */
-    Translation2d velVector = segments[segmentIndex].calc(chassisPose.getTranslation(), velocity);
+    Translation2d velVector = segments[segmentIndex].calc(chassisPose.getTranslation(), 2);
 
-    ChassisSpeeds speed = new ChassisSpeeds(velVector.getX(), velVector.getY(),Math.toRadians(rotationVelocity));
+    ChassisSpeeds speed = new ChassisSpeeds(velVector.getX(), velVector.getY(),/*Math.toRadians(rotationVelocity)*/0);
     //ChassisSpeeds speed = new ChassisSpeeds(2, 2, 0);
     chassis.setVelocities(speed);
   }

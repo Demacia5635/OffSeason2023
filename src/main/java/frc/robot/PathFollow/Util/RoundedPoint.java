@@ -92,7 +92,7 @@ public class RoundedPoint{
      * @return An array of points that represent the corner's curve's structure
      */
 
-    /*public Translation2d[] getPoints(){
+    public Translation2d[] getPoints(){
         int place = 0;
         Translation2d[] points = new Translation2d[(int)smoothnes];
         double diffAngle = endRange().getAngle().getDegrees() - startRange().getAngle().getDegrees();
@@ -102,7 +102,7 @@ public class RoundedPoint{
             place++;
         }
         return points;
-    } */
+    } 
 
     /**
      * 

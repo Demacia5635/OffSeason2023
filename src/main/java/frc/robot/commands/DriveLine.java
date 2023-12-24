@@ -15,7 +15,7 @@ public class DriveLine extends CommandBase {
   Translation2d point = new Translation2d(0, 4);
   Chassis chassis;
   Translation2d velocity = new Translation2d();
-  Trapez trap = new Trapez(2, 4, 0);
+  Trapez trap = new Trapez(1, 0.5, 0);
   public DriveLine(Chassis chassis) {
     this.chassis = chassis;
     addRequirements(chassis);
@@ -32,10 +32,8 @@ public class DriveLine extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    velocity = new Translation2d(0, trap.calc(point.getY() - chassis.getPose().getY(), chassis.getChassisSpeeds().vyMetersPerSecond));
-    System.out.println("CALC: " + trap.calc(point.getY() - chassis.getPose().getY(), chassis.getChassisSpeeds().vyMetersPerSecond));
-    System.out.println("VELOCITY: " + velocity.getY());
-    ChassisSpeeds speed = new ChassisSpeeds(0,velocity.getY(), 0);
+
+    ChassisSpeeds speed = new ChassisSpeeds(0,1, 0.5);
     chassis.setVelocities(speed);
   }
 

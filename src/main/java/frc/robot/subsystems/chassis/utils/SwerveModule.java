@@ -22,6 +22,8 @@ public class SwerveModule implements Sendable {
     private final TalonFX angleMotor;
     private final CANCoder absoluteEncoder;
 
+    private Rotation2d optimizedAngle = new Rotation2d(0);
+
     private final double angleOffset;
 
     public SwerveModule(SwerveModuleConstants constants) {
@@ -163,8 +165,10 @@ public class SwerveModule implements Sendable {
     public void setState(SwerveModuleState state) {
         SwerveModuleState optimized = SwerveModuleState.optimize(state, getAngle());
         setVelocity(optimized.speedMetersPerSecond);
+        optimizedAngle = optimized.angle; 
         setAngle(optimized.angle);
     }
+
 
     /**
      * Returns the module position
@@ -206,5 +210,7 @@ public class SwerveModule implements Sendable {
         builder.addDoubleProperty("angle", () -> getAngle().getDegrees(), null);
         builder.addDoubleProperty("velocity", this::getVelocity, null);
         builder.addDoubleProperty("angular velocity", this::getAngularVelocity, null);
+        builder.addDoubleProperty("Wanted angle", () -> optimizedAngle.getDegrees(), null);
+        builder.addDoubleProperty("Error", () ->  optimizedAngle.minus(getAngle()).getDegrees(), null);
     }
 }

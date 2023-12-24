@@ -36,7 +36,7 @@ public class DriveCommand extends CommandBase {
     
     double velX = joyY * MAX_DRIVE_VELOCITY;
     double velY = joyX * MAX_DRIVE_VELOCITY;
-    double velRot = rot * MAX_ANGULAR_VELOCITY;
+    double velRot = rot * 540;
     
     if (precisionDrive) {
       velX /= 2;

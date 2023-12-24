@@ -24,6 +24,10 @@ public class Segment {
     public double distancePassed(Translation2d position) {return 0;};
     public double getLength() {return 0;};
     public boolean isAprilTagMode(){return aprilMode;};
+    public Translation2d[] getPoints() {
+        Translation2d[] pArr = {p1,p2}; 
+        return pArr;
+    }
     public void setAprilTagMode(boolean aprilMode){ this.aprilMode = aprilMode;};
     @Override
     public String toString() {

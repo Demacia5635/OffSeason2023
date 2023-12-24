@@ -77,6 +77,8 @@ public class Arc extends Segment{
       return Math.abs(diffAngle.getRadians() * radius);
     }
 
+   // public 
+
 
     @Override
     public double getLength()
