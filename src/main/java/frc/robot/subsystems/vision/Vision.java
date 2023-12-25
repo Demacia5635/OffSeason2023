@@ -105,39 +105,30 @@ public class Vision extends SubsystemBase {
     //takes the visions snapshots from the buffer and medians or avg it and add vision mesurements to pose estimator
     public void updateRobotPose() {
         double time = getTime();
-        {
-            if (validBuf(time)) {
-                VisionData vData = median(buf3);
-                VisionData vDataAvg = avg(buf3);
-                if (vData != null && vData.getPose() != null) {
-                    poseEstimator.addVisionMeasurement(vData.pose, vData.timeStamp);
-                    poseEstimatorField.setRobotPose(poseEstimator.getEstimatedPosition());
-                    visionField3.setRobotPose(vData.getPose());
-                    visionFieldavg3.setRobotPose(vDataAvg.getPose());
-                    lastUpdateTime = time;
-                    time = vData.getTimeStamp();
+        if (validBuf(time)) {
+            VisionData vData = median(buf3);
+            VisionData vDataAvg = avg(buf3);
+            if (vData != null && vData.getPose() != null) {
+                poseEstimator.addVisionMeasurement(vData.pose, vData.timeStamp);
+                poseEstimatorField.setRobotPose(poseEstimator.getEstimatedPosition());
+                visionField3.setRobotPose(vData.getPose());
+                visionFieldavg3.setRobotPose(vDataAvg.getPose());
+                lastUpdateTime = time;
+                time = vData.getTimeStamp();
 
-                    for (VisionData vd : buf3){
-                        vd.clear();
-                    }
-                    // for (VisionData vd : buf3) {
-                    //     vd.recalc(time);
-                    // }
-                    
+                for (VisionData vd : buf3){
+                    vd.clear();
                 }
-            } 
-        }
+            }
+        } 
     }
 
     public void updateRobotPose5() {
-        
         double time = getTime();
         if (validBuf5(time)) {
             VisionData vData5 = median(buf5);
             VisionData vDataAvg5 = avg(buf5);
             if (vData5 != null && vData5.getPose() != null) {
-                //poseEstimator.addVisionMeasurement(vData5.getPose(), vData5.getTimeStamp());
-                //poseEstimatorField.setRobotPose(poseEstimator.getEstimatedPosition());
                 visionField5.setRobotPose(vData5.getPose());
                 visionFieldavg5.setRobotPose(vDataAvg5.getPose());
                 lastUpdateTime5 = time;
@@ -146,9 +137,7 @@ public class Vision extends SubsystemBase {
                 for (VisionData vd : buf5){
                     vd.clear();
                 }
-                // for (VisionData vd : buf5) {
-                //     vd.recalc(time);
-                // }
+                
             }
         } 
     }
@@ -169,6 +158,7 @@ public class Vision extends SubsystemBase {
                     var estimatedPose = estimatedRobotPose.estimatedPose;
                     if(estimatedRobotPose != null){
                         VisionData newVisionData = new VisionData(estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds);
+                        VisionData newVisionData5 = new VisionData(estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds);
                         if(firstRun){
                             poseEstimator.resetPosition(chassis.getAngle(), chassis.getModulePositions(), newVisionData.getFalsePose());
                             firstRun = false;
@@ -177,15 +167,8 @@ public class Vision extends SubsystemBase {
                             lastData = next();
                             lastData5 = next5(); 
                             buf3[lastData] = newVisionData;
-                            buf5[lastData5] = newVisionData;
-
-                            // System.out.println(newVisionData.timeStamp + ", in index:" + lastData);
-                            // System.out.println("---------------------------");
-                            // for (int i = 0; i < buf3.length; i++) {
-                            //     VisionData visionBill = buf3[i];
-                            //     System.out.println(visionBill.timeStamp + ", in index:" + i);
-                            // }
-                            // System.out.println("---------------------------");
+                            buf5[lastData5] = newVisionData5;
+                            
 
                             visionField.setRobotPose(newVisionData.getPose());
                         }   
@@ -201,6 +184,7 @@ public class Vision extends SubsystemBase {
     @Override
     public void periodic() {
         super.periodic();
+
         getNewDataFromLimelightX(Limelight.Limelight2);
         getNewDataFromLimelightX(Limelight.Limelight3);
         updateRobotPose();
@@ -279,16 +263,11 @@ public class Vision extends SubsystemBase {
      * @return bal2
      */
     private boolean validBuf(double time) {
-        // System.out.println("---------------------------");
-        // for (int i = 0; i < buf3.length; i++) {
-        //     VisionData visionBill = buf3[i];
-        //     System.out.println(visionBill.timeStamp + ", in index:" + i);
-        // }
-        // System.out.println("---------------------------");
+        
         double minTime = time - 1.2;
         for (VisionData vData : buf3) {
             if (vData.getTimeStamp() < minTime) {
-                System.out.println(vData.getTimeStamp() + ", " + minTime + ", " + (vData.getTimeStamp() < minTime));
+                //System.out.println(vData.getTimeStamp() + ", " + minTime + ", " + (vData.getTimeStamp() < minTime));
                 return false;
             }
         }
@@ -308,7 +287,7 @@ public class Vision extends SubsystemBase {
     }
     
     private boolean validBuf5(double time) {
-        double minTime = time - 2.5;
+        double minTime = time - 2;
         // System.out.println("---------------------------");
         // for (int i = 0; i < buf5.length; i++) {
         //     VisionData visionBill = buf5[i];
@@ -388,7 +367,7 @@ public class Vision extends SubsystemBase {
             diffrence = -1;
             pose = null;
             timeStamp = 0;
-           System.out.println("Cleared.");
+            //System.out.println("Cleared.");
         }    
             
         //getters
