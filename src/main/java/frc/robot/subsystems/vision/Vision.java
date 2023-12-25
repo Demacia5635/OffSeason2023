@@ -190,6 +190,8 @@ public class Vision extends SubsystemBase {
         updateRobotPose();
         updateRobotPose5();
 
+        SmartDashboard.putNumber("angle", visionField.getRobotPose().getRotation().getDegrees());
+        
         Pose2d visionPose = visionField.getRobotPose();
         SmartDashboard.putNumber("no filter X", visionPose.getX());
         SmartDashboard.putNumber("no filter Y", visionPose.getY());
@@ -355,7 +357,7 @@ public class Vision extends SubsystemBase {
             if(poseSample != null)
                 //System.out.println(Math.abs(poseSample.getRotation().minus(pose.getRotation()).getDegrees()) < maxValidAngleDiff);
             if (poseSample != null
-                    && Math.abs(poseSample.getRotation().minus(pose.getRotation()).getDegrees()) < maxValidAngleDiff) {
+                    /*&& Math.abs(poseSample.getRotation().minus(pose.getRotation()).getDegrees()) < maxValidAngleDiff*/) {
                 diffrence = poseSample.getTranslation().getDistance(pose.getTranslation());
             } else {
                 System.out.println("cleared on setDifference() func");
