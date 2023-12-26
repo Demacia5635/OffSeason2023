@@ -37,8 +37,8 @@ public final class Constants {
       MODULE_BACK_RIGHT.moduleTranslationOffset
     );
 
-    public static final double MAX_DRIVE_VELOCITY = 1;
-    public static final double DRIVE_ACCELERATION = 4;
+    public static final double MAX_DRIVE_VELOCITY = 3;
+    public static final double DRIVE_ACCELERATION = 8;
     public static final double MAX_ANGULAR_VELOCITY = 360;
     public static final double ANGULAR_ACCELERATION = 720;
 
@@ -52,14 +52,14 @@ public final class Constants {
       public static final double ANGLE_POSITION_KP = 0.35;
       public static final double ANGLE_POSITION_KI = 0;
       public static final double ANGLE_POSITION_KD = 0.029;
-      public static final double ANGLE_VELOCITY_KP = 0.07;
-      public static final double ANGLE_VELOCITY_KI = 0.004;
-      public static final double ANGLE_VELOCITY_KD = 0.05;
+      public static final double ANGLE_VELOCITY_KP = 6.7422E-08; //0.07;
+      public static final double ANGLE_VELOCITY_KI = 0 ; //0.004;
+      public static final double ANGLE_VELOCITY_KD = 0; //0.05;
 
       public static final double MOVE_KS = 0.0362;
       public static final double MOVE_KV = 0.0862;
-      public static final double ANGLE_KS = 0.05;
-      public static final double ANGLE_KV = 0.0962;
+      public static final double ANGLE_KS = 0.52557/12.0; //0.05;
+      public static final double ANGLE_KV = 0.003737/12.0; //0.0962;
 
       public final int moveMotorId;
       public final int angleMotorId;
