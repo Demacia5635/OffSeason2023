@@ -1,6 +1,7 @@
 package frc.robot.commands.chassis;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -47,8 +48,17 @@ public class DriveCommand extends CommandBase {
     ChassisSpeeds speeds = new ChassisSpeeds(velX, velY, Math.toRadians(velRot));
     chassis.setVelocities(speeds);
     
-    System.out.println(precisionDrive);
-  }
+    SmartDashboard.putNumber("omega", velRot);
+    SmartDashboard.putNumber("velX", velX);
+    SmartDashboard.putNumber("velY", velY);
+
+    SmartDashboard.putNumber("actual velX", chassis.getVelocity().getX());
+    SmartDashboard.putNumber("actual velY", chassis.getVelocity().getY());
+
+    SmartDashboard.putNumber("actual omega", 
+    chassis.getChassisSpeeds().omegaRadiansPerSecond);
+
+    }
 
   private double deadband(double x, double threshold) {
     if (Math.abs(x) < threshold) return 0;

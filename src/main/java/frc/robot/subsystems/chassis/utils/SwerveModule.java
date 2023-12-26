@@ -21,7 +21,8 @@ public class SwerveModule implements Sendable {
     private final TalonFX moveMotor;
     private final TalonFX angleMotor;
     private final CANCoder absoluteEncoder;
-
+    private final double maxAngularVelocityChange = ANGULAR_ACCELERATION*Constants.CYCLE_DT;
+    private final double maxDriveVelocityChange = DRIVE_ACCELERATION * Constants.CYCLE_DT;
     private Rotation2d optimizedAngle = new Rotation2d(0);
 
     private final double angleOffset;
@@ -40,8 +41,9 @@ public class SwerveModule implements Sendable {
         angleMotor.configMotionAcceleration(angularToEncoderSpeed(ANGULAR_ACCELERATION));
         angleMotor.configMotionSCurveStrength(1);
 
-        setMovePID(MOVE_KP, MOVE_KI, MOVE_KD);
-        setAnglePIDF(ANGLE_VELOCITY_KP, ANGLE_VELOCITY_KI, ANGLE_VELOCITY_KD, ANGLE_KV);
+        setMovePID(MOVE_KP, 0 /*MOVE_KI*/, MOVE_KD);
+        setAnglePIDF(ANGLE_VELOCITY_KP, 0 /*ANGLE_VELOCITY_KI*/, 
+            ANGLE_VELOCITY_KD, ANGLE_KV);
     }
 
     public void setMovePID(double kP, double kI, double kD) {
@@ -90,14 +92,19 @@ public class SwerveModule implements Sendable {
      * @param v Velocity in m/s
      */
     public void setVelocity(double v) {
-        double newVelocity = getVelocity();
-        if (Math.abs(newVelocity) < MAX_DRIVE_VELOCITY)
-            newVelocity += Math.signum(v) * DRIVE_ACCELERATION * Constants.CYCLE_DT;
-        double volts = MOVE_KS + MOVE_KV * v;
-        if (Math.abs(v) > MOVE_KS)
-            moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(newVelocity), DemandType.ArbitraryFeedForward, volts);
-        else
-            setPower(0);
+        double curVelocity = getVelocity();
+        double dv = v - curVelocity;
+        if(dv > maxDriveVelocityChange) {
+            curVelocity += maxDriveVelocityChange;
+        } else if(dv < -maxDriveVelocityChange) {
+            curVelocity -= maxDriveVelocityChange;
+        } else {
+            curVelocity = v;
+        }
+        double volts = Math.signum(curVelocity)*MOVE_KS + MOVE_KV * curVelocity;
+        
+        moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(curVelocity), 
+            DemandType.ArbitraryFeedForward, volts);
     }
 
     /**
