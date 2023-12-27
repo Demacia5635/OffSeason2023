@@ -221,8 +221,11 @@ public class SwerveModule implements Sendable {
         builder.addDoubleProperty("velocity", this::getVelocity, null);
         builder.addDoubleProperty("angular velocity", this::getAngularVelocity, null);
         builder.addDoubleProperty("tgt velocity", ()->tgtVelocity, null);
-        builder.addDoubleProperty("tgt angel",()->tgtAngle, null);
-        builder.addDoubleProperty("vel error",()->moveMotor.getClosedLoopError(), null);
-        builder.addDoubleProperty("vel tgt",()->moveMotor.getClosedLoopTarget(), null);
+        // builder.addDoubleProperty("tgt angel",()->tgtAngle, null);
+        // builder.addDoubleProperty("vel error",()->moveMotor.getClosedLoopError(), null);
+        // builder.addDoubleProperty("vel tgt",()->moveMotor.getClosedLoopTarget(), null);
+        builder.addDoubleProperty("angular module velocity", this::getAngularVelocity, null);
+
     }
+
 }

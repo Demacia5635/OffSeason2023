@@ -81,6 +81,24 @@ public class Chassis extends SubsystemBase {
     Arrays.stream(modules).forEach(SwerveModule::stop);
   }
 
+
+  public void setModulesAngularPower(double power) {
+    for (int i = 0; i < modules.length; i++) {
+      modules[i].setAngularPower(power);
+    }
+
+    // modules[3].setPower(power);
+  }
+
+  
+  public double[] getAngularVelocities() {
+    double[] angularVelocities = new double[4];
+    for (int i = 0; i < modules.length; i++) {
+      angularVelocities[i] = modules[i].getAngularVelocity();
+    }
+    return angularVelocities;
+  }
+
   /**
    * Sets the velocity of the chassis
    * @param speeds In m/s and rad/s
