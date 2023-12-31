@@ -56,10 +56,10 @@ public final class Constants {
       public static final double ANGLE_VELOCITY_KI = 0 ; //0.004;
       public static final double ANGLE_VELOCITY_KD = 0; //0.05;
 
-      public static final double MOVE_KS = 0.0362;
-      public static final double MOVE_KV = 0.0862;
-      public static final double ANGLE_KS = 0.04;//0.52557/12.0; //0.05;
-      public static final double ANGLE_KV = 0.00035;//0.003737/12.0; //0.0962;
+      public static final double MOVE_KS =  0.3; //0.0362;
+      public static final double MOVE_KV = 0.15; //0.0862;
+      public static final double ANGLE_KS = 0.06;//0.52557/12.0; //0.05;
+      public static final double ANGLE_KV = 0.0004;//0.003737/12.0; //0.0962;
 
       public final int moveMotorId;
       public final int angleMotorId;

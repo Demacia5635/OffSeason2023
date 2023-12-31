@@ -155,6 +155,16 @@ public class SwerveModule implements Sendable {
         return encoderToAngularSpeed(angleMotor.getSelectedSensorVelocity());
     }
 
+    public static double ArbitraryFeedForwardAngle(double v) {
+        return ANGLE_KS + v*ANGLE_KV;
+    }
+
+
+    public static double ArbitraryFeedForward(double v) {
+        return MOVE_KS + v*MOVE_KV;
+    }
+
+
     /**
      * Sets the angular velocity of the module
      * @param v Velocity in deg/s

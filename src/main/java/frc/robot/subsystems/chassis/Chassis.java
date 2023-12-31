@@ -94,6 +94,14 @@ public class Chassis extends SubsystemBase {
     // modules[3].setPower(power);
   }
 
+  public void setModulesPower(double power) {
+    for (int i = 0; i < modules.length; i++) {
+      modules[i].setPower(power);
+    }
+
+    // modules[3].setPower(power);
+  }
+
   
   public double[] getAngularVelocities() {
     double[] angularVelocities = new double[4];
@@ -102,6 +110,18 @@ public class Chassis extends SubsystemBase {
     }
     return angularVelocities;
   }
+
+
+
+  public double[] getVelocities() {
+    double[] angularVelocities = new double[4];
+    for (int i = 0; i < modules.length; i++) {
+      angularVelocities[i] = modules[i].getVelocity();
+    }
+    return angularVelocities;
+  }
+
+
 
   /**
    * Sets the velocity of the chassis
