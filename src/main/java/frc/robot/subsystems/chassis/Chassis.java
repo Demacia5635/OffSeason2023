@@ -102,6 +102,11 @@ public class Chassis extends SubsystemBase {
     // modules[3].setPower(power);
   }
 
+  public void setModulesAngularVelocity(double v) {
+    for (int i = 0; i < modules.length; i++) {
+      modules[i].setAngularVelocity(v);
+    }
+  }
   
   public double[] getAngularVelocities() {
     double[] angularVelocities = new double[4];
@@ -204,8 +209,8 @@ public class Chassis extends SubsystemBase {
   public void periodic() {
       poseEstimator.update(getAngle(), getModulePositions());
       updateField();
-      for (SwerveModule module : modules) {
-        module.update();
-      }
+      // for (SwerveModule module : modules) {
+      //   module.update();
+      // }
   }
 }

@@ -52,9 +52,9 @@ public final class Constants {
       public static final double ANGLE_POSITION_KP = 0.35;
       public static final double ANGLE_POSITION_KI = 0;
       public static final double ANGLE_POSITION_KD = 0.029;
-      public static final double ANGLE_VELOCITY_KP = 6.7422E-08; //0.07;
-      public static final double ANGLE_VELOCITY_KI = 0 ; //0.004;
-      public static final double ANGLE_VELOCITY_KD = 0; //0.05;
+      public static final double ANGLE_VELOCITY_KP = 0.08/*6.7422E-08*/; //0.07
+      public static final double ANGLE_VELOCITY_KI = 0; //0.004;
+      public static final double ANGLE_VELOCITY_KD = 1;
 
       public static final double MOVE_KS =  0.3; //0.0362;
       public static final double MOVE_KV = 0.15; //0.0862;
