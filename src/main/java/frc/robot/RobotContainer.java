@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.chassis.DriveCommand;
 import frc.robot.subsystems.chassis.Chassis;
+import frc.robot.subsystems.chassis.utils.SwerveModule;
 
 public class RobotContainer {
   CommandXboxController commandController = new CommandXboxController(Constants.CONTROLLER_PORT);
@@ -31,12 +32,12 @@ public class RobotContainer {
 
     // return new RunCommand(()->chassis.setModulesPower(0.12), chassis);
 
-    return new InstantCommand(()->chassis.setModulesAngularPower(0.5), chassis)
-    .andThen(new WaitCommand(1), 
+    return new InstantCommand(()->chassis.setModulesPower(0.6), chassis)
+    .andThen(new WaitCommand(0.25), 
     new InstantCommand(()->
-    {SmartDashboard.putNumber("modules velocities 0", chassis.getAngularVelocities()[0]);
-    SmartDashboard.putNumber("modules velocities 1", chassis.getAngularVelocities()[1]);
-    SmartDashboard.putNumber("modules velocities 2", chassis.getAngularVelocities()[2]);
-    SmartDashboard.putNumber("modules velocities 3", chassis.getAngularVelocities()[3]);}, chassis));
+    {SmartDashboard.putNumber("modules velocities 0", chassis.getVelocities()[0]);
+    SmartDashboard.putNumber("modules velocities 1", chassis.getVelocities()[1]);
+    SmartDashboard.putNumber("modules velocities 2", chassis.getVelocities()[2]);
+    SmartDashboard.putNumber("modules velocities 3", chassis.getVelocities()[3]);}, chassis));
   }
 }
