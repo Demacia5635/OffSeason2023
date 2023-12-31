@@ -65,6 +65,10 @@ public class Chassis extends SubsystemBase {
     }).ignoringDisable(true));
   }
 
+  public SwerveModule getModule(int i) {
+    return modules[i];
+  }
+
   public void resetWheels() {
     Command cmd = new ResetWheelCommand(modules[0]);
     cmd = cmd.alongWith(new ResetWheelCommand(modules[1]));
@@ -180,5 +184,8 @@ public class Chassis extends SubsystemBase {
   public void periodic() {
       poseEstimator.update(getAngle(), getModulePositions());
       updateField();
+      for (SwerveModule module : modules) {
+        module.update();
+      }
   }
 }

@@ -46,8 +46,6 @@ public class DriveCommand extends CommandBase {
 
     ChassisSpeeds speeds = new ChassisSpeeds(velX, velY, Math.toRadians(velRot));
     chassis.setVelocities(speeds);
-    
-    System.out.println(precisionDrive);
   }
 
   private double deadband(double x, double threshold) {

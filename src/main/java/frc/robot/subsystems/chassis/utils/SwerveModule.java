@@ -14,21 +14,22 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import frc.robot.Constants;
 import frc.robot.Constants.ChassisConstants.SwerveModuleConstants;
+import frc.robot.utils.Trapezoid;
 
 import static frc.robot.Constants.ChassisConstants.*;
 import static frc.robot.Constants.ChassisConstants.SwerveModuleConstants.*;
-
-import javax.swing.text.StyledEditorKit.FontFamilyAction;
 
 public class SwerveModule implements Sendable {
     private final TalonFX moveMotor;
     private final TalonFX angleMotor;
     private final CANCoder absoluteEncoder;
 
-    SimpleMotorFeedforward velocityFF;
+    private SimpleMotorFeedforward velocityFF;
+    private SimpleMotorFeedforward angularFF;
+    private Trapezoid angleTrapezoid;
 
-    double tgtVelocity = 0;
-    double tgtAngle = 0;
+    double targetVelocity = 0;
+    double targetAngle = 0;
 
     private final double angleOffset;
 
@@ -36,7 +37,9 @@ public class SwerveModule implements Sendable {
         moveMotor = new TalonFX(constants.moveMotorId);
         angleMotor = new TalonFX(constants.angleMotorId);
         absoluteEncoder = new CANCoder(constants.absoluteEncoderId);
-        velocityFF = new SimpleMotorFeedforward(ANGLE_KS, ANGLE_KV);
+        velocityFF = new SimpleMotorFeedforward(MOVE_KS, MOVE_KV);
+        angularFF = new SimpleMotorFeedforward(ANGLE_KS, ANGLE_KV);
+        angleTrapezoid = new Trapezoid(MAX_DRIVE_VELOCITY, DRIVE_ACCELERATION);
 
         angleOffset = constants.steerOffset;
         
@@ -48,7 +51,7 @@ public class SwerveModule implements Sendable {
         angleMotor.configMotionSCurveStrength(1);
 
         setMovePID(MOVE_KP,0 /*MOVE_KI*/ , MOVE_KD);
-        setAnglePIDF(ANGLE_VELOCITY_KP, ANGLE_VELOCITY_KI, ANGLE_VELOCITY_KD, ANGLE_KV);
+        setAnglePIDF(ANGLE_VELOCITY_KP, ANGLE_VELOCITY_KI, ANGLE_VELOCITY_KD, 0);
     }
 
     public void setMovePID(double kP, double kI, double kD) {
@@ -97,15 +100,15 @@ public class SwerveModule implements Sendable {
      * @param v Velocity in m/s
      */
     public void setVelocity(double v) {
-        tgtVelocity = v;
-        double curVelocity = getVelocity();
+        targetVelocity = v;
+        double currentVelocity = getVelocity();
         double tgtV = v;
-        double dv = v - curVelocity;
-        double max = DRIVE_ACCELERATION * Constants.CYCLE_DT;
-        if(dv > max && v > 0) {
-            tgtV = curVelocity + max;
-        } else if(dv < -max && v < 0) {
-            tgtV = curVelocity - max;
+        double dv = v - currentVelocity;
+        double maxAccel = DRIVE_ACCELERATION * Constants.CYCLE_DT;
+        if (dv > maxAccel && v > 0) {
+            tgtV = currentVelocity + maxAccel;
+        } else if (dv < -maxAccel && v < 0) {
+            tgtV = currentVelocity - maxAccel;
         }
         double ff = velocityFF.calculate(tgtV);
         moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(tgtV), DemandType.ArbitraryFeedForward, ff);
@@ -127,8 +130,13 @@ public class SwerveModule implements Sendable {
      * Sets the angle of the module with MotionMagic control
      */
     public void setAngle(Rotation2d angle) {
-        tgtAngle = angle.getDegrees();
-        angleMotor.set(ControlMode.MotionMagic, calculateTarget(angle));
+        targetAngle = angle.getDegrees();
+    }
+
+    public void update() {
+        double dist = calculateTarget(Rotation2d.fromDegrees(targetAngle));
+        double v = angleTrapezoid.calculate(dist, getAngularVelocity(), 0);
+        setAngularVelocity(v);
     }
 
     /**
@@ -152,15 +160,17 @@ public class SwerveModule implements Sendable {
      * @param v Velocity in deg/s
      */
     public void setAngularVelocity(double v) {
-        double newVelocity = getAngularVelocity();
-        if (Math.abs(newVelocity) < MAX_ANGULAR_VELOCITY)
-            newVelocity += Math.signum(v) * ANGULAR_ACCELERATION * Constants.CYCLE_DT;
-        double volts = ANGLE_KS + ANGLE_KV * v;
-        if (Math.abs(v) >= ANGLE_KS) {
-            angleMotor.set(ControlMode.Velocity, angularToEncoderSpeed(newVelocity), DemandType.ArbitraryFeedForward, volts / 12);
+        double currentVelocity = getAngularVelocity();
+        double tgtV = v;
+        double dv = v - currentVelocity;
+        double maxAccel = ANGULAR_ACCELERATION * Constants.CYCLE_DT;
+        if (dv > maxAccel && v > 0) {
+            tgtV = currentVelocity + maxAccel;
+        } else if (dv < -maxAccel && v < 0) {
+            tgtV = currentVelocity - maxAccel;
         }
-        else
-            angleMotor.set(ControlMode.PercentOutput, 0);
+        double ff = angularFF.calculate(tgtV);
+        angleMotor.set(ControlMode.Velocity, angularToEncoderSpeed(tgtV), DemandType.ArbitraryFeedForward, ff);
     }
 
     /**
@@ -220,11 +230,11 @@ public class SwerveModule implements Sendable {
         builder.addDoubleProperty("angle", () -> getAngle().getDegrees(), null);
         builder.addDoubleProperty("velocity", this::getVelocity, null);
         builder.addDoubleProperty("angular velocity", this::getAngularVelocity, null);
-        builder.addDoubleProperty("tgt velocity", ()->tgtVelocity, null);
-        // builder.addDoubleProperty("tgt angel",()->tgtAngle, null);
-        // builder.addDoubleProperty("vel error",()->moveMotor.getClosedLoopError(), null);
+//        builder.addDoubleProperty("tgt velocity", ()->targetVelocity, null);    
+        builder.addDoubleProperty("angle vel error",()->angleMotor.getClosedLoopError(), null);
+        builder.addDoubleProperty("angle power",()->angleMotor.getMotorOutputPercent(), null);
+        
         // builder.addDoubleProperty("vel tgt",()->moveMotor.getClosedLoopTarget(), null);
-        builder.addDoubleProperty("angular module velocity", this::getAngularVelocity, null);
 
     }
 
