@@ -2,6 +2,7 @@ package frc.robot.subsystems.chassis.utils;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 
@@ -33,6 +34,7 @@ public class SwerveModule implements Sendable {
 
         moveFF = new SimpleMotorFeedforward(constants.kS, constants.kV, constants.kA);
         angleFF = new SimpleMotorFeedforward(constants.kS, constants.kV, constants.kA);
+        setCoast();
     }
 
     @Override
@@ -108,5 +110,9 @@ public class SwerveModule implements Sendable {
     private double calculateTarget(double targetAngle) {
         double difference = getAngleDifference(getAngle().getDegrees(), targetAngle);
         return angleMotor.getSelectedSensorPosition() + (difference * PULSES_PER_DEGREE);
+    }
+    public void setCoast() {
+        angleMotor.setNeutralMode(NeutralMode.Coast);
+        moveMotor.setNeutralMode(NeutralMode.Coast);
     }
 }

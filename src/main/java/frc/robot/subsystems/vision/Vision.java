@@ -65,7 +65,7 @@ public class Vision extends SubsystemBase {
         //initializing photons pose estimators
         try {
             this.photonPoseEstimatorForLimelight2 = new PhotonPoseEstimator(AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile),
-             PoseStrategy.AVERAGE_BEST_TARGETS, Limelight2, robotCenterToLimelight2Transform);
+             PoseStrategy.CLOSEST_TO_LAST_POSE, Limelight2, robotCenterToLimelight2Transform);
 
              this.photonPoseEstimatorForLimelight3 = new PhotonPoseEstimator(AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile),
              PoseStrategy.AVERAGE_BEST_TARGETS, Limelight3, robotCenterToLimelight3Transform);
@@ -157,6 +157,7 @@ public class Vision extends SubsystemBase {
                     var estimatedRobotPose = PhotonUpdate.get();
                     var estimatedPose = estimatedRobotPose.estimatedPose;
                     if(estimatedRobotPose != null){
+                        System.out.println("pose isnt null " + lastData5);
                         VisionData newVisionData = new VisionData(estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds);
                         VisionData newVisionData5 = new VisionData(estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds);
                         if(firstRun){
@@ -174,7 +175,7 @@ public class Vision extends SubsystemBase {
                         }   
                     }
                 } catch (NoSuchElementException e) {
-                    //System.out.println("");
+                    //System.out.println("got exception at get new data eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
                 }
             }
         }
@@ -353,9 +354,6 @@ public class Vision extends SubsystemBase {
     
         protected void setDiffrence() {
             Pose2d poseSample = poseEstimator.getSample(timeStamp);
-            //System.out.println(poseSample == null);
-            if(poseSample != null)
-                //System.out.println(Math.abs(poseSample.getRotation().minus(pose.getRotation()).getDegrees()) < maxValidAngleDiff);
             if (poseSample != null
                     /*&& Math.abs(poseSample.getRotation().minus(pose.getRotation()).getDegrees()) < maxValidAngleDiff*/) {
                 diffrence = poseSample.getTranslation().getDistance(pose.getTranslation());

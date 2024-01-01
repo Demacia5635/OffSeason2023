@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.chassis.utils.SwerveModule;
 import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.Vision3Solo;
 import frc.robot.subsystems.vision.utils.SwerveDrivePoseEstimator;
 
 import static frc.robot.Constants.ChassisConstants.*;
@@ -26,7 +27,7 @@ public class Chassis extends SubsystemBase {
 
   private final SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field;
-  private final Vision vision;
+  private final Vision3Solo vision3Solo;
   public Chassis() {
     modules = new SwerveModule[] {
       new SwerveModule(MODULE_FRONT_LEFT),
@@ -42,8 +43,8 @@ public class Chassis extends SubsystemBase {
     gyro = new PigeonIMU(GYRO_ID);
     
     poseEstimator = new SwerveDrivePoseEstimator(KINEMATICS, getAngle(), getModulePositions(), new Pose2d());
-    vision = new Vision(this, poseEstimator);
-    vision.getName();
+    vision3Solo = new Vision3Solo(this, poseEstimator);
+    vision3Solo.getName();
     field = new Field2d();
     SmartDashboard.putData(field);
     SmartDashboard.putData(this);
@@ -56,6 +57,7 @@ public class Chassis extends SubsystemBase {
     modules[1].setInverted(true);
     modules[2].setInverted(false);
     modules[3].setInverted(true);
+    setCoast();
   }
 
   @Override
@@ -115,4 +117,8 @@ public class Chassis extends SubsystemBase {
   public void setModuleStates(SwerveModuleState[] states) {
     for (int i = 0; i < 4; i++) modules[i].setState(states[i]);
   }
+  public void setCoast() {
+    for (int i = 0; i < 4; i++) modules[i].setCoast();
+  }
+
 }
