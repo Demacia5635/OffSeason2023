@@ -37,6 +37,8 @@ public class Vision3Solo extends SubsystemBase {
     // declaring poseEstimator chassis and buffers 
     SwerveDrivePoseEstimator poseEstimator;
     Chassis chassis;
+    VisionData[] buf3;
+
 
     int lastData;
     double lastUpdateTime;
@@ -46,6 +48,8 @@ public class Vision3Solo extends SubsystemBase {
     public Vision3Solo(Chassis chassis, SwerveDrivePoseEstimator estimator) {
         this.chassis = chassis;
         this.poseEstimator = estimator;
+        this.lastData = -1;
+        this.buf3  = new VisionData[3];
         this.Limelight2 = new PhotonCamera(Limelight2Name);
         this.Limelight3 = new PhotonCamera(Limelight3Name);
         
@@ -63,7 +67,11 @@ public class Vision3Solo extends SubsystemBase {
             e.printStackTrace();
         } 
         
-       
+       //initializing buffers
+        for (int i = 0; i < buf3.length; i++) {
+            this.buf3[i] = new VisionData(null, 0);
+        }
+
         //initializing fields for testing
         this.visionField= new Field2d();   
         this.visionField3 = new Field2d();
@@ -73,53 +81,83 @@ public class Vision3Solo extends SubsystemBase {
         SmartDashboard.putData("no Filter vision", visionField);
         SmartDashboard.putData("field check pose estimator", poseEstimatorField);
         
-       
+        SmartDashboard.putData("vision3", visionField3);
+
 
     }
     
     //takes the visions snapshots from the buffer and medians or avg it and add vision mesurements to pose estimator
     public void updateRobotPose() {
-        PhotonPoseEstimator photonPoseEstimator = photonPoseEstimatorForLimelight2;
-        var PhotonUpdate = photonPoseEstimator.update();
-        if(PhotonUpdate != null){
-            try {
-                var estimatedRobotPose = PhotonUpdate.get();
-                var estimatedPose = estimatedRobotPose.estimatedPose;
-                if(estimatedRobotPose != null){
-                    VisionData newVisionData = new VisionData(estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds);
-                    if(firstRun){
-                        poseEstimator.resetPosition(chassis.getAngle(), chassis.getModulePositions(), newVisionData.getFalsePose());
-                        firstRun = false;
-                    }
-                    if (newVisionData != null && newVisionData.getPose() != null) {
-                        poseEstimator.addVisionMeasurement(newVisionData.pose, newVisionData.timeStamp);
-                        poseEstimatorField.setRobotPose(poseEstimator.getEstimatedPosition());
-                        visionField.setRobotPose(newVisionData.getPose());
-                    }   
-                }
-            } catch (NoSuchElementException e) {
-                //System.out.println("got exception at get new data eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-            }
+        double time = getTime();
+        //if (validBuf(time)) {
+        VisionData vData = median(buf3);
+        if (vData != null && vData.getPose() != null) {
+            poseEstimator.addVisionMeasurement(vData.pose, vData.timeStamp);
+            poseEstimatorField.setRobotPose(poseEstimator.getEstimatedPosition());
+            visionField3.setRobotPose(vData.getPose());
+            lastUpdateTime = time;
+            time = vData.getTimeStamp();
 
+            for (VisionData vd : buf3){
+                vd.clear();
+            }
         }
+        //} 
+        
             
     }
 
-   
+    private void getNewDataFromLimelightX(Limelight x) {
+        //determines camera
+        PhotonPoseEstimator photonPoseEstimator;
+        if(x.equals(Limelight.Limelight2))
+            photonPoseEstimator = photonPoseEstimatorForLimelight2;
+        else
+            photonPoseEstimator = photonPoseEstimatorForLimelight3;
+        SmartDashboard.putNumber("velocity", chassis.getVelocity().getNorm());
+        if (chassis.getVelocity().getNorm() <= maxValidVelcity) {
+            var PhotonUpdate = photonPoseEstimator.update();
+            if(PhotonUpdate != null){
+                try {
+                    var estimatedRobotPose = PhotonUpdate.get();
+                    var estimatedPose = estimatedRobotPose.estimatedPose;
+                    if(estimatedRobotPose != null){
+                        VisionData newVisionData = new VisionData(estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds);
+                        if(firstRun){
+                            poseEstimator.resetPosition(chassis.getAngle(), chassis.getModulePositions(), newVisionData.getFalsePose());
+                            firstRun = false;
+                        }
+                        if (newVisionData != null && newVisionData.getPose() != null) {
+                            lastData = next();
+                            buf3[lastData] = newVisionData;
+                            
+
+                            visionField.setRobotPose(newVisionData.getPose());
+                        }   
+                    }
+                } catch (NoSuchElementException e) {
+                    //System.out.println("got exception at get new data eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+                }
+            }
+        }
+    }
+
 
 
     @Override
     public void periodic() {
         super.periodic();
 
-      
+        getNewDataFromLimelightX(Limelight.Limelight2);
         updateRobotPose();
 
         
         Pose2d visionPose = visionField.getRobotPose();
         SmartDashboard.putNumber("no filter X", visionPose.getX());
         SmartDashboard.putNumber("no filter Y", visionPose.getY());
-        
+        Pose2d vision3Pose = visionField3.getRobotPose();
+        SmartDashboard.putNumber("buf 3 med X", vision3Pose.getX());
+        SmartDashboard.putNumber("buf 3 med Y", vision3Pose.getY());
 
     }
     //util
@@ -141,15 +179,28 @@ public class Vision3Solo extends SubsystemBase {
         return visionDataArr[visionDataArr.length / 2];
     }
 
-    
-
-   
+    // BUF 3
+    int next() {
+        return (lastData + 1) % buf3.length;
+    }
 
     /*
      * @param bla
      * @return bal2
      */
+    private boolean validBuf(double time) {
+        
+        double minTime = time - 1.2;
+        for (VisionData vData : buf3) {
+            if (vData.getTimeStamp() < minTime) {
+                //System.out.println(vData.getTimeStamp() + ", " + minTime + ", " + (vData.getTimeStamp() < minTime));
+                return false;
+            }
+        }
+        return true;
+    }
 
+   
     public double lastUpdateLatency() {
         return getTime() - lastUpdateTime;
     }
@@ -199,7 +250,7 @@ public class Vision3Solo extends SubsystemBase {
         protected void setDiffrence() {
             Pose2d poseSample = poseEstimator.getSample(timeStamp);
             if (poseSample != null
-                    /*&& Math.abs(poseSample.getRotation().minus(pose.getRotation()).getDegrees()) < maxValidAngleDiff*/) {
+                    && Math.abs(poseSample.getRotation().minus(pose.getRotation()).getDegrees()) < maxValidAngleDiff) {
                 diffrence = poseSample.getTranslation().getDistance(pose.getTranslation());
             } else {
                 System.out.println("cleared on setDifference() func");
