@@ -44,6 +44,7 @@ public class DriveCommand extends CommandBase {
       velRot /= 2;
     }
 
+    System.out.println(" drive: velX = " + velX + " velY = " + velY);
     ChassisSpeeds speeds = new ChassisSpeeds(velX, velY, Math.toRadians(velRot));
     chassis.setVelocities(speeds);
   }
