@@ -4,9 +4,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.chassis.Chassis;
 
+import static frc.robot.Constants.ChassisConstants.SwerveModuleConstants.*;
+
 public class CalculateFF extends CommandBase {
 
-    double[] p = {0.2, -0.2, 0.3, -0.3, 0.4, -0.4};
+    double vSetpoint = -1.5;
+    double[] p = {MOVE_KS * -1};
     double cycleTime = 0;
     double cycle = 2;
     double[] v = new double[p.length];

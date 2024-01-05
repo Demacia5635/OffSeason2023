@@ -69,6 +69,6 @@ public class Trapezoid {
     }
     // Helper function to compute the distance travelled in one cycle with maximum acceleration
     private double cycleDistanceWithAccel(double currentVelocity) {
-        return currentVelocity * 0.02 + (maxAcceleration * 0.0002);
+        return currentVelocity * 0.02 + (0.5*maxAcceleration * Math.pow(0.02, 2));
     }
 }

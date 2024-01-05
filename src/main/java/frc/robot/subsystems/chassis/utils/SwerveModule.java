@@ -13,6 +13,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.ChassisConstants.SwerveModuleConstants;
@@ -41,7 +44,7 @@ public class SwerveModule implements Sendable {
         moveMotor = new TalonFX(constants.moveMotorId);
         angleMotor = new TalonFX(constants.angleMotorId);
         absoluteEncoder = new CANCoder(constants.absoluteEncoderId);
-        velocityFF = new SimpleMotorFeedforward(MOVE_KS, MOVE_KV, MOVE_KA);
+        velocityFF = new SimpleMotorFeedforward(MOVE_KS, MOVE_KV);
         angularFF = new SimpleMotorFeedforward(ANGLE_KS, ANGLE_KV);
         angleTrapezoid = new Trapezoid(MAX_ANGULAR_VELOCITY, ANGULAR_ACCELERATION);
 
@@ -58,7 +61,7 @@ public class SwerveModule implements Sendable {
         angleMotor.configMotionAcceleration(angularToEncoderSpeed(ANGULAR_ACCELERATION));
         angleMotor.configMotionSCurveStrength(1);
 
-        setMovePID(MOVE_KP,0 /*MOVE_KI*/ , MOVE_KD);
+        setMovePID(MOVE_KP, MOVE_KI, MOVE_KD);
         setAnglePID(ANGLE_VELOCITY_KP, ANGLE_VELOCITY_KI, ANGLE_VELOCITY_KD);
     }
 
@@ -130,7 +133,6 @@ public class SwerveModule implements Sendable {
             tgtV = currentVelocity - maxAccel;
         }
         double ff = velocityFF.calculate(tgtV);
-        if(debug) System.out.println(" vel = " + tgtV + " ff=" + ff + " cur v" + currentVelocity);
         moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(tgtV), DemandType.ArbitraryFeedForward, ff);
         lastMoveA = tgtV - currentVelocity;
         lastMoveV = tgtV;
@@ -158,7 +160,7 @@ public class SwerveModule implements Sendable {
     public void update() {
         double dist = Rotation2d.fromDegrees(targetAngle).minus(getAngle()).getDegrees();
         double v = angleTrapezoid.calculate(dist, getAngularVelocity(), 0);
-        if (Math.abs(dist) > 5)
+        if (Math.abs(dist) > MAX_STEER_ERROR)
             setAngularVelocity(v);
         else
             setAngularPower(0);
@@ -272,12 +274,7 @@ public class SwerveModule implements Sendable {
         builder.addDoubleProperty("angle", () -> getAngle().getDegrees(), null);
         builder.addDoubleProperty("velocity", this::getVelocity, null);
         builder.addDoubleProperty("angular velocity", this::getAngularVelocity, null);
-//        builder.addDoubleProperty("tgt velocity", ()->targetVelocity, null);    
-        builder.addDoubleProperty("angle vel error",()->angleMotor.getClosedLoopError(), null);
-        builder.addDoubleProperty("angle power",()->angleMotor.getMotorOutputPercent(), null);
-        
-        // builder.addDoubleProperty("vel tgt",()->moveMotor.getClosedLoopTarget(), null);
-
+        builder.addDoubleProperty("desired angle", () -> targetAngle, null);
     }
 
 }
