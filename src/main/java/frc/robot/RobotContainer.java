@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.SongCommand;
 import frc.robot.commands.chassis.DriveCommand;
-import frc.robot.commands.chassis.utils.CalculateFF;
 import frc.robot.commands.chassis.utils.CheckFF;
 import frc.robot.subsystems.chassis.Chassis;
 
@@ -33,7 +32,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return new CheckFF(chassis);
+    return new RunCommand(()-> chassis.setModulesAngleFromSB(90), chassis);
     // return new InstantCommand(() -> chassis.resetWheels(), chassis)
     // .andThen(new RunCommand(() -> chassis.setVelocities(new ChassisSpeeds(-2, 0, 0))).withTimeout(2).andThen(new InstantCommand(() -> chassis.stop())));
   }

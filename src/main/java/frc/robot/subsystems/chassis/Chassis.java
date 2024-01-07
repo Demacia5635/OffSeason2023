@@ -182,6 +182,14 @@ public class Chassis extends SubsystemBase {
     return Arrays.stream(modules).map(SwerveModule::getState).toArray(SwerveModuleState[]::new);
   }
 
+  public double[] getModulesAngles() {
+    double[] angles = new double[4];
+    for (int i = 0; i < modules.length; i++) {
+      angles[i] = modules[i].getAngle().getDegrees();
+    }
+    return angles;
+  }
+
   /**
    * Sets the state of every module
    * @param states Velocity in m/s, angle in Rotation2d
@@ -202,12 +210,11 @@ public class Chassis extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
       builder.addDoubleProperty("chassis velocity", () -> getVelocity().getNorm(), null);
       builder.addDoubleProperty("chassis ang velocity", () -> Math.toDegrees(getChassisSpeeds().omegaRadiansPerSecond), null);
-      SmartDashboard.putData("Set Modules Angle", new RunCommand(()->setModulesAngleFromSB()));
+      SmartDashboard.putData("Set Modules Angle", new RunCommand(()->setModulesAngleFromSB(0)));
       SmartDashboard.putNumber("Angle", 90);
     }
 
-    public void setModulesAngleFromSB() {
-      double angle = SmartDashboard.getNumber("Angle", 90);
+    public void setModulesAngleFromSB(double angle) {
       Rotation2d a = Rotation2d.fromDegrees(angle);
       for (SwerveModule module : modules) {
         module.setAngle(a);
@@ -222,5 +229,7 @@ public class Chassis extends SubsystemBase {
       for (SwerveModule module : modules) {
         module.update();
       }
+
+      System.out.println("angle = " + getModulesAngles()[0]);
   }
 }
