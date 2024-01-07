@@ -27,7 +27,7 @@ public class Chassis extends SubsystemBase {
 
   private final SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field;
-  private final Vision vision;
+  private final Vision3Solo vision3Solo;
   public Chassis() {
     modules = new SwerveModule[] {
       new SwerveModule(MODULE_FRONT_LEFT),
@@ -43,8 +43,8 @@ public class Chassis extends SubsystemBase {
     gyro = new PigeonIMU(GYRO_ID);
     
     poseEstimator = new SwerveDrivePoseEstimator(KINEMATICS, getAngle(), getModulePositions(), new Pose2d());
-    vision = new Vision(this, poseEstimator);
-    vision.getName();
+    vision3Solo = new Vision3Solo(this, poseEstimator);
+    vision3Solo.getName();
     field = new Field2d();
     SmartDashboard.putData(field);
     SmartDashboard.putData(this);

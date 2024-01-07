@@ -65,7 +65,7 @@ public class Vision extends SubsystemBase {
         //initializing photons pose estimators
         try {
             this.photonPoseEstimatorForLimelight2 = new PhotonPoseEstimator(AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile),
-             PoseStrategy.AVERAGE_BEST_TARGETS, Limelight2, robotCenterToLimelight2Transform);
+             PoseStrategy.CLOSEST_TO_LAST_POSE, Limelight2, robotCenterToLimelight2Transform);
 
              this.photonPoseEstimatorForLimelight3 = new PhotonPoseEstimator(AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile),
              PoseStrategy.AVERAGE_BEST_TARGETS, Limelight3, robotCenterToLimelight3Transform);
@@ -150,13 +150,14 @@ public class Vision extends SubsystemBase {
             photonPoseEstimator = photonPoseEstimatorForLimelight2;
         else
             photonPoseEstimator = photonPoseEstimatorForLimelight3;
-        if (true || chassis.getVelocity().getNorm() <= maxValidVelcity) {
+        if (chassis.getVelocity().getNorm() <= maxValidVelcity) {
             var PhotonUpdate = photonPoseEstimator.update();
             if(PhotonUpdate != null){
                 try {
                     var estimatedRobotPose = PhotonUpdate.get();
                     var estimatedPose = estimatedRobotPose.estimatedPose;
                     if(estimatedRobotPose != null){
+                        System.out.println("pose isnt null " + lastData5);
                         VisionData newVisionData = new VisionData(estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds);
                         VisionData newVisionData5 = new VisionData(estimatedPose.toPose2d(), estimatedRobotPose.timestampSeconds);
                         if(firstRun){
@@ -290,9 +291,16 @@ public class Vision extends SubsystemBase {
     
     private boolean validBuf5(double time) {
         double minTime = time - 2;
-        
+        // System.out.println("---------------------------");
+        // for (int i = 0; i < buf5.length; i++) {
+        //     VisionData visionBill = buf5[i];
+        //     System.out.println(visionBill.timeStamp + ", in index:" + i);
+        // }
+        // System.out.println("---------------------------");
         for (VisionData vData : buf5) {
+            //System.out.println(vData.timeStamp);
             if (vData.getTimeStamp() < minTime) {
+                // System.out.println(vData.getTimeStamp() + ", " + minTime + ", " + (vData.getTimeStamp() < minTime));
                 return false;
             }
         }
@@ -347,7 +355,7 @@ public class Vision extends SubsystemBase {
         protected void setDiffrence() {
             Pose2d poseSample = poseEstimator.getSample(timeStamp);
             if (poseSample != null
-                    && Math.abs(poseSample.getRotation().minus(pose.getRotation()).getDegrees()) < maxValidAngleDiff) {
+                    /*&& Math.abs(poseSample.getRotation().minus(pose.getRotation()).getDegrees()) < maxValidAngleDiff*/) {
                 diffrence = poseSample.getTranslation().getDistance(pose.getTranslation());
             } else {
                 System.out.println("cleared on setDifference() func");
