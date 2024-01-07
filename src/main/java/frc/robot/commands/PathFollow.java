@@ -22,6 +22,7 @@ import frc.robot.PathFollow.Util.Segment;
 import frc.robot.PathFollow.Util.Trapez;
 import frc.robot.PathFollow.Util.pathPoint;
 import frc.robot.subsystems.chassis.*;
+import frc.robot.utils.Trapezoid;
 
 public class PathFollow extends CommandBase {
   Pose2d closestAprilTag = new Pose2d();
@@ -40,8 +41,8 @@ public class PathFollow extends CommandBase {
   Rotation2d wantedAngle;
   Field2d trajField;
 
-  Trapez driveTrapezoid;
-  Trapez rotationTrapezoid;
+  Trapezoid driveTrapezoid;
+  Trapezoid rotationTrapezoid;
   double velocity = 0;
   double rotationVelocity = 0;
   double safeVel = 1;
@@ -74,8 +75,8 @@ public class PathFollow extends CommandBase {
 
     SmartDashboard.putData(this);
 
-    driveTrapezoid = new Trapez(maxAcc, maxVel, 0);
-    rotationTrapezoid = new Trapez(180, 180, 0);
+    driveTrapezoid = new Trapezoid(maxVel, maxAcc);
+    rotationTrapezoid = new Trapezoid(180, 360);
 
     //calculate the total length of the path
 
@@ -176,10 +177,10 @@ public class PathFollow extends CommandBase {
         segmentIndex++;  
     }
 
-    velocity = driveTrapezoid.calc(totalLeft - segments[segmentIndex].distancePassed(chassisPose.getTranslation()), translation2dVelocity.getNorm());
+    velocity = driveTrapezoid.calculate(totalLeft - segments[segmentIndex].distancePassed(chassisPose.getTranslation()), translation2dVelocity.getNorm(), 0);
 
     //if(!segments[segmentIndex].isAprilTagMode())
-    rotationVelocity = rotationTrapezoid.calc(wantedAngle.minus(chassis.getAngle()).getDegrees(), Math.toDegrees(chassis.getChassisSpeeds().omegaRadiansPerSecond));
+    rotationVelocity = rotationTrapezoid.calculate(new Rotation2d(Math.PI / 2.0).minus(chassis.getAngle()).getRadians(), chassis.getChassisSpeeds().omegaRadiansPerSecond, 0);
     /*else
       rotationVelocity = rotationTrapezoid.calc(
         getClosestAprilTag().getTranslation().minus(chassis.getPose().getTranslation())
@@ -188,9 +189,8 @@ public class PathFollow extends CommandBase {
             chassis.getAngle()).getDegrees(),
             Math.toDegrees(chassis.getChassisSpeeds().omegaRadiansPerSecond));
     */
-    Translation2d velVector = segments[segmentIndex].calc(chassisPose.getTranslation(), 2);
-
-    ChassisSpeeds speed = new ChassisSpeeds(velVector.getX(), velVector.getY(),/*Math.toRadians(rotationVelocity)*/0);
+    Translation2d velVector = segments[segmentIndex].calc(chassisPose.getTranslation(), velocity);
+    ChassisSpeeds speed = new ChassisSpeeds(velVector.getX(), velVector.getY(),Math.toRadians(rotationVelocity));
     //ChassisSpeeds speed = new ChassisSpeeds(2, 2, 0);
     chassis.setVelocities(speed);
   }

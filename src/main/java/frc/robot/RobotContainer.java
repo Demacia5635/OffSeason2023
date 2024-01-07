@@ -23,16 +23,16 @@ public class RobotContainer {
 
 
   pathPoint[] points = { 
-     new pathPoint(0,0, new Rotation2d() ,0.25, false),
-     new pathPoint(1,1, new Rotation2d() ,0.25, false),
-     new pathPoint(0,2, new Rotation2d() ,0.25, false),
-    new pathPoint(1,3, new Rotation2d(Math.PI/2) ,0.25, false),
+     new pathPoint(0,0, new Rotation2d() ,0.1, false),
+     new pathPoint(1,1, new Rotation2d() ,0.1, false),
+     new pathPoint(02,0, new Rotation2d() ,0.1, false),
+      new pathPoint(3,1, new Rotation2d() ,0.1, false),
 
     };
 
     
      
-  PathFollow path = new PathFollow(chassis, points, 0.5, 1);
+  PathFollow path = new PathFollow(chassis, points, 0.1, 1);
   DriveCommand drive = new DriveCommand(chassis, controller);
   DriveLine driveLine = new DriveLine(chassis);
   

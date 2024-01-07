@@ -65,6 +65,8 @@ public class Chassis extends SubsystemBase {
       resetWheels();
     }).ignoringDisable(true));
 
+    SmartDashboard.putData("Reset Pose", new InstantCommand(() -> resetPose()));
+
   }
 
   public SwerveModule getModule(int i) {
@@ -247,6 +249,6 @@ public class Chassis extends SubsystemBase {
         module.update();
       }
 
-      System.out.println("angle = " + getModulesAngles()[0]);
+      // System.out.println("angle = " + getModulesAngles()[0]);
   }
 }

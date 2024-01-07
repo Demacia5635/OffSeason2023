@@ -3,6 +3,8 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Reset Pose": "Command",
+      "/SmartDashboard/Set Modules Angle": "Command",
       "/SmartDashboard/reset pose": "Command",
       "/SmartDashboard/reset wheels": "Command",
       "/SmartDashboard/set angles": "Command",
