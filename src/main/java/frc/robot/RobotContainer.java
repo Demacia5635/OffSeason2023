@@ -8,14 +8,13 @@ import frc.robot.commands.chassis.SetWheelAngles;
 import frc.robot.subsystems.chassis.Chassis;
 
 public class RobotContainer {
-  CommandXboxController controller = new CommandXboxController(0);
-  Chassis chassis = new Chassis();
+  CommandXboxController controller;
+  Chassis chassis;
   DriveCommand drive;
-  SetWheelAngles angles;
 
   public RobotContainer() {
+    chassis = new Chassis();
     drive = new DriveCommand(chassis, controller);
-    angles = new SetWheelAngles(chassis);
     chassis.setDefaultCommand(drive);
     
     configureBindings();
@@ -27,7 +26,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     // return new FunctionalCommand(() -> chassis.setDrivePower(0.2), null, null, null, chassis);
-    return angles;
+    return null;
     // return null;
   }
 }
