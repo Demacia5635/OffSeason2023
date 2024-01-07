@@ -3,17 +3,19 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.chassis.DriveCommand;
+import frc.robot.commands.Drive;
+import frc.robot.commands.SetWheelAngles;
 import frc.robot.subsystems.chassis.Chassis;
 
 public class RobotContainer {
-  CommandXboxController controller;
-  Chassis chassis;
-  DriveCommand drive;
+  CommandXboxController controller = new CommandXboxController(0);
+  Chassis chassis = new Chassis();
+  Drive drive;
+  SetWheelAngles angles;
 
   public RobotContainer() {
-    chassis = new Chassis();
-    drive = new DriveCommand(chassis, controller);
+    drive = new Drive(chassis, controller);
+    angles = new SetWheelAngles(chassis);
     chassis.setDefaultCommand(drive);
     
     configureBindings();
