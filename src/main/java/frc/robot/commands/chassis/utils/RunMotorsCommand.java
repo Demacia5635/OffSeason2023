@@ -4,9 +4,10 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.chassis.Chassis;
 
-public class RunMotorsCommand extends Command {
+public class RunMotorsCommand extends CommandBase {
     private final double power;
     private final double pulsesPerUnit;
     private final TalonFX[] motors;

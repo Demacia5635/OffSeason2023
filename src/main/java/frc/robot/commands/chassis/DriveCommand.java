@@ -1,14 +1,14 @@
 package frc.robot.commands.chassis;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.chassis.Chassis;
 
 import static frc.robot.Constants.ChassisConstants.*;
 
-public class DriveCommand extends Command {
+public class DriveCommand extends CommandBase {
   private final Chassis chassis;
   private final CommandXboxController controller;
 
