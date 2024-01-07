@@ -32,12 +32,12 @@ public class DriveCommand extends CommandBase {
   @Override
   public void execute() {
     double joyX = -deadband(controller.getLeftX(), 0.1);
-    double joyY = -deadband(controller.getLeftY(), 0.1);
-    double rot = -(deadband(controller.getLeftTriggerAxis(), 0.1) - deadband(controller.getRightTriggerAxis(), 0.1));
+    double joyY = deadband(controller.getLeftY(), 0.1);
+    double rot = -(deadband(controller.getRightTriggerAxis(), 0.1) - deadband(controller.getLeftTriggerAxis(), 0.1));
     
-    double velX = joyY * MAX_DRIVE_VELOCITY;
-    double velY = joyX * MAX_DRIVE_VELOCITY;
-    double velRot = rot * 540;
+    double velX = Math.pow(joyY, 3) * MAX_DRIVE_VELOCITY;
+    double velY = Math.pow(joyX, 3) * MAX_DRIVE_VELOCITY;
+    double velRot = Math.pow(rot, 3) * MAX_ANGULAR_VELOCITY;
     
     if (precisionDrive) {
       velX /= 2;
@@ -45,20 +45,9 @@ public class DriveCommand extends CommandBase {
       velRot /= 2;
     }
 
-    ChassisSpeeds speeds = new ChassisSpeeds(velX, velY, Math.toRadians(velRot));
+    ChassisSpeeds speeds = new ChassisSpeeds(velY, velX, Math.toRadians(velRot));
     chassis.setVelocities(speeds);
-    
-    SmartDashboard.putNumber("omega", velRot);
-    SmartDashboard.putNumber("velX", velX);
-    SmartDashboard.putNumber("velY", velY);
-
-    SmartDashboard.putNumber("actual velX", chassis.getVelocity().getX());
-    SmartDashboard.putNumber("actual velY", chassis.getVelocity().getY());
-
-    SmartDashboard.putNumber("actual omega", 
-    chassis.getChassisSpeeds().omegaRadiansPerSecond);
-
-    }
+  }
 
   private double deadband(double x, double threshold) {
     if (Math.abs(x) < threshold) return 0;

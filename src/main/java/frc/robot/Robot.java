@@ -16,6 +16,7 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  public static  Robot robot;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -24,9 +25,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
-
-
-
+    robot = this;
   }
 
   /**
