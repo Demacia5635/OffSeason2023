@@ -13,9 +13,9 @@ public class SongCommand extends CommandBase {
   private final Orchestra orchestra;
 
   public SongCommand() {
-    m = new TalonFX(0); // TODO: set motor id
+    m = new TalonFX(7);
     ArrayList<TalonFX> arr = new ArrayList<>();
-    arr.add(m);
+    arr.add(new TalonFX(30));
     orchestra = new Orchestra(arr, Filesystem.getDeployDirectory().getPath() + "/song.chrp");
   }
 

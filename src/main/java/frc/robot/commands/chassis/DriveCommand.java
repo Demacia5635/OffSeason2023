@@ -31,12 +31,12 @@ public class DriveCommand extends CommandBase {
   @Override
   public void execute() {
     double joyX = -deadband(controller.getLeftX(), 0.1);
-    double joyY = -deadband(controller.getLeftY(), 0.1);
+    double joyY = deadband(controller.getLeftY(), 0.1);
     double rot = -(deadband(controller.getRightTriggerAxis(), 0.1) - deadband(controller.getLeftTriggerAxis(), 0.1));
     
-    double velX = joyY * MAX_DRIVE_VELOCITY;
-    double velY = joyX * MAX_DRIVE_VELOCITY;
-    double velRot = rot * MAX_ANGULAR_VELOCITY;
+    double velX = Math.pow(joyY, 3) * MAX_DRIVE_VELOCITY;
+    double velY = Math.pow(joyX, 3) * MAX_DRIVE_VELOCITY;
+    double velRot = Math.pow(rot, 3) * MAX_ANGULAR_VELOCITY;
     
     if (precisionDrive) {
       velX /= 2;
@@ -44,10 +44,8 @@ public class DriveCommand extends CommandBase {
       velRot /= 2;
     }
 
-    ChassisSpeeds speeds = new ChassisSpeeds(velX, velY, Math.toRadians(velRot));
+    ChassisSpeeds speeds = new ChassisSpeeds(velY, velX, Math.toRadians(velRot));
     chassis.setVelocities(speeds);
-    
-    System.out.println(precisionDrive);
   }
 
   private double deadband(double x, double threshold) {

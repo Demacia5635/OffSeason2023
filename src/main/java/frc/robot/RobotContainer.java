@@ -1,12 +1,17 @@
 package frc.robot;
 
+import java.time.Instant;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.SongCommand;
 import frc.robot.commands.chassis.DriveCommand;
+import frc.robot.commands.chassis.utils.CheckFF;
 import frc.robot.subsystems.chassis.Chassis;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Gripper;
@@ -29,7 +34,8 @@ public class RobotContainer {
 
     chassis.setDefaultCommand(drive);
 
-    SmartDashboard.putData("set velocity", new RunCommand(() -> chassis.setVelocities(new ChassisSpeeds(1.2, 0.6, Math.toRadians(39)))));
+    SmartDashboard.putData("sing", new SongCommand());
+
     configureBindings();
   }
 
@@ -57,7 +63,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return new InstantCommand();
+    return new RunCommand(()-> chassis.setModulesAngleFromSB(90), chassis);
+    // return new InstantCommand(() -> chassis.resetWheels(), chassis)
+    // .andThen(new RunCommand(() -> chassis.setVelocities(new ChassisSpeeds(-2, 0, 0))).withTimeout(2).andThen(new InstantCommand(() -> chassis.stop())));
   }
 }

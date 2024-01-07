@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -40,6 +41,7 @@ public class Chassis extends SubsystemBase {
     };
 
     gyro = new PigeonIMU(GYRO_ID);
+    gyro.setFusedHeading(0);
 
     poseEstimator = new SwerveDrivePoseEstimator(KINEMATICS, getAngle(), getModulePositions(), new Pose2d());
     field = new Field2d();
@@ -54,24 +56,25 @@ public class Chassis extends SubsystemBase {
     modules[1].setInverted(false);
     modules[2].setInverted(false);
     modules[3].setInverted(false);
+    modules[0].debug = true;
 
     SmartDashboard.putData("set coast", new InstantCommand(() -> setNeutralMode(NeutralMode.Coast)).ignoringDisable(true));
     SmartDashboard.putData("set brake", new InstantCommand(() -> setNeutralMode(NeutralMode.Brake)).ignoringDisable(true));
 
-    SmartDashboard.putData("reset wheels", new RunCommand(() -> {
-      for (SwerveModule module : modules) {
-        module.setAngle(new Rotation2d());
-      }
+    SmartDashboard.putData("reset wheels", new InstantCommand(() -> {
+      resetWheels();
     }).ignoringDisable(true));
+
+  }
+
+  public SwerveModule getModule(int i) {
+    return modules[i];
   }
 
   public void resetWheels() {
-    Command cmd = new ResetWheelCommand(modules[0]);
-    cmd = cmd.alongWith(new ResetWheelCommand(modules[1]));
-    cmd = cmd.alongWith(new ResetWheelCommand(modules[2]));
-    cmd = cmd.alongWith(new ResetWheelCommand(modules[3]));
-
-    cmd.schedule();
+    for (SwerveModule module : modules) {
+      module.setAngle(new Rotation2d());
+    }
   }
 
   /**
@@ -81,6 +84,49 @@ public class Chassis extends SubsystemBase {
     Arrays.stream(modules).forEach(SwerveModule::stop);
   }
 
+
+  public void setModulesAngularPower(double power) {
+    for (int i = 0; i < modules.length; i++) {
+      modules[i].setAngularPower(power);
+    }
+
+    // modules[3].setPower(power);
+  }
+
+  public void setModulesPower(double power) {
+    for (int i = 0; i < modules.length; i++) {
+      modules[i].setPower(power);
+    }
+
+    // modules[3].setPower(power);
+  }
+
+  public void setModulesAngularVelocity(double v) {
+    for (int i = 0; i < modules.length; i++) {
+      modules[i].setAngularVelocity(v);
+    }
+  }
+  
+  public double[] getAngularVelocities() {
+    double[] angularVelocities = new double[4];
+    for (int i = 0; i < modules.length; i++) {
+      angularVelocities[i] = modules[i].getAngularVelocity();
+    }
+    return angularVelocities;
+  }
+
+
+
+  public double[] getVelocities() {
+    double[] angularVelocities = new double[4];
+    for (int i = 0; i < modules.length; i++) {
+      angularVelocities[i] = modules[i].getVelocity();
+    }
+    return angularVelocities;
+  }
+
+
+
   /**
    * Sets the velocity of the chassis
    * @param speeds In m/s and rad/s
@@ -88,6 +134,7 @@ public class Chassis extends SubsystemBase {
   public void setVelocities(ChassisSpeeds speeds) {
     ChassisSpeeds relativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getAngle());
     SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(relativeSpeeds);
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_DRIVE_VELOCITY);
     setModuleStates(states);
   }
 
@@ -135,6 +182,14 @@ public class Chassis extends SubsystemBase {
     return Arrays.stream(modules).map(SwerveModule::getState).toArray(SwerveModuleState[]::new);
   }
 
+  public double[] getModulesAngles() {
+    double[] angles = new double[4];
+    for (int i = 0; i < modules.length; i++) {
+      angles[i] = modules[i].getAngle().getDegrees();
+    }
+    return angles;
+  }
+
   /**
    * Sets the state of every module
    * @param states Velocity in m/s, angle in Rotation2d
@@ -155,12 +210,26 @@ public class Chassis extends SubsystemBase {
   public void initSendable(SendableBuilder builder) {
       builder.addDoubleProperty("chassis velocity", () -> getVelocity().getNorm(), null);
       builder.addDoubleProperty("chassis ang velocity", () -> Math.toDegrees(getChassisSpeeds().omegaRadiansPerSecond), null);
-  }
+      SmartDashboard.putData("Set Modules Angle", new RunCommand(()->setModulesAngleFromSB(0)));
+      SmartDashboard.putNumber("Angle", 90);
+    }
+
+    public void setModulesAngleFromSB(double angle) {
+      Rotation2d a = Rotation2d.fromDegrees(angle);
+      for (SwerveModule module : modules) {
+        module.setAngle(a);
+      }
+    }
 
 
   @Override
   public void periodic() {
       poseEstimator.update(getAngle(), getModulePositions());
       updateField();
+      for (SwerveModule module : modules) {
+        module.update();
+      }
+
+      System.out.println("angle = " + getModulesAngles()[0]);
   }
 }
