@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.chassis.utils.ResetWheelCommand;
 import frc.robot.subsystems.chassis.utils.SwerveModule;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.vision.Vision3Solo;
 import frc.robot.subsystems.vision.utils.SwerveDrivePoseEstimator;
 
 import static frc.robot.Constants.ChassisConstants.*;
@@ -32,7 +31,7 @@ public class Chassis extends SubsystemBase {
 
   private final SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field;
-  private final Vision3Solo vision3Solo;
+  private final Vision vision;
   public Chassis() {
     modules = new SwerveModule[] {
       new SwerveModule(MODULE_FRONT_LEFT),
@@ -44,8 +43,8 @@ public class Chassis extends SubsystemBase {
     gyro = new PigeonIMU(GYRO_ID);
     
     poseEstimator = new SwerveDrivePoseEstimator(KINEMATICS, getAngle(), getModulePositions(), new Pose2d());
-    vision3Solo = new Vision3Solo(this, poseEstimator);
-    vision3Solo.getName();
+    vision = new Vision(this, poseEstimator);
+    vision.getName();
     field = new Field2d();
     SmartDashboard.putData(field);
     SmartDashboard.putData(this);
