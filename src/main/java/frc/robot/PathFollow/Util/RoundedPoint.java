@@ -98,7 +98,6 @@ public class RoundedPoint{
         double diffAngle = endRange().getAngle().getDegrees() - startRange().getAngle().getDegrees();
         for (double i = 0; i < diffAngle; i = i + (diffAngle / smoothnes)) {
             points[place] = startRange().rotateBy((new Rotation2d(Math.toRadians(i)))).plus(getCenterCircle());
-            System.out.println(points[place].plus(getCenterCircle()));
             place++;
         }
         return points;

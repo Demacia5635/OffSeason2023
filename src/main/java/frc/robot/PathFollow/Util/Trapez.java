@@ -22,16 +22,14 @@ public class Trapez {
 
     public double calc(double rDistance, double cVel)
     {
-        System.out.println("rDistance: " + rDistance);
-        System.out.println("DISTANCE TO SLOW: " + accDistance(cVel));
+
         //The question is - to accelerate or not accelerate?
         //Check if the distance that's left, is enough for the distance to deaccelerate to the end velocity at an accelerated velocity (cVel + deltaV)
         if(Math.abs(rDistance) > Math.abs(accDistance(cVel)))
         {
 
             //If yes, strive for the max velocity
-            System.out.println("STRIVE FOR MAX");
-            System.out.println();
+
             if(rDistance >= 0)
                 return Math.min(maxVel, cVel + (deltaV * Math.signum(rDistance)));
             else
@@ -40,7 +38,7 @@ public class Trapez {
         else
         {
             //If no, strive for the min velocity
-            System.out.println("STRIVE FOR END");
+
             if(rDistance >= 0)
                 return Math.max(endVel, cVel - (deltaV * Math.signum(rDistance)));
             else

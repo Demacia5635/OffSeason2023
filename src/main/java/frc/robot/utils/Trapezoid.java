@@ -29,8 +29,10 @@ public class Trapezoid {
 
     // Helper function to calculate distance required to change from current velocity to target velocity
     private double distanceToVelocity(double currentVelocity, double targetVelocity, double acceleration) {
-        double deltaVelocity = currentVelocity - targetVelocity;
-        return (currentVelocity - deltaVelocity/2)*deltaVelocity/acceleration;
+        double deltaT = currentVelocity / maxAcceleration;
+        //return (currentVelocity - deltaVelocity/2)*deltaVelocity/acceleration;
+        return 0.5 * (maxAcceleration * deltaT * deltaT);
+
     }
 
     // Function to calculate the next velocity setpoint, based on remaining distance and current and target velocities
@@ -48,6 +50,7 @@ public class Trapezoid {
             }
         }        // Case for below max velocity, and enough distance to reach targetVelocity at max acceleration
         if(curentVelocity < maxVelocity && distanceToVelocity(curentVelocity+deltaVelocity, targetVelocity, maxAcceleration) < remainingDistance - cycleDistanceWithAccel(curentVelocity)) {
+            System.out.println("-------------TRAP ACCEL----------");
             lastV = Math.min(curentVelocity + deltaVelocity, maxVelocity);
         } 
         // Case for enough distance to reach targetVelocity without acceleration
@@ -56,6 +59,7 @@ public class Trapezoid {
         } 
         // Case for not enough distance to reach targetVelocity, must decelerate
         else {
+            System.out.println("------------TRAP DEACCEL-----------");
             lastV = Math.max(curentVelocity - deltaVelocity,0);
         }
         lastA = lastV - curentVelocity;
