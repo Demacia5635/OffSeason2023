@@ -96,7 +96,6 @@ public class Vision extends SubsystemBase {
         
         SmartDashboard.putData("vision3", visionField3);
         SmartDashboard.putData("vision5", visionField5);
-        
         SmartDashboard.putData("visionavg3", visionFieldavg3);
         SmartDashboard.putData("visionavg5", visionFieldavg5);
 
@@ -189,25 +188,32 @@ public class Vision extends SubsystemBase {
         getNewDataFromLimelightX(Limelight.Limelight3);
         updateRobotPose();
         updateRobotPose5();
-
         SmartDashboard.putNumber("angle", visionField.getRobotPose().getRotation().getDegrees());
-        
+        double x = 15.513;
+        double y = 4.424;
         Pose2d visionPose = visionField.getRobotPose();
         SmartDashboard.putNumber("no filter X", visionPose.getX());
         SmartDashboard.putNumber("no filter Y", visionPose.getY());
+        SmartDashboard.putNumber("no filter dist",Math.sqrt(Math.pow(x-visionPose.getX(), 2) + Math.pow(y-visionPose.getY(),2) ) );
         Pose2d vision3Pose = visionField3.getRobotPose();
         SmartDashboard.putNumber("buf 3 med X", vision3Pose.getX());
         SmartDashboard.putNumber("buf 3 med Y", vision3Pose.getY());
+        SmartDashboard.putNumber("buf 3 med dist",Math.sqrt(Math.pow(vision3Pose.getX()-x, 2) + Math.pow(vision3Pose.getY()-y,2) ) );
         Pose2d vision5Pose = visionField5.getRobotPose();
         SmartDashboard.putNumber("buf 5 med X", vision5Pose.getX());
         SmartDashboard.putNumber("buf 5 med Y", vision5Pose.getY());    
+        SmartDashboard.putNumber("buf 5 med dist",Math.sqrt(Math.pow(vision5Pose.getX()-x, 2) + Math.pow(vision5Pose.getY()-y,2) ) );
 
         Pose2d vision3avgPose = visionFieldavg3.getRobotPose();
         SmartDashboard.putNumber("buf 3 avg X", vision3avgPose.getX());
         SmartDashboard.putNumber("buf 3 avg Y", vision3avgPose.getY());
+        SmartDashboard.putNumber("buf 3 avg dist",Math.sqrt(Math.pow(vision3avgPose.getX()-x, 2) + Math.pow(vision3avgPose.getY()-y,2) ) );
+
         Pose2d vision5avgPose = visionFieldavg5.getRobotPose();
         SmartDashboard.putNumber("buf 5 avg X", vision5avgPose.getX());
         SmartDashboard.putNumber("buf 5 avg Y", vision5avgPose.getY());    
+        SmartDashboard.putNumber("buf 5 avg dist",Math.sqrt(Math.pow(vision5avgPose.getX()-x, 2) + Math.pow(vision5avgPose.getY()-y,2) ) );
+
 
     }
     //util
