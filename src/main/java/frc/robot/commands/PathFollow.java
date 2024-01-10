@@ -19,10 +19,10 @@ import frc.robot.Constants;
 import frc.robot.PathFollow.Util.Leg;
 import frc.robot.PathFollow.Util.RoundedPoint;
 import frc.robot.PathFollow.Util.Segment;
-import frc.robot.PathFollow.Util.Trapez;
+import frc.robot.PathFollow.Util.TrapezShay;
 import frc.robot.PathFollow.Util.pathPoint;
 import frc.robot.subsystems.chassis.*;
-import frc.robot.utils.Trapezoid;
+import frc.robot.utils.TrapezoidNoam;
 
 public class PathFollow extends CommandBase {
   Pose2d closestAprilTag = new Pose2d();
@@ -41,8 +41,8 @@ public class PathFollow extends CommandBase {
   Rotation2d wantedAngle;
   Field2d trajField;
 
-  Trapezoid driveTrapezoid;
-  Trapezoid rotationTrapezoid;
+  TrapezoidNoam driveTrapezoid;
+  TrapezoidNoam rotationTrapezoid;
   double velocity = 0;
   double rotationVelocity = 0;
   double safeVel = 1;
@@ -75,8 +75,8 @@ public class PathFollow extends CommandBase {
 
     SmartDashboard.putData(this);
 
-    driveTrapezoid = new Trapezoid(maxVel, maxAcc);
-    rotationTrapezoid = new Trapezoid(180, 360);
+    driveTrapezoid = new TrapezoidNoam(maxVel, maxAcc);
+    rotationTrapezoid = new TrapezoidNoam(180, 360);
 
     //calculate the total length of the path
 

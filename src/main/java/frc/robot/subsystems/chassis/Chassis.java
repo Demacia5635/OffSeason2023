@@ -136,7 +136,7 @@ public class Chassis extends SubsystemBase {
   public void setVelocities(ChassisSpeeds speeds) {
     ChassisSpeeds relativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getAngle());
     SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(relativeSpeeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_DRIVE_VELOCITY);
+    // SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_DRIVE_VELOCITY);
     setModuleStates(states);
   }
 

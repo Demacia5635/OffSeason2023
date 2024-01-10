@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 
 /** Add your docs here. */
-public class Trapezoid {
+public class TrapezoidNoam {
     double maxVelocity; // Maximum permissible velocity
     double maxAcceleration; // Maximum permissible acceleration
     private double deltaVelocity; // Velocity increment at each time step
@@ -20,7 +20,7 @@ public class Trapezoid {
 
 
     // Constructor to initialize with maximum velocity and acceleration
-    public Trapezoid(double maxVelocity, double maxAcceleration) {
+    public TrapezoidNoam(double maxVelocity, double maxAcceleration) {
         this.maxAcceleration = maxAcceleration;
         this.maxVelocity = maxVelocity;
         // Velocity increment calculated based on max acceleration
@@ -29,9 +29,9 @@ public class Trapezoid {
 
     // Helper function to calculate distance required to change from current velocity to target velocity
     private double distanceToVelocity(double currentVelocity, double targetVelocity, double acceleration) {
-        double deltaT = currentVelocity / maxAcceleration;
-        //return (currentVelocity - deltaVelocity/2)*deltaVelocity/acceleration;
-        return 0.5 * (maxAcceleration * deltaT * deltaT);
+        //double deltaT = currentVelocity / maxAcceleration;
+        return (currentVelocity - deltaVelocity/2)*deltaVelocity/acceleration;
+        //return 0.5 * (maxAcceleration * deltaT * deltaT);
 
     }
 

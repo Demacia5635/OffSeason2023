@@ -6,13 +6,13 @@ package frc.robot.PathFollow.Util;
 
 
 /** Add your docs here. */
-public class Trapez {
+public class TrapezShay {
     double acc;
     double maxVel;
     double endVel;
     double deltaV;
 
-    public Trapez(double acc, double maxVel, double endVel)
+    public TrapezShay(double acc, double maxVel, double endVel)
     {
         this.acc = acc;
         this.maxVel = maxVel;

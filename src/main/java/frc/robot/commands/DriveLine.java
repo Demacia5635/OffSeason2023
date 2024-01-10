@@ -8,14 +8,14 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.PathFollow.Util.Trapez;
+import frc.robot.PathFollow.Util.TrapezShay;
 import frc.robot.subsystems.chassis.Chassis;
 
 public class DriveLine extends CommandBase {
   Translation2d point = new Translation2d(0, 4);
   Chassis chassis;
   Translation2d velocity = new Translation2d();
-  Trapez trap = new Trapez(1, 0.5, 0);
+  TrapezShay trap = new TrapezShay(1, 0.5, 0);
   public DriveLine(Chassis chassis) {
     this.chassis = chassis;
     addRequirements(chassis);

@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.ChassisConstants.SwerveModuleConstants;
-import frc.robot.utils.Trapezoid;
+import frc.robot.utils.TrapezoidNoam;
 
 import static frc.robot.Constants.ChassisConstants.*;
 import static frc.robot.Constants.ChassisConstants.SwerveModuleConstants.*;
@@ -31,7 +31,7 @@ public class SwerveModule implements Sendable {
 
     private SimpleMotorFeedforward velocityFF;
     private SimpleMotorFeedforward angularFF;
-    private Trapezoid angleTrapezoid;
+    private TrapezoidNoam angleTrapezoid;
 
     double targetVelocity = 0;
     double targetAngle = 0;
@@ -46,7 +46,7 @@ public class SwerveModule implements Sendable {
         absoluteEncoder = new CANCoder(constants.absoluteEncoderId);
         velocityFF = new SimpleMotorFeedforward(MOVE_KS, MOVE_KV);
         angularFF = new SimpleMotorFeedforward(ANGLE_KS, ANGLE_KV);
-        angleTrapezoid = new Trapezoid(MAX_ANGULAR_VELOCITY, ANGULAR_ACCELERATION);
+        angleTrapezoid = new TrapezoidNoam(MAX_ANGULAR_VELOCITY, ANGULAR_ACCELERATION);
 
         moveMotor.configFactoryDefault();
         angleMotor.configFactoryDefault();
