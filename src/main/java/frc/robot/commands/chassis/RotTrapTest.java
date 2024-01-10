@@ -37,14 +37,14 @@ public class RotTrapTest extends CommandBase {
   @Override
   public void initialize() {
     prevVecloity = 0;  
-    rotationVelocity = 60;
+    rotationVelocity = 360;
     
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-     distanceLeft = Rotation2d.fromDegrees(90).minus(chassis.getAngle()).getDegrees();
+     distanceLeft = Rotation2d.fromDegrees(179).minus(chassis.getAngle()).getDegrees();
     //rotationVelocity = -rotationTrapezoid.calculate(distanceLeft, Math.toDegrees(chassis.getChassisSpeeds().omegaRadiansPerSecond), 0);
     
 
@@ -70,6 +70,6 @@ public class RotTrapTest extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return distanceLeft <= 1 && distanceLeft >= -1;
+    return false;
   }
 }

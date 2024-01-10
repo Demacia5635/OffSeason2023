@@ -101,9 +101,9 @@ public final class Constants {
     public static final double PULSES_PER_DEGREE = 72.817777777777777777777777777779;
 
     public static class SwerveModuleConstants {
-      public static final double MOVE_KP = 0.003;
-      public static final double MOVE_KI = 0.00005;
-      public static final double MOVE_KD = 0.008;
+      public static final double MOVE_KP = 0.00000015; //0.000002;
+      public static final double MOVE_KI = 0.000035; //0.00007;
+      public static final double MOVE_KD = 0.07; //0.008;
       public static final double ANGLE_POSITION_KP = 0.35;
       public static final double ANGLE_POSITION_KI = 0;
       public static final double ANGLE_POSITION_KD = 0.029;
