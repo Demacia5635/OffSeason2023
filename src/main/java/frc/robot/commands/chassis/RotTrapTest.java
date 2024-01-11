@@ -9,9 +9,11 @@ import java.util.concurrent.ThreadPoolExecutor.DiscardOldestPolicy;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.PathFollow.Util.TrapezShay;
 import frc.robot.subsystems.chassis.Chassis;
 import frc.robot.utils.TrapezoidNoam;
@@ -25,6 +27,9 @@ public class RotTrapTest extends CommandBase {
   double prevVecloity;
   PIDController pidController;
 
+  SwerveModuleState[] reqStates = new SwerveModuleState[4];
+  ChassisSpeeds speeds = new ChassisSpeeds();
+
   public RotTrapTest(Chassis chassis) {
     this.chassis= chassis;
     rotationTrapezoid = new TrapezoidNoam(360, 720);
@@ -37,8 +42,8 @@ public class RotTrapTest extends CommandBase {
   @Override
   public void initialize() {
     prevVecloity = 0;  
-    rotationVelocity = 360;
-    
+    rotationVelocity = 30;
+    this.speeds = new ChassisSpeeds(2, 0, Math.toRadians(rotationVelocity));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -46,9 +51,8 @@ public class RotTrapTest extends CommandBase {
   public void execute() {
      distanceLeft = Rotation2d.fromDegrees(179).minus(chassis.getAngle()).getDegrees();
     //rotationVelocity = -rotationTrapezoid.calculate(distanceLeft, Math.toDegrees(chassis.getChassisSpeeds().omegaRadiansPerSecond), 0);
-    
 
-    chassis.setVelocities(new ChassisSpeeds(0, 0, Math.toRadians(rotationVelocity)));
+    chassis.setVelocities(speeds);
     
   }
 
@@ -58,6 +62,29 @@ public class RotTrapTest extends CommandBase {
       builder.addDoubleProperty("CHASSIS VELOCITY",()-> {return Math.toDegrees(chassis.getChassisSpeeds().omegaRadiansPerSecond);}, null);
       builder.addDoubleProperty("CURRENT ANGLE",()->  {return chassis.getAngle().getDegrees();}, null);
       builder.addDoubleProperty("DISTANCE LEFT", ()-> {return distanceLeft;}, null);
+  }
+
+  public String[] speedToReqModuleStatesString(ChassisSpeeds speeds)
+  {
+    String[] msg = new String[4];
+    SwerveModuleState[] states = Constants.ChassisConstants.KINEMATICS.toSwerveModuleStates(speeds);
+    int count = 0;
+    for (SwerveModuleState state : states) {
+      msg[count] = "Module " + count + " : \n" + state + "\n~\n";
+      count++;
+    }
+    return msg;
+  }
+
+  public String[] ReqModuleStatesString(SwerveModuleState[] states)
+  {
+    String[] msg = new String[4];
+    int count = 0;
+    for (SwerveModuleState state : states) {
+      msg[count] = "Module " + count + " : \n" + state + "\n~\n";
+      count++;
+    }
+    return msg;
   }
   // Called once the command ends or is interrupted.
   @Override 
