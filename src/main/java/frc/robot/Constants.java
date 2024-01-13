@@ -92,7 +92,7 @@ public final class Constants {
       MODULE_BACK_RIGHT.moduleTranslationOffset
     );
 
-    public static final double MAX_DRIVE_VELOCITY = 3.0;
+    public static final double MAX_DRIVE_VELOCITY = 3;
     public static final double DRIVE_ACCELERATION = 8;
     public static final double MAX_ANGULAR_VELOCITY = 600;
     public static final double ANGULAR_ACCELERATION = 6000;
