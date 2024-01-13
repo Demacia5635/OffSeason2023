@@ -37,8 +37,6 @@ public class Leg extends Segment{
 
         Rotation2d diffAngle = p1.minus(p2).getAngle().minus(relativePos.getAngle());
 
-        System.out.println("DiffAngle : " + diffAngle);
-
         return new Translation2d(velocity, relativePos.times(-1).getAngle().minus(diffAngle));
 
     }

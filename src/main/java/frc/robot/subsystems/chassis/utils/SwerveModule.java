@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.Constants.ChassisConstants.SwerveModuleConstants;
+import frc.robot.subsystems.chassis.Chassis;
 import frc.robot.utils.TrapezoidNoam;
 
 import static frc.robot.Constants.ChassisConstants.*;
@@ -35,12 +36,14 @@ public class SwerveModule implements Sendable {
 
     double targetVelocity = 0;
     double targetAngle = 0;
+    Chassis chassis;
 
     private final double angleOffset;
 
     public boolean debug = false;
 
-    public SwerveModule(SwerveModuleConstants constants) {
+    public SwerveModule(SwerveModuleConstants constants, Chassis chassis) {
+        this.chassis = chassis;
         moveMotor = new TalonFX(constants.moveMotorId);
         angleMotor = new TalonFX(constants.angleMotorId);
         absoluteEncoder = new CANCoder(constants.absoluteEncoderId);
@@ -119,18 +122,24 @@ public class SwerveModule implements Sendable {
             return;
         }
         targetVelocity = v;
-        double currentVelocity = getVelocity();
-        if(lastMoveA > 0 && currentVelocity < lastMoveV && currentVelocity < v) {
-            currentVelocity = lastMoveV;
-        } else if(lastMoveA < 0 && currentVelocity > lastMoveV && currentVelocity < v) {
-            currentVelocity = lastMoveV;
-        }
         double tgtV = v;
-        double maxAccel = DRIVE_ACCELERATION * Constants.CYCLE_DT;
-        if (v > currentVelocity + maxAccel) {
-            tgtV = currentVelocity + maxAccel;
-        } else if (v < currentVelocity-maxAccel) {
-            tgtV = currentVelocity - maxAccel;
+        double currentVelocity = getVelocity();
+        if(chassis.useAcceleration) {
+            double maxAccel = DRIVE_ACCELERATION * Constants.CYCLE_DT;
+            if(lastMoveA > 0 && currentVelocity < lastMoveV && currentVelocity < v) {
+                currentVelocity = lastMoveV;
+            } else if(lastMoveA < 0 && currentVelocity > lastMoveV && currentVelocity < v) {
+                currentVelocity = lastMoveV;
+            }
+        
+            
+            if (v > currentVelocity + maxAccel) {
+                tgtV = currentVelocity + maxAccel;
+            } else if (v < currentVelocity-maxAccel) {
+                tgtV = currentVelocity - maxAccel;
+            }
+        } else {
+            System.out.println(" module: tgtv=" + tgtV + " cV = " + currentVelocity);
         }
         double ff = velocityFF.calculate(tgtV);
         moveMotor.set(ControlMode.Velocity, metricToEncoderSpeed(tgtV), DemandType.ArbitraryFeedForward, ff);

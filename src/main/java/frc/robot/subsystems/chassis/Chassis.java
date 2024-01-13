@@ -32,12 +32,14 @@ public class Chassis extends SubsystemBase {
   private final SwerveDrivePoseEstimator poseEstimator;
   private final Field2d field;
 
+  public boolean useAcceleration = true;
+
   public Chassis() {
     modules = new SwerveModule[] {
-      new SwerveModule(MODULE_FRONT_LEFT),
-      new SwerveModule(MODULE_FRONT_RIGHT),
-      new SwerveModule(MODULE_BACK_LEFT),
-      new SwerveModule(MODULE_BACK_RIGHT),
+      new SwerveModule(MODULE_FRONT_LEFT, this),
+      new SwerveModule(MODULE_FRONT_RIGHT, this),
+      new SwerveModule(MODULE_BACK_LEFT, this),
+      new SwerveModule(MODULE_BACK_RIGHT, this),
     };
 
     gyro = new PigeonIMU(GYRO_ID);

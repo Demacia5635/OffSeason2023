@@ -101,9 +101,9 @@ public final class Constants {
     public static final double PULSES_PER_DEGREE = 72.817777777777777777777777777779;
 
     public static class SwerveModuleConstants {
-      public static final double MOVE_KP = 0.05; //0.000002;
-      public static final double MOVE_KI = 0; //0.00007;
-      public static final double MOVE_KD = 0; //0.008;
+      public static final double MOVE_KP = 0.0015; //0.000002;
+      public static final double MOVE_KI = 0;//0.000035; //0.00007;
+      public static final double MOVE_KD = 0;//0.07; //0.008;
       public static final double ANGLE_POSITION_KP = 0.35;
       public static final double ANGLE_POSITION_KI = 0;
       public static final double ANGLE_POSITION_KD = 0.029;
@@ -111,10 +111,11 @@ public final class Constants {
       public static final double ANGLE_VELOCITY_KI = 0; //0.004;
       public static final double ANGLE_VELOCITY_KD = 1;
 
-      public static final double MOVE_KS = 0.05; // 0.15851/12; //0.0362;
-      public static final double MOVE_KV = 0.263; //0.012314/12; //0.0862;
-      public static final double ANGLE_KS = 0.52;//0.035;//0.52557/12.0; //0.05;
-      public static final double ANGLE_KV = 0.003737;//0.0003;//0.003737/12.0; //0.0962;
+      
+      public static final double MOVE_KS = 0.035; //0.05; // 0.15851/12; //0.0362;
+      public static final double MOVE_KV = 0.215; // 0.263; //0.012314/12; //0.0862;
+      public static final double ANGLE_KS = 0.035;//0.52557/12.0; //0.05;
+      public static final double ANGLE_KV = 0.0003;//0.003737/12.0; //0.0962;
 
       public static final double MAX_STEER_ERROR = 5;
 
