@@ -129,7 +129,9 @@ public final class Constants {
     public static final String Limelight2Name = "Limelight2";
     public static final String Limelight3Name = "Limelight3";
 
-    public static final Pose2d robotCenterToLimelight2 = new Pose2d(new Translation2d(0.14, -0.22),Rotation2d.fromDegrees(-28));
+    public static final Pose2d robotCenterToLimelight2 = new Pose2d(new Translation2d(0, 0),Rotation2d.fromDegrees(0));
+
+    // public static final Pose2d robotCenterToLimelight2 = new Pose2d(new Translation2d(0.14, -0.22),Rotation2d.fromDegrees(-28));
     public static final Transform3d robotCenterToLimelight2Transform = new Transform3d(new Pose3d(), new Pose3d(robotCenterToLimelight2));
 
     public static final Pose2d robotCenterToLimelight3 = new Pose2d(new Translation2d(-0.14, -0.22),Rotation2d.fromDegrees(28));
